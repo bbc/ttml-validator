@@ -231,7 +231,7 @@ class activeAreaCheck(xmlCheck):
             if matches:
                 # check validity
                 for g in ['leftOffset', 'topOffset', 'width', 'height']:
-                    if int(matches.group(g)) > 100:
+                    if float(matches.group(g)) > 100:
                         valid = False
                 if not valid:
                     validation_results.append(
