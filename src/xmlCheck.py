@@ -3,7 +3,7 @@ from .validationResult import ValidationResult, ERROR, GOOD
 from xml.etree.ElementTree import Element
 from .ebuttdSchema import EBUTTDSchema
 from xmlschema import XMLSchemaValidationError
-from .xmlUtils import get_namespace, get_unqualified_name
+from .xmlUtils import get_namespace, get_unqualified_name, make_qname
 
 class xmlCheck:
 
@@ -128,5 +128,64 @@ class ttTagAndNamespaceCheck(xmlCheck):
             )
 
         context['root_ns'] = ns
+
+        return valid
+
+
+class timeBaseCheck(xmlCheck):
+    default_timeBase = 'media'
+
+    def __init__(self,
+                 timeBase_whitelist: List[str] = ['media'],
+                 timeBase_required: bool = False):
+        super().__init__()
+        self._timeBase_whitelist = timeBase_whitelist
+        self._timeBase_required = timeBase_required
+
+    def run(
+            self,
+            input: Element,
+            context: Dict,
+            validation_results: List[ValidationResult]) -> bool:
+        ttp_ns = \
+            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            + '#parameter'
+        timeBase_attr_key = make_qname(ttp_ns, 'timeBase')
+        valid = True
+
+        if self._timeBase_required and timeBase_attr_key not in input.attrib:
+            valid = False
+            validation_results.append(
+                ValidationResult(
+                    status=ERROR,
+                    location='{} {} attribute'.format(
+                        input.tag, timeBase_attr_key),
+                    message='Required timeBase attribute absent'
+                )
+            )
+
+        timeBase_attr_val = \
+            input.get(timeBase_attr_key, self.default_timeBase)
+        if timeBase_attr_val not in self._timeBase_whitelist:
+            valid = False
+            validation_results.append(
+                ValidationResult(
+                    status=ERROR,
+                    location='{} {} attribute'.format(
+                        input.tag, timeBase_attr_key),
+                    message='timeBase {} not in the allowed set {}'.format(
+                        timeBase_attr_val, self._timeBase_whitelist)
+                )
+            )
+
+        if valid:
+            validation_results.append(
+                ValidationResult(
+                    status=GOOD,
+                    location='{} {} attribute'.format(
+                        input.tag, timeBase_attr_key),
+                    message='timeBase checked'
+                )
+            )
 
         return valid
