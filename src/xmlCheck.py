@@ -1,9 +1,10 @@
 from typing import Dict, List
-from .validationResult import ValidationResult, ERROR, GOOD
+from .validationResult import ValidationResult, ERROR, GOOD, WARN
 from xml.etree.ElementTree import Element
 from .ebuttdSchema import EBUTTDSchema
 from xmlschema import XMLSchemaValidationError
 from .xmlUtils import get_namespace, get_unqualified_name, make_qname
+import re
 
 class xmlCheck:
 
@@ -185,6 +186,85 @@ class timeBaseCheck(xmlCheck):
                     location='{} {} attribute'.format(
                         input.tag, timeBase_attr_key),
                     message='timeBase checked'
+                )
+            )
+
+        return valid
+
+
+class activeAreaCheck(xmlCheck):
+    activeArea_re = re.compile(
+        r'^(?P<leftOffset>[\d]+(\.[\d]+)?)%[\s]+'
+        r'(?P<topOffset>[\d]+(\.[\d]+)?)%[\s]+'
+        r'(?P<width>[\d]+(\.[\d]+)?)%[\s]+'
+        r'(?P<height>[\d]+(\.[\d]+)?)%$')
+
+    def __init__(self,
+                 activeArea_required: bool = False):
+        super().__init__()
+        self._activeArea_required = activeArea_required
+
+    def run(
+            self,
+            input: Element,
+            context: Dict,
+            validation_results: List[ValidationResult]) -> bool:
+        ittp_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#parameter'
+        ittp_attr_key = make_qname(ittp_ns, 'activeArea')
+        valid = True
+
+        if ittp_attr_key not in input.attrib:
+            valid = not self._activeArea_required
+            validation_results.append(
+                ValidationResult(
+                    status=ERROR if self._activeArea_required else WARN,
+                    location='{} {} attribute'.format(
+                        input.tag, ittp_attr_key),
+                    message='{}activeArea attribute absent'.format(
+                        'Required ' if self._activeArea_required else ''
+                    )
+                )
+            )
+        else:
+            ittp_attr_val = input.get(ittp_attr_key)
+            matches = self.activeArea_re.match(ittp_attr_val)
+            if matches:
+                # check validity
+                for g in ['leftOffset', 'topOffset', 'width', 'height']:
+                    if int(matches.group(g)) > 100:
+                        valid = False
+                if not valid:
+                    validation_results.append(
+                        ValidationResult(
+                            status=ERROR,
+                            location='{} {} attribute'.format(
+                                input.tag, ittp_attr_key),
+                            message='activeArea {} has '
+                                    'at least one component >100%'.format(
+                                ittp_attr_val)
+                        )
+                    )
+
+            else:
+                valid = False
+                validation_results.append(
+                    ValidationResult(
+                        status=ERROR,
+                        location='{} {} attribute'.format(
+                            input.tag, ittp_attr_key),
+                        message='activeArea {} does not '
+                                'match syntax requirements'.format(
+                            ittp_attr_val)
+                    )
+                )
+
+        if valid:
+            validation_results.append(
+                ValidationResult(
+                    status=GOOD,
+                    location='{} {} attribute'.format(
+                        input.tag, ittp_attr_key),
+                    message='activeArea checked'
                 )
             )
 

@@ -7,7 +7,8 @@ import xml.etree.ElementTree as ElementTree
 from .timeExpression import TimeExpressionHandler
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
 from .preParseCheck import BadEncodingCheck, NullByteCheck
-from .xmlCheck import xsdValidator, duplicateXmlIdCheck, ttTagAndNamespaceCheck, timeBaseCheck
+from .xmlCheck import xsdValidator, duplicateXmlIdCheck, \
+    ttTagAndNamespaceCheck, timeBaseCheck, activeAreaCheck
 from io import TextIOBase
 
 logging.getLogger().setLevel(logging.INFO)
@@ -22,7 +23,8 @@ xmlChecks = [
     xsdValidator(),
     duplicateXmlIdCheck(),
     ttTagAndNamespaceCheck(),
-    timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True)
+    timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
+    activeAreaCheck(activeArea_required=False),
 ]
 
 
