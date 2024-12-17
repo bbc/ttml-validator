@@ -1,5 +1,5 @@
 from typing import List
-from .validationResult import ValidationResult, ERROR, GOOD
+from ..validationResult import ValidationResult, ERROR, GOOD
 
 
 class PreParseCheck:

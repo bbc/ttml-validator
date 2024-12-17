@@ -6,8 +6,8 @@ from typing import Dict, List
 import xml.etree.ElementTree as ElementTree
 from .timeExpression import TimeExpressionHandler
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
-from .preParseCheck import BadEncodingCheck, NullByteCheck
-from .xmlCheck import xsdValidator, duplicateXmlIdCheck, \
+from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck
+from .xmlChecks.xmlCheck import xsdValidator, duplicateXmlIdCheck, \
     ttTagAndNamespaceCheck, timeBaseCheck, activeAreaCheck
 from io import TextIOBase
 

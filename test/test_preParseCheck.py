@@ -1,5 +1,5 @@
 import unittest
-import src.preParseCheck as preParseCheck
+import src.preParseChecks.preParseCheck as preParseCheck
 from src.validationResult import ValidationResult, ERROR, GOOD
 
 
