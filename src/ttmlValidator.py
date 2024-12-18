@@ -7,8 +7,9 @@ import xml.etree.ElementTree as ElementTree
 from .timeExpression import TimeExpressionHandler
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck
-from .xmlChecks.xmlCheck import xsdValidator, duplicateXmlIdCheck, \
-    ttTagAndNamespaceCheck, timeBaseCheck, activeAreaCheck
+from .xmlChecks.xmlCheck import xsdValidator
+from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
+    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
 from io import TextIOBase
 
 logging.getLogger().setLevel(logging.INFO)
@@ -25,6 +26,7 @@ xmlChecks = [
     ttTagAndNamespaceCheck(),
     timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
     activeAreaCheck(activeArea_required=False),
+    cellResolutionCheck(cellResolution_required=False)
 ]
 
 
@@ -33,7 +35,7 @@ def write_results(
         stream: TextIOBase,
         ):
     for result in validation_results:
-        stream.write(result.asString())
+        stream.write(result.asString() + '\n')
 
 
 def validate_ttml(args) -> int:
