@@ -1,7 +1,7 @@
 import unittest
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationResult import ValidationResult, ERROR, GOOD, WARN
+from src.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 
 
 class testTtXmlCheck(unittest.TestCase):
@@ -451,6 +451,198 @@ class testTtXmlCheck(unittest.TestCase):
                          'activeArea attribute',
                 message='activeArea 10% 10% 110% 80% has '
                         'at least one component >100%'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_cellResolution_ok(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml"
+    ttp:cellResolution="40 24">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck(
+            cellResolution_required=True)
+        vr = []
+        context = {}
+        valid = cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='cellResolution checked'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_cellResolution_ok_wrong_ns(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttaf#parameter"
+    xmlns="http://www.w3.org/ns/ttaf"
+    ttp:cellResolution="40 24">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck(
+            cellResolution_required=True)
+        vr = []
+        context = {
+            'root_ns': 'http://www.w3.org/ns/ttaf'
+        }
+        valid = cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttaf}tt '
+                         '{http://www.w3.org/ns/ttaf#parameter}'
+                         'cellResolution attribute',
+                message='cellResolution checked'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_cellResolution_missing(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        cellResolutionCheck_required = ttXmlCheck.cellResolutionCheck(
+            cellResolution_required=True)
+        vr = []
+        context = {}
+        valid = cellResolutionCheck_required.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='Required cellResolution attribute absent'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='using default cellResolution value 32 15'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+        cellResolutionCheck_optional = ttXmlCheck.cellResolutionCheck(
+            cellResolution_required=False)
+        vr = []
+        context = {}
+        valid = cellResolutionCheck_optional.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='cellResolution attribute absent'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='using default cellResolution value 32 15'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='cellResolution checked'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_cellResolution_bad_syntax(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml"
+    ttp:cellResolution="40c 24c">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        valid = cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='cellResolution 40c 24c does not '
+                        'match syntax requirements'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_cellResolution_bad_semantic(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml"
+    ttp:cellResolution="0 24">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        valid = cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'cellResolution attribute',
+                message='cellResolution 0 24 has '
+                        'at least one component == 0'
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

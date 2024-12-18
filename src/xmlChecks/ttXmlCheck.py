@@ -1,5 +1,5 @@
 from typing import Dict, List
-from ..validationResult import ValidationResult, ERROR, GOOD, WARN
+from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_namespace, get_unqualified_name, make_qname
 from .xmlCheck import xmlCheck
@@ -226,5 +226,99 @@ class activeAreaCheck(xmlCheck):
                     message='activeArea checked'
                 )
             )
+
+        return valid
+
+
+class cellResolutionCheck(xmlCheck):
+    cellResolution_re = re.compile(
+        r'^(?P<horizontal>[\d]+)[\s]+'
+        r'(?P<vertical>[\d]+)$')
+    default_cellResolution = '32 15'  # defined by TTML spec
+
+    def __init__(self,
+                 cellResolution_required: bool = False):
+        super().__init__()
+        self._cellResolution_required = cellResolution_required
+
+    def run(
+            self,
+            input: Element,
+            context: Dict,
+            validation_results: List[ValidationResult]) -> bool:
+        ttp_ns = \
+            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            + '#parameter'
+        cellResolution_attr_key = make_qname(ttp_ns, 'cellResolution')
+        valid = True
+
+        if cellResolution_attr_key not in input.attrib:
+            valid = not self._cellResolution_required
+            validation_results.append(
+                ValidationResult(
+                    status=ERROR if self._cellResolution_required else WARN,
+                    location='{} {} attribute'.format(
+                        input.tag, cellResolution_attr_key),
+                    message='{}cellResolution attribute absent'.format(
+                        'Required ' if self._cellResolution_required else ''
+                    )
+                )
+            )
+            cellResolution_attr_val = self.default_cellResolution
+            validation_results.append(
+                ValidationResult(
+                    status=INFO,
+                    location='{} {} attribute'.format(
+                        input.tag, cellResolution_attr_key),
+                    message='using default cellResolution value {}'.format(
+                        cellResolution_attr_val
+                    )
+                )
+            )
+        else:
+            cellResolution_attr_val = input.get(cellResolution_attr_key)
+            matches = self.cellResolution_re.match(cellResolution_attr_val)
+            if matches:
+                # check validity
+                for g in ['horizontal', 'vertical']:
+                    if int(matches.group(g)) == 0:
+                        valid = False
+                if not valid:
+                    validation_results.append(
+                        ValidationResult(
+                            status=ERROR,
+                            location='{} {} attribute'.format(
+                                input.tag, cellResolution_attr_key),
+                            message='cellResolution {} has '
+                                    'at least one component == 0'.format(
+                                cellResolution_attr_val)
+                        )
+                    )
+
+            else:
+                valid = False
+                validation_results.append(
+                    ValidationResult(
+                        status=ERROR,
+                        location='{} {} attribute'.format(
+                            input.tag, cellResolution_attr_key),
+                        message='cellResolution {} does not '
+                                'match syntax requirements'.format(
+                            cellResolution_attr_val)
+                    )
+                )
+
+        if valid:
+            validation_results.append(
+                ValidationResult(
+                    status=GOOD,
+                    location='{} {} attribute'.format(
+                        input.tag, cellResolution_attr_key),
+                    message='cellResolution checked'
+                )
+            )
+            context['cellResolution'] = cellResolution_attr_val
+        else:
+            context['cellResolution'] = self.default_cellResolution
 
         return valid
