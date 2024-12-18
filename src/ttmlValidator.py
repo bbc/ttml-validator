@@ -10,6 +10,7 @@ from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck
 from .xmlChecks.xmlCheck import xsdValidator
 from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
+from .xmlChecks.headXmlCheck import headCheck
 from io import TextIOBase
 
 logging.getLogger().setLevel(logging.INFO)
@@ -26,7 +27,8 @@ xmlChecks = [
     ttTagAndNamespaceCheck(),
     timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
     activeAreaCheck(activeArea_required=False),
-    cellResolutionCheck(cellResolution_required=False)
+    cellResolutionCheck(cellResolution_required=False),
+    headCheck(copyright_required=False),
 ]
 
 
