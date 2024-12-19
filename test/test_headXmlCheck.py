@@ -589,3 +589,72 @@ class testheadXmlCheck(unittest.TestCase):
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
+
+    def test_headCheck_style_invalid_attribs(self):
+        pass
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+            tts:color="white"
+            ebutts:linePadding="1%"
+            itts:fillLineGap="curious"/>
+    </styling>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}style@'
+                         '{http://www.w3.org/ns/ttml#styling}color',
+                message='Attribute value [white] is invalid'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}style@'
+                         '{urn:ebu:tt:style}linePadding',
+                message='Attribute value [1%] is invalid'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}style@'
+                         '{http://www.w3.org/ns/ttml/profile/imsc1#styling}'
+                         'fillLineGap',
+                message='Attribute value [curious] is invalid'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)

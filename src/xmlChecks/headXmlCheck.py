@@ -1,10 +1,9 @@
 from typing import Dict, List
-from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationResult import ValidationResult, ERROR, GOOD, WARN
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
-    xmlIdAttr
+from ..xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import xmlCheck
-from ..styleAttribs import styleAttribs, getStyleAttributeKeys
+from ..styleAttribs import getStyleAttributeKeys, getAllStyleAttributeDict
 import re
 
 
@@ -52,6 +51,32 @@ class headCheck(xmlCheck):
             )
         return valid
 
+    def _validateStyleAttr(
+            self,
+            style_el: Element,
+            context: Dict,
+            validation_results: List[ValidationResult],
+            tt_ns: str) -> bool:
+        valid = True
+        style_attr_dict = getAllStyleAttributeDict(tt_ns=tt_ns)
+        for a_key, a_val in style_el.items():
+            if a_key in style_attr_dict:
+                match = style_attr_dict[a_key].syntaxRegex.match(a_val)
+                if match is None:
+                    valid = False
+                    validation_results.append(
+                        ValidationResult(
+                            status=ERROR,
+                            location='{}@{}'.format(
+                                style_el.tag,
+                                a_key),
+                            message='Attribute value [{}] is invalid'.format(
+                                a_val)
+                        )
+                    )
+
+        return valid
+
     def _checkStyle(
             self,
             style_el: Element,
@@ -81,6 +106,10 @@ class headCheck(xmlCheck):
                     style_el.get(xmlIdAttr, '(no xml:id)')),
                 message='Style element has no recognised style attributes'
             ))
+        valid &= self._validateStyleAttr(style_el=style_el,
+                                         context=context,
+                                         validation_results=validation_results,
+                                         tt_ns=tt_ns)
 
         return valid
 

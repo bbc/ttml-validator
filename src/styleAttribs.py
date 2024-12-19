@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 from .xmlUtils import make_qname
 
 styling_ns_suffix = '#styling'
@@ -236,6 +236,19 @@ def getStyleAttributeKeys(tt_ns: str, elements: List[str]) -> List[str]:
             if not el_set.isdisjoint(sa.appliesTo)]
 
 
+def getStyleAttributeDict(
+        tt_ns: str, elements: List[str]) -> Dict[str, StyleAttribute]:
+    el_set = set(elements)
+    return {_makeTag(tt_ns=tt_ns, styleAttribute=sa): sa
+            for sa in styleAttribs
+            if not el_set.isdisjoint(sa.appliesTo)}
+
+
 def getAllStyleAttributeKeys(tt_ns: str) -> List[str]:
     return [_makeTag(tt_ns=tt_ns, styleAttribute=sa)
             for sa in styleAttribs]
+
+
+def getAllStyleAttributeDict(tt_ns: str) -> Dict[str, StyleAttribute]:
+    return {_makeTag(tt_ns=tt_ns, styleAttribute=sa): sa
+            for sa in styleAttribs}

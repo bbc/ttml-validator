@@ -1,5 +1,8 @@
 import unittest
-from src.styleAttribs import getAllStyleAttributeKeys, getStyleAttributeKeys
+import re
+from src.styleAttribs import getAllStyleAttributeKeys, \
+    getStyleAttributeKeys, getStyleAttributeDict, \
+    StyleAttribute
 
 
 class testStyleAttribs(unittest.TestCase):
@@ -96,3 +99,20 @@ class testStyleAttribs(unittest.TestCase):
             'style',
         ]
         self.assertListEqual(actual, expected)
+
+    def test_getStyleAttributeDict_style(self):
+        actual = getStyleAttributeDict(
+            tt_ns='ttml:ns:prefix', elements=['style'])
+        expected = {
+            'style':
+            StyleAttribute(
+                 ns='',
+                 nsIsRelative=False,
+                 tag='style',
+                 appliesTo=['style', 'region', 'body', 'div', 'p', 'span'],
+                 syntaxRegex=re.compile(
+                     r'^([a-zA-Z_][\S]*([\t\f ]+([a-zA-Z_][\S]*))*)?$'),
+                 defaultValue=''
+            )
+            }
+        self.assertDictEqual(actual, expected)
