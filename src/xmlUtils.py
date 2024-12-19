@@ -1,3 +1,6 @@
+xmlIdAttr = '{http://www.w3.org/XML/1998/namespace}id'
+
+
 def make_qname(namespace: str, name: str) -> str:
     if namespace is not None and len(namespace) > 0:
         return '{' + namespace + '}' + name

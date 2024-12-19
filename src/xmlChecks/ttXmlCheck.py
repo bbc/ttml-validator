@@ -1,17 +1,17 @@
 from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_namespace, get_unqualified_name, make_qname
+from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
+    xmlIdAttr
 from .xmlCheck import xmlCheck
 import re
 
 
 class duplicateXmlIdCheck(xmlCheck):
-    _xmlIdAttr = '{http://www.w3.org/XML/1998/namespace}id'
 
     @classmethod
     def _gatherXmlId(cls, e: Element, m: Dict[str, List]):
-        xmlId = e.get(cls._xmlIdAttr)
+        xmlId = e.get(xmlIdAttr)
         if xmlId:
             elist = m.get(xmlId, [])
             elist.append(e)
