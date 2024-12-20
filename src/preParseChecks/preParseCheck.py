@@ -49,6 +49,7 @@ class BadEncodingCheck(PreParseCheck):
         sirens = [
             b'\xc3\xa2\xc2\x80\xc2\x98',  # badly encoded U2018
             b'\xc3\xa2\xc2\x80\xc2\x99',  # badly encoded U2019
+            b'\xc3\x83\xc2\xb8',  # badly encoded U00F8
         ]
         needs_reencoding = False
         for siren in sirens:
