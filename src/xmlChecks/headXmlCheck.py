@@ -4,7 +4,6 @@ from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import xmlCheck
 from ..styleAttribs import getStyleAttributeKeys, getAllStyleAttributeDict
-import re
 
 
 class headCheck(xmlCheck):
@@ -92,6 +91,11 @@ class headCheck(xmlCheck):
                 location='{}@{}'.format(style_el.tag, xmlIdAttr),
                 message='style element found with no xml:id'
             ))
+        else:
+            # Store in context for later use
+            style_map = context.get('id_to_style_map', {})
+            style_map[style_el.get(xmlIdAttr)] = style_el
+            context['id_to_style_map'] = style_map
 
         # region-only style attributes should be inline in EBU-TT-D
         style_attr_keys = set(
@@ -130,6 +134,7 @@ class headCheck(xmlCheck):
                 location='{}/{}'.format(styling_el.tag, style_el_tag),
                 message='At least one style element required, none found'
             ))
+            context['id_to_style_map'] = {}  # expected downstream
         else:
             for style_el in style_els:
                 valid &= self._checkStyle(

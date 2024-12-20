@@ -8,7 +8,7 @@ ebutts_ns = 'urn:ebu:tt:style'
 itts_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#styling'
 
 ebutt_distribution_color_type_regex = \
-    r'^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?$'
+    r'^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?$'
 
 
 @dataclass
@@ -36,7 +36,7 @@ styleAttribs = \
             nsIsRelative=True,
             tag='fontFamily',
             appliesTo=['span'],
-            syntaxRegex=None,  # TODO
+            syntaxRegex=re.compile(r'.*'),  # TODO
             defaultValue='default'
         ),
         StyleAttribute(
@@ -220,6 +220,16 @@ styleAttribs = \
         )
     ]
 
+_elementsToApplicableStyleAttributes = {}
+for styleAttrib in styleAttribs:
+    for el_tag in styleAttrib.appliesTo:
+        el_to_attrs = _elementsToApplicableStyleAttributes.get(
+            el_tag, set()
+        )
+        el_to_attrs.add(styleAttrib.tag)
+        _elementsToApplicableStyleAttributes[el_tag] = el_to_attrs
+_allAttributeKeys = set(styleAttrib.tag for styleAttrib in styleAttribs)
+
 
 def _makeTag(tt_ns: str, styleAttribute: StyleAttribute) -> str:
     tag = styleAttribute.tag
@@ -252,3 +262,9 @@ def getAllStyleAttributeKeys(tt_ns: str) -> List[str]:
 def getAllStyleAttributeDict(tt_ns: str) -> Dict[str, StyleAttribute]:
     return {_makeTag(tt_ns=tt_ns, styleAttribute=sa): sa
             for sa in styleAttribs}
+
+
+def attributeIsApplicableToElement(attr_key: str, el_tag: str) -> bool:
+    return \
+        attr_key not in _allAttributeKeys \
+        or attr_key in _elementsToApplicableStyleAttributes.get(el_tag, set())

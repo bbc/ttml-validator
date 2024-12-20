@@ -2,7 +2,7 @@ import unittest
 import re
 from src.styleAttribs import getAllStyleAttributeKeys, \
     getStyleAttributeKeys, getStyleAttributeDict, \
-    StyleAttribute
+    StyleAttribute, attributeIsApplicableToElement
 
 
 class testStyleAttribs(unittest.TestCase):
@@ -116,3 +116,31 @@ class testStyleAttribs(unittest.TestCase):
             )
             }
         self.assertDictEqual(actual, expected)
+
+    def test_attributeIsApplicableToElement(self):
+        is_applicable = [
+            ('color', 'span'),
+            ('backgroundColor', 'span'),
+            ('backgroundColor', 'region'),
+            ('fillLineGap', 'p')
+        ]
+        is_not_applicable = [
+            ('color', 'p'),
+            ('textAlign', 'span'),
+            ('lineHeight', 'div'),
+            ('fillLineGap', 'region')
+        ]
+
+        for (attr_key, el_tag) in is_applicable:
+            with self.subTest(attr_key=attr_key, el_tag=el_tag):
+                self.assertTrue(attributeIsApplicableToElement(
+                    attr_key=attr_key,
+                    el_tag=el_tag
+                ))
+
+        for (attr_key, el_tag) in is_not_applicable:
+            with self.subTest(attr_key=attr_key, el_tag=el_tag):
+                self.assertFalse(attributeIsApplicableToElement(
+                    attr_key=attr_key,
+                    el_tag=el_tag
+                ))
