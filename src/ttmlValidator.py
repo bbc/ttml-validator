@@ -12,6 +12,7 @@ from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
 from .xmlChecks.headXmlCheck import headCheck
 from .xmlChecks.styleRefsCheck import styleRefsXmlCheck
+from .xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from io import TextIOBase
 
 logging.getLogger().setLevel(logging.INFO)
@@ -31,6 +32,7 @@ xmlChecks = [
     cellResolutionCheck(cellResolution_required=False),
     headCheck(copyright_required=False),
     styleRefsXmlCheck(),
+    inlineStyleAttributesCheck(),
 ]
 
 
