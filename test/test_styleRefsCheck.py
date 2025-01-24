@@ -203,3 +203,73 @@ class testStyleRefsCheck(unittest.TestCase):
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
+
+    def test_cyclic_style_refs(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:color="#ffffff" style="s2"/>
+        <style xml:id="s2" tts:fontSize="120%" style="s1"/>
+        <style xml:id="s3" style="s4"/>
+        <style xml:id="s4" style="s5"/>
+        <style xml:id="s5" style="s3"/>
+    </styling>
+</head>
+<body>
+<div><p xml:id="d1"><span style="s1">text</span></p></div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        vr = []
+        context = {}
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='style element',
+                message='Cyclic style ref to s2 found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='style element',
+                message='Cyclic style ref to s1 found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='style element',
+                message='Cyclic style ref to s4 found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='style element',
+                message='Cyclic style ref to s5 found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='style element',
+                message='Cyclic style ref to s3 found'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)

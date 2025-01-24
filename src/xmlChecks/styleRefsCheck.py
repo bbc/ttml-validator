@@ -36,45 +36,59 @@ class styleRefsXmlCheck(xmlCheck):
             style_el: Element,
             id_to_style_map: Dict[str, Element],
             style_attrib_map: Dict[str, str],
-            visited_styles: List[str]
-            ):
+            visited_styles: List[str],
+            validation_results: List[ValidationResult],
+            ) -> bool:
+        valid = True
         style_refs = style_el.get('style', '').split()
         for style_ref in style_refs:
             if style_ref not in visited_styles:
-                self._get_style_attrib_map(
+                visited_styles.append(style_ref)
+                valid &= self._get_style_attrib_map(
                     id_to_style_map[style_ref],
                     id_to_style_map=id_to_style_map,
-                    style_attrib_map=style_attrib_map
+                    style_attrib_map=style_attrib_map,
+                    visited_styles=visited_styles,
+                    validation_results=validation_results
                 )
-                visited_styles.append(style_ref)
             else:
-                logging.error('Cyclic style ref to {} found'.format(style_ref))
+                validation_results.append(
+                    ValidationResult(
+                        status=ERROR,
+                        location='style element',
+                        message='Cyclic style ref to {} found'.format(
+                            style_ref)
+                    ))
+                valid = False
 
         for key, value in style_el.items():
             if key != 'style':
                 style_attrib_map[key] = value
 
-        return
+        return valid
 
     def _gather_style_attribs(
             self,
-            id_to_style_map: Dict[str, Element]
-            ) -> Dict[str, Dict[str, str]]:
-        rv = {}
+            id_to_style_map: Dict[str, Element],
+            validation_results: List[ValidationResult],
+            id_to_styleattribs_map: Dict[str, Dict[str, str]],
+            ) -> bool:
+        valid = True
 
         for id, style_el in id_to_style_map.items():
             attrib_map = {}
             visited = []
-            self._get_style_attrib_map(
+            valid &= self._get_style_attrib_map(
                 style_el=style_el,
                 id_to_style_map=id_to_style_map,
                 style_attrib_map=attrib_map,
-                visited_styles=visited
+                visited_styles=visited,
+                validation_results=validation_results
             )
 
-            rv[id] = attrib_map
+            id_to_styleattribs_map[id] = attrib_map
 
-        return rv
+        return valid
 
     def _check_attr_applicability(
             self,
@@ -142,8 +156,11 @@ class styleRefsXmlCheck(xmlCheck):
 
             # Compute list of style attributes and values for each
             # referenced style
-            id_to_styleattribs_map = self._gather_style_attribs(
-                id_to_style_map=context['id_to_style_map']
+            id_to_styleattribs_map = {}
+            valid &= self._gather_style_attribs(
+                id_to_style_map=context['id_to_style_map'],
+                validation_results=validation_results,
+                id_to_styleattribs_map=id_to_styleattribs_map
             )
 
             # For all references from span elements, check that the referenced
