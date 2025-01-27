@@ -1,9 +1,9 @@
 from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN
 from xml.etree.ElementTree import Element
-from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name
+from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name, get_namespace
 from .xmlCheck import xmlCheck
-from ..styleAttribs import getStyleAttributeKeys, \
+from ..styleAttribs import getAllStyleAttributeKeys, \
     getAllStyleAttributeDict, attributeIsApplicableToElement
 import logging
 
@@ -92,6 +92,30 @@ class styleRefsXmlCheck(xmlCheck):
 
     def _check_attr_applicability(
             self,
+            tag: str,
+            sss: Dict,
+            validation_results: List[ValidationResult]
+            ) -> bool:
+        valid = True
+
+        for attr_key in sss.keys():
+            if not attributeIsApplicableToElement(
+                    attr_key=get_unqualified_name(
+                        attr_key), el_tag=tag):
+                valid = False
+                validation_results.append(
+                    ValidationResult(
+                        status=ERROR,
+                        location='{} element'.format(tag),
+                        message='Specified style attribute {} is not '
+                                'applicable to element type {}'
+                                .format(attr_key, tag)
+                    ))
+
+        return valid
+
+    def _check_attr_applicability_old(
+            self,
             element_tags: List[str],
             id_to_styleattribs_map: Dict[str, Dict[str, str]],
             id_to_referencing_els_map: Dict[str, List[Element]],
@@ -119,6 +143,158 @@ class styleRefsXmlCheck(xmlCheck):
                                         'applicable to element type'
                                         .format(attr_key)
                             ))
+        return valid
+
+    def _get_merged_style_attribs(
+            self,
+            el: Element,
+            id_to_styleattribs_map: Dict[str, Dict[str, str]],
+    ) -> Dict[str, str]:
+
+        style_attr_val = el.get('style', '')
+        ref_style_ids = style_attr_val.split()
+        style_set = {}
+        # Merge referential and chained referential styles
+        for ref_style_id in ref_style_ids:
+            attrib_dict = id_to_styleattribs_map.get(ref_style_id, {})
+            for key, value in attrib_dict.items():
+                if key != 'style':
+                    style_set[key] = value
+        # Merge inline styles (even though there shouldn't be any)
+        tt_ns = get_namespace(el.tag)
+        style_attr_keys = getAllStyleAttributeKeys(tt_ns=tt_ns)
+        for key in style_attr_keys:
+            if key != 'style' and key in el.keys():
+                style_set[key] = el.get(key)
+
+        return style_set
+
+    def _check_no_backgroundColor(
+            self,
+            sss: Dict[str, str],
+            el_tag: str,
+            tt_ns: str,
+            validation_results: List[ValidationResult]
+            ) -> bool:
+        valid = True
+
+        style_attrib_dict = getAllStyleAttributeDict(
+            tt_ns=tt_ns)
+        for style_attr_key, style_attr in style_attrib_dict.items():
+            unq_attr_key = get_unqualified_name(style_attr_key)
+            if unq_attr_key == 'backgroundColor' \
+               and style_attr_key in sss:
+                backgroundColor_val = sss[style_attr_key]
+                parsed_bg = style_attr.syntaxRegex.fullmatch(
+                                backgroundColor_val)
+                if parsed_bg is None:
+                    valid = False
+                    validation_results.append(
+                        ValidationResult(
+                            status=ERROR,
+                            location='{} element {} attribute'
+                                     .format(el_tag, style_attr_key),
+                            message='backgroundColor attribute {} '
+                                    'is not valid'
+                                    .format(backgroundColor_val)
+                        ))
+                else:
+                    a = int(parsed_bg.group('a'), 16) \
+                        if parsed_bg.group('a') else 255
+                    if a != 0:
+                        valid = False
+                        validation_results.append(
+                            ValidationResult(
+                                status=ERROR,
+                                location='{} element {} attribute'
+                                         .format(
+                                            el_tag,
+                                            style_attr_key),
+                                message='backgroundColor {} is not '
+                                        'transparent (BBC requirement)'
+                                        .format(backgroundColor_val)
+                            ))
+
+        return valid
+
+    def _check_styles(
+                    self,
+                    el: Element,
+                    context: Dict,
+                    validation_results: List[ValidationResult],
+                    tt_ns: str,
+                    parent_sss: Dict,
+                    parent_css: Dict) -> bool:
+        valid = True
+
+        id_to_styleattribs_map = context['id_to_style_attribs_map']
+
+        # Iterate through the elements from body down to span
+        # For each, gather the specified style set
+        # and compute the computed styles, then pass the
+        # computed style set down to each child to compute
+        # its style set.
+        el_sss = self._get_merged_style_attribs(
+            el=el,
+            id_to_styleattribs_map=id_to_styleattribs_map
+        )
+
+        el_tag = get_unqualified_name(el.tag)
+
+        # For all references from span elements, check that the referenced
+        # attributes apply to span, and ERROR for any that do not.
+        if el_tag == 'span':
+            valid &= self._check_attr_applicability(
+                tag=el_tag,
+                sss=el_sss,
+                validation_results=validation_results)
+
+        # For all references from elements other than span, check that
+        # there is no non-transparent tts:backgroundColor attribute
+        # (BBC requirement) - if there is, ERROR
+        if el_tag in ['region', 'body', 'div', 'p']:
+            valid &= self._check_no_backgroundColor(
+                sss=el_sss,
+                el_tag=el_tag,
+                tt_ns=tt_ns,
+                validation_results=validation_results)
+
+        # Check for referenced style lists that have wrong computed
+        # tts:fontFamily value (BBC requirement) - if there is, ERROR
+
+        # Compute fontSize for every p and span,
+        # and check it is within BBC range 2% - 8%
+        # ERROR if not
+        el_css = {}
+
+        # Compute lineHeight for every p, ERROR if <100% or >130%,
+        # WARN if "normal"
+
+        # For every p, check if ebutts:multiRowAlign is present (INFO) and
+        # if not auto and different from tts:textAlign, WARN (BBC requirement)
+
+        # For every p, check ebutts:linePadding - ERROR if absent,
+        # ERROR if out of range
+
+        # For every span, check tts:color - ERROR if not a permitted color
+
+        # For every span, check tts:backgroundColor - ERROR if not a
+        # permitted color (black)
+
+        # For every p, check itts:fillLineGap - ERROR if not true
+
+        # For every span, check tts:fontStyle - WARN if "italic"
+
+        # Recursively call for each child element, passing in el_sss and el_css
+        for child_el in el:
+            valid &= self._check_styles(
+                el=child_el,
+                context=context,
+                validation_results=validation_results,
+                tt_ns=tt_ns,
+                parent_sss=el_sss,
+                parent_css=el_css
+            )
         return valid
 
     def run(
@@ -162,43 +338,30 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results=validation_results,
                 id_to_styleattribs_map=id_to_styleattribs_map
             )
+            context['id_to_style_attribs_map'] = id_to_styleattribs_map
 
-            # For all references from span elements, check that the referenced
-            # attributes apply to span, and ERROR for any that do not.
-            valid &= self._check_attr_applicability(
-                element_tags=['span'],
-                id_to_styleattribs_map=id_to_styleattribs_map,
-                id_to_referencing_els_map=style_to_referencing_els_map,
-                validation_results=validation_results)
+            tt_ns = \
+                context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            body_el_tag = make_qname(tt_ns, 'body')
+            bodies = [el for el in input if el.tag == body_el_tag]
+            if len(bodies) != 1:
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location='{}/{}'.format(input.tag, body_el_tag),
+                    message='Found {} body elements, expected 1'.format(
+                        len(bodies))
+                ))
+                valid = False
+            else:
+                body_el = bodies[0]
 
-        # For all references from elements other than span, check that there
-        # is no non-transparent tts:backgroundColor attribute (BBC requirement)
-        # - if there is, ERROR
-
-        # Check for referenced style lists that have wrong computed
-        # tts:fontFamily value (BBC requirement) - if there is, ERROR
-
-        # Compute fontSize for every p and span,
-        # and check it is within BBC range 2% - 8%
-        # ERROR if not
-
-        # Compute lineHeight for every p, ERROR if <100% or >130%,
-        # WARN if "normal"
-
-        # For every p, check if ebutts:multiRowAlign is present (INFO) and
-        # if not auto and different from tts:textAlign, WARN (BBC requirement)
-
-        # For every p, check ebutts:linePadding - ERROR if absent,
-        # ERROR if out of range
-
-        # For every span, check tts:color - ERROR if not a permitted color
-
-        # For every span, check tts:backgroundColor - ERROR if not a
-        # permitted color (black)
-
-        # For every p, check itts:fillLineGap - ERROR if not true
-
-        # For every span, check tts:fontStyle - WARN if "italic"
+                valid &= self._check_styles(
+                    el=body_el,
+                    context=context,
+                    validation_results=validation_results,
+                    tt_ns=tt_ns,
+                    parent_sss={},
+                    parent_css={})
 
         if valid:
             validation_results.append(

@@ -8,7 +8,10 @@ ebutts_ns = 'urn:ebu:tt:style'
 itts_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#styling'
 
 ebutt_distribution_color_type_regex = \
-    r'^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?$'
+    r'^#(?P<r>[0-9a-fA-F]{2})' \
+    r'(?P<g>[0-9a-fA-F]{2})' \
+    r'(?P<b>[0-9a-fA-F]{2})' \
+    r'(?P<a>[0-9a-fA-F]{2})?$'
 
 
 @dataclass
