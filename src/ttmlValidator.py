@@ -2,7 +2,6 @@ import argparse
 import sys
 import logging
 # from csv import writer as csvWriter
-from typing import Dict, List
 import xml.etree.ElementTree as ElementTree
 from .timeExpression import TimeExpressionHandler
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
@@ -37,7 +36,7 @@ xmlChecks = [
 
 
 def write_results(
-        validation_results: List[ValidationResult],
+        validation_results: list[ValidationResult],
         stream: TextIOBase,
         ):
     for result in validation_results:

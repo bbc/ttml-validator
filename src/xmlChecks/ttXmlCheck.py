@@ -1,4 +1,3 @@
-from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
@@ -10,7 +9,7 @@ import re
 class duplicateXmlIdCheck(xmlCheck):
 
     @classmethod
-    def _gatherXmlId(cls, e: Element, m: Dict[str, List]):
+    def _gatherXmlId(cls, e: Element, m: dict[str, list]):
         xmlId = e.get(xmlIdAttr)
         if xmlId:
             elist = m.get(xmlId, [])
@@ -20,8 +19,8 @@ class duplicateXmlIdCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         xmlIdToElementMap = {}
 
         for e in input.iter():
@@ -52,8 +51,8 @@ class ttTagAndNamespaceCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         ns = get_namespace(input.tag)
         unq_name = get_unqualified_name(input.tag)
         ttml_ns = 'http://www.w3.org/ns/ttml'
@@ -96,7 +95,7 @@ class timeBaseCheck(xmlCheck):
     default_timeBase = 'media'
 
     def __init__(self,
-                 timeBase_whitelist: List[str] = ['media'],
+                 timeBase_whitelist: list[str] = ['media'],
                  timeBase_required: bool = False):
         super().__init__()
         self._timeBase_whitelist = timeBase_whitelist
@@ -105,8 +104,8 @@ class timeBaseCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         ttp_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml') \
             + '#parameter'
@@ -166,8 +165,8 @@ class activeAreaCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         ittp_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#parameter'
         ittp_attr_key = make_qname(ittp_ns, 'activeArea')
         valid = True
@@ -244,8 +243,8 @@ class cellResolutionCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         ttp_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml') \
             + '#parameter'

@@ -1,6 +1,5 @@
 import re
 from dataclasses import dataclass
-from typing import Dict, List
 from .xmlUtils import make_qname
 
 styling_ns_suffix = '#styling'
@@ -19,7 +18,7 @@ class StyleAttribute:
     ns: str
     nsIsRelative: bool
     tag: str
-    appliesTo: List[str]
+    appliesTo: list[str]
     syntaxRegex: re.Pattern
     defaultValue: str
 
@@ -242,7 +241,7 @@ def _makeTag(tt_ns: str, styleAttribute: StyleAttribute) -> str:
     return make_qname(ns, tag)
 
 
-def getStyleAttributeKeys(tt_ns: str, elements: List[str]) -> List[str]:
+def getStyleAttributeKeys(tt_ns: str, elements: list[str]) -> list[str]:
     el_set = set(elements)
     return [_makeTag(tt_ns=tt_ns, styleAttribute=sa)
             for sa in styleAttribs
@@ -250,19 +249,19 @@ def getStyleAttributeKeys(tt_ns: str, elements: List[str]) -> List[str]:
 
 
 def getStyleAttributeDict(
-        tt_ns: str, elements: List[str]) -> Dict[str, StyleAttribute]:
+        tt_ns: str, elements: list[str]) -> dict[str, StyleAttribute]:
     el_set = set(elements)
     return {_makeTag(tt_ns=tt_ns, styleAttribute=sa): sa
             for sa in styleAttribs
             if not el_set.isdisjoint(sa.appliesTo)}
 
 
-def getAllStyleAttributeKeys(tt_ns: str) -> List[str]:
+def getAllStyleAttributeKeys(tt_ns: str) -> list[str]:
     return [_makeTag(tt_ns=tt_ns, styleAttribute=sa)
             for sa in styleAttribs]
 
 
-def getAllStyleAttributeDict(tt_ns: str) -> Dict[str, StyleAttribute]:
+def getAllStyleAttributeDict(tt_ns: str) -> dict[str, StyleAttribute]:
     return {_makeTag(tt_ns=tt_ns, styleAttribute=sa): sa
             for sa in styleAttribs}
 

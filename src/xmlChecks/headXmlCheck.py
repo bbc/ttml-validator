@@ -1,4 +1,3 @@
-from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
@@ -18,8 +17,8 @@ class headCheck(xmlCheck):
     def _checkForCopyright(
             self,
             head_el: Element,
-            context: Dict,
-            validation_results: List[ValidationResult],
+            context: dict,
+            validation_results: list[ValidationResult],
             ttm_ns: str) -> bool:
         copyright_el_tag = make_qname(ttm_ns, 'copyright')
         copyright_els = [el for el in head_el if el.tag == copyright_el_tag]
@@ -53,8 +52,8 @@ class headCheck(xmlCheck):
     def _validateStyleAttr(
             self,
             style_el: Element,
-            context: Dict,
-            validation_results: List[ValidationResult],
+            context: dict,
+            validation_results: list[ValidationResult],
             tt_ns: str) -> bool:
         valid = True
         style_attr_dict = getAllStyleAttributeDict(tt_ns=tt_ns)
@@ -79,8 +78,8 @@ class headCheck(xmlCheck):
     def _checkStyle(
             self,
             style_el: Element,
-            context: Dict,
-            validation_results: List[ValidationResult],
+            context: dict,
+            validation_results: list[ValidationResult],
             tt_ns: str) -> bool:
         valid = True
 
@@ -120,8 +119,8 @@ class headCheck(xmlCheck):
     def _checkStyles(
             self,
             styling_el: Element,
-            context: Dict,
-            validation_results: List[ValidationResult],
+            context: dict,
+            validation_results: list[ValidationResult],
             tt_ns: str) -> bool:
         style_el_tag = make_qname(tt_ns, 'style')
         valid = True
@@ -156,8 +155,8 @@ class headCheck(xmlCheck):
     def _checkForStyling(
             self,
             head_el: Element,
-            context: Dict,
-            validation_results: List[ValidationResult],
+            context: dict,
+            validation_results: list[ValidationResult],
             tt_ns: str) -> bool:
         styling_el_tag = make_qname(tt_ns, 'styling')
 
@@ -206,8 +205,8 @@ class headCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         tt_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml')
         head_el_tag = make_qname(tt_ns, 'head')

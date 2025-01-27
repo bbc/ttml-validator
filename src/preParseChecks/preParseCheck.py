@@ -1,4 +1,3 @@
-from typing import List
 from ..validationResult import ValidationResult, ERROR, GOOD
 
 
@@ -7,7 +6,7 @@ class PreParseCheck:
     def run(
             self,
             input: bytes,
-            validation_results: List[ValidationResult]) -> bytes:
+            validation_results: list[ValidationResult]) -> bytes:
         raise NotImplementedError()
 
 
@@ -16,7 +15,7 @@ class NullByteCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: List[ValidationResult]) -> bytes:
+            validation_results: list[ValidationResult]) -> bytes:
         null_byte = b'\x00'
         if null_byte in input:
             validation_results.append(ValidationResult(
@@ -39,7 +38,7 @@ class BadEncodingCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: List[ValidationResult]) -> bytes:
+            validation_results: list[ValidationResult]) -> bytes:
 
         # sirens for bad encoding - there's a chance of getting
         # false positives or false negatives. False positives

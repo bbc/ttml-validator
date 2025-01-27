@@ -1,4 +1,3 @@
-from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
@@ -13,8 +12,8 @@ class inlineStyleAttributesCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         valid = True
         tt_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml')

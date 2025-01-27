@@ -1,4 +1,3 @@
-from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD
 from xml.etree.ElementTree import Element
 from ..ebuttdSchema import EBUTTDSchema
@@ -10,8 +9,8 @@ class xmlCheck:
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         raise NotImplementedError()
 
 
@@ -20,8 +19,8 @@ class xsdValidator(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         valid = True
         try:
             EBUTTDSchema.validate(source=input)

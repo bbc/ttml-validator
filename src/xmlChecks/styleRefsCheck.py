@@ -1,4 +1,3 @@
-from typing import Dict, List
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name, get_namespace
@@ -16,7 +15,7 @@ class styleRefsXmlCheck(xmlCheck):
     def _gather_style_refs(
             self,
             input: Element,
-    ) -> Dict[str, List[Element]]:
+    ) -> dict[str, list[Element]]:
         style_to_referencing_el_map = {}
         style_attr_key = 'style'
         for el in input.iter():
@@ -34,10 +33,10 @@ class styleRefsXmlCheck(xmlCheck):
     def _get_style_attrib_map(
             self,
             style_el: Element,
-            id_to_style_map: Dict[str, Element],
-            style_attrib_map: Dict[str, str],
-            visited_styles: List[str],
-            validation_results: List[ValidationResult],
+            id_to_style_map: dict[str, Element],
+            style_attrib_map: dict[str, str],
+            visited_styles: list[str],
+            validation_results: list[ValidationResult],
             ) -> bool:
         valid = True
         style_refs = style_el.get('style', '').split()
@@ -69,9 +68,9 @@ class styleRefsXmlCheck(xmlCheck):
 
     def _gather_style_attribs(
             self,
-            id_to_style_map: Dict[str, Element],
-            validation_results: List[ValidationResult],
-            id_to_styleattribs_map: Dict[str, Dict[str, str]],
+            id_to_style_map: dict[str, Element],
+            validation_results: list[ValidationResult],
+            id_to_styleattribs_map: dict[str, dict[str, str]],
             ) -> bool:
         valid = True
 
@@ -93,8 +92,8 @@ class styleRefsXmlCheck(xmlCheck):
     def _check_attr_applicability(
             self,
             tag: str,
-            sss: Dict,
-            validation_results: List[ValidationResult]
+            sss: dict,
+            validation_results: list[ValidationResult]
             ) -> bool:
         valid = True
 
@@ -116,10 +115,10 @@ class styleRefsXmlCheck(xmlCheck):
 
     def _check_attr_applicability_old(
             self,
-            element_tags: List[str],
-            id_to_styleattribs_map: Dict[str, Dict[str, str]],
-            id_to_referencing_els_map: Dict[str, List[Element]],
-            validation_results: List[ValidationResult]
+            element_tags: list[str],
+            id_to_styleattribs_map: dict[str, dict[str, str]],
+            id_to_referencing_els_map: dict[str, list[Element]],
+            validation_results: list[ValidationResult]
             ) -> bool:
         valid = True
 
@@ -148,8 +147,8 @@ class styleRefsXmlCheck(xmlCheck):
     def _get_merged_style_attribs(
             self,
             el: Element,
-            id_to_styleattribs_map: Dict[str, Dict[str, str]],
-    ) -> Dict[str, str]:
+            id_to_styleattribs_map: dict[str, dict[str, str]],
+    ) -> dict[str, str]:
 
         style_attr_val = el.get('style', '')
         ref_style_ids = style_attr_val.split()
@@ -171,10 +170,10 @@ class styleRefsXmlCheck(xmlCheck):
 
     def _check_no_backgroundColor(
             self,
-            sss: Dict[str, str],
+            sss: dict[str, str],
             el_tag: str,
             tt_ns: str,
-            validation_results: List[ValidationResult]
+            validation_results: list[ValidationResult]
             ) -> bool:
         valid = True
 
@@ -220,11 +219,11 @@ class styleRefsXmlCheck(xmlCheck):
     def _check_styles(
                     self,
                     el: Element,
-                    context: Dict,
-                    validation_results: List[ValidationResult],
+                    context: dict,
+                    validation_results: list[ValidationResult],
                     tt_ns: str,
-                    parent_sss: Dict,
-                    parent_css: Dict) -> bool:
+                    parent_sss: dict,
+                    parent_css: dict) -> bool:
         valid = True
 
         id_to_styleattribs_map = context['id_to_style_attribs_map']
@@ -300,8 +299,8 @@ class styleRefsXmlCheck(xmlCheck):
     def run(
             self,
             input: Element,
-            context: Dict,
-            validation_results: List[ValidationResult]) -> bool:
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
         valid = True
 
         # Gather style references from style, region, body, div, p and span
