@@ -1,9 +1,10 @@
-from ..validationResult import ValidationResult, ERROR, GOOD, WARN
+from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name, get_namespace
 from .xmlCheck import xmlCheck
 from ..styleAttribs import getAllStyleAttributeKeys, \
-    getAllStyleAttributeDict, attributeIsApplicableToElement
+    getAllStyleAttributeDict, attributeIsApplicableToElement, \
+    canonicaliseFontFamily
 import logging
 
 
@@ -216,6 +217,40 @@ class styleRefsXmlCheck(xmlCheck):
 
         return valid
 
+    def _compute_styles(
+            self,
+            tt_ns: str,
+            validation_results: list[ValidationResult],
+            el_sss: dict[str, str],
+            el_css: dict[str, str],
+            parent_css: dict[str, str],
+            params: dict[str, str]) -> bool:
+        valid = True
+
+        style_attrib_dict = getAllStyleAttributeDict(
+            tt_ns=tt_ns)
+
+        for style_key, style_attr in style_attrib_dict.items():
+            try:
+                specified = el_sss.get(style_key)
+                if specified and not style_attr.validateValue(specified):
+                    raise ValueError('Value has invalid format')
+                el_css[style_attr.tag] = style_attr.computeValue(
+                    specified=specified,
+                    parent=parent_css.get(style_attr.tag),
+                    params=params
+                )
+            except Exception as e:
+                valid = False
+                validation_results.append(ValidationResult(
+                    ERROR,
+                    '{} styling attribute with value "{}"'.format(
+                        style_key, el_sss.get(style_key)),
+                    str(e)
+                ))
+
+        return valid
+
     def _check_styles(
                     self,
                     el: Element,
@@ -225,6 +260,11 @@ class styleRefsXmlCheck(xmlCheck):
                     parent_sss: dict,
                     parent_css: dict) -> bool:
         valid = True
+
+        el_tag = get_unqualified_name(el.tag)
+        validation_location = \
+            '{} element xml:id {}'.format(
+                el_tag, el.get(xmlIdAttr, 'omitted'))
 
         id_to_styleattribs_map = context['id_to_style_attribs_map']
 
@@ -237,8 +277,6 @@ class styleRefsXmlCheck(xmlCheck):
             el=el,
             id_to_styleattribs_map=id_to_styleattribs_map
         )
-
-        el_tag = get_unqualified_name(el.tag)
 
         # For all references from span elements, check that the referenced
         # attributes apply to span, and ERROR for any that do not.
@@ -258,31 +296,110 @@ class styleRefsXmlCheck(xmlCheck):
                 tt_ns=tt_ns,
                 validation_results=validation_results)
 
-        # Check for referenced style lists that have wrong computed
-        # tts:fontFamily value (BBC requirement) - if there is, ERROR
-
-        # Compute fontSize for every p and span,
-        # and check it is within BBC range 2% - 8%
-        # ERROR if not
+        # Generate the computed style set
         el_css = {}
+        params = {}
+        cell_resolution_key = 'cellResolution'
+        if cell_resolution_key in context:
+            params[cell_resolution_key] = context[cell_resolution_key]
+
+        valid &= self._compute_styles(
+            tt_ns=tt_ns,
+            validation_results=validation_results,
+            el_sss=el_sss,
+            el_css=el_css,
+            parent_css=parent_css,
+            params=params
+        )
+
+        if el_tag in ['p', 'span']:
+            # Check for referenced style lists that have wrong computed
+            # tts:fontFamily value (BBC requirement) - if there is, ERROR
+            c_font_family = canonicaliseFontFamily(
+                el_css.get('fontFamily', 'default'))
+            required_font_family = canonicaliseFontFamily(
+                'ReithSans, Arial, Roboto, proportionalSansSerif, default')
+            if c_font_family != required_font_family:
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location=validation_location,
+                    message='Computed fontFamily {} differs'
+                            ' from BBC requirement'
+                            .format(c_font_family)
+                ))
+
+            # Compute fontSize for every p and span,
+            # and check it is within BBC range 2% - 8%
+            # ERROR if not
+            c_font_size = el_css.get('fontSize')
+            if c_font_size[-2:] != 'rh':
+                raise RuntimeError(
+                    'Non-canonical computed fontSize {}'.format(c_font_size))
+            c_font_size_val = float(c_font_size[:-2])
+            if c_font_size_val < 2 or c_font_size_val > 8:
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location=validation_location,
+                    message='Computed fontSize {} outside BBC-allowed range'
+                            .format(c_font_size)
+                ))
+            else:
+                validation_results.append(ValidationResult(
+                    status=INFO,
+                    location=validation_location,
+                    message='Computed fontSize {} (within BBC-allowed range)'
+                            .format(c_font_size)
+                ))
 
         # Compute lineHeight for every p, ERROR if <100% or >130%,
         # WARN if "normal"
+        if el_tag == 'p':
+            c_line_height = el_css.get('lineHeight', 'broken')
+            print('lineHeight = {}'.format(c_line_height))
 
-        # For every p, check if ebutts:multiRowAlign is present (INFO) and
-        # if not auto and different from tts:textAlign, WARN (BBC requirement)
+            if c_line_height == 'normal':
+                validation_results.append(ValidationResult(
+                    status=WARN,
+                    location=validation_location,
+                    message='lineHeight normal used - SHOULD use explicit percentage'
+                ))
+            else:
+                if c_line_height[-2:] != 'rh':
+                    raise RuntimeError(
+                        'Non-canonical computed lineHeight {}'.format(c_line_height))
+                c_line_height_val = float(c_line_height[:-2])
+                if c_line_height_val < (2 * 1.2) or c_line_height_val > (8 * 1.2):
+                    valid = False
+                    validation_results.append(ValidationResult(
+                        status=ERROR,
+                        location=validation_location,
+                        message='Computed lineHeight {} outside BBC-allowed range'
+                                .format(c_line_height)
+                    ))
 
-        # For every p, check ebutts:linePadding - ERROR if absent,
-        # ERROR if out of range
+            # For every p, check if ebutts:multiRowAlign is present (INFO) and
+            # if not auto and different from tts:textAlign, WARN (BBC requirement)
+            print('multiRowAlign = {}'.format(el_css.get('multiRowAlign')))
 
-        # For every span, check tts:color - ERROR if not a permitted color
+            # For every p, check ebutts:linePadding - ERROR if absent,
+            # ERROR if out of range
+            print('linePadding = {}'.format(el_css.get('linePadding')))
 
-        # For every span, check tts:backgroundColor - ERROR if not a
-        # permitted color (black)
+            # For every p, check itts:fillLineGap - ERROR if not true
+            print('fillLineGap = {}'.format(el_css.get('fillLineGap')))
 
-        # For every p, check itts:fillLineGap - ERROR if not true
+        if el_tag == 'span':
+            # For every span, check tts:color - ERROR if not a permitted color
+            print('color = {}'.format(el_css.get('color')))
 
-        # For every span, check tts:fontStyle - WARN if "italic"
+            # For every span, check tts:backgroundColor - ERROR if not a
+            # permitted color (black)
+            print('backgroundColor = {}'.format(el_css.get('backgroundColor')))
+
+            # For every span, check tts:fontStyle - WARN if "italic"
+            print('fontStyle = {}'.format(el_css.get('fontStyle')))
 
         # Recursively call for each child element, passing in el_sss and el_css
         for child_el in el:
