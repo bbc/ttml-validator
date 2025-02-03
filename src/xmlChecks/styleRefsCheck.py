@@ -357,31 +357,55 @@ class styleRefsXmlCheck(xmlCheck):
         # WARN if "normal"
         if el_tag == 'p':
             c_line_height = el_css.get('lineHeight', 'broken')
-            print('lineHeight = {}'.format(c_line_height))
+            # print('lineHeight = {}'.format(c_line_height))
 
             if c_line_height == 'normal':
                 validation_results.append(ValidationResult(
                     status=WARN,
                     location=validation_location,
-                    message='lineHeight normal used - SHOULD use explicit percentage'
+                    message='lineHeight normal used - '
+                            'SHOULD use explicit percentage'
                 ))
             else:
                 if c_line_height[-2:] != 'rh':
                     raise RuntimeError(
-                        'Non-canonical computed lineHeight {}'.format(c_line_height))
+                        'Non-canonical computed lineHeight {}'.format(
+                            c_line_height))
                 c_line_height_val = float(c_line_height[:-2])
-                if c_line_height_val < (2 * 1.2) or c_line_height_val > (8 * 1.2):
+                if c_line_height_val < (2 * 1.2) \
+                   or c_line_height_val > (8 * 1.2):
                     valid = False
                     validation_results.append(ValidationResult(
                         status=ERROR,
                         location=validation_location,
-                        message='Computed lineHeight {} outside BBC-allowed range'
+                        message='Computed lineHeight {} outside '
+                                'BBC-allowed range'
                                 .format(c_line_height)
                     ))
 
             # For every p, check if ebutts:multiRowAlign is present (INFO) and
-            # if not auto and different from tts:textAlign, WARN (BBC requirement)
-            print('multiRowAlign = {}'.format(el_css.get('multiRowAlign')))
+            # if not auto and different from tts:textAlign,
+            # WARN (BBC requirement)
+            ta = el_css.get('textAlign')
+            mra = el_css.get('multiRowAlign')
+            if mra and mra != 'auto' and mra == ta:
+                validation_results.append(ValidationResult(
+                    status=INFO,
+                    location=validation_location,
+                    message='Computed multiRowAlign set to {}, '
+                            'matches textAlign'
+                            .format(mra)
+                ))
+            elif mra and mra != 'auto':
+                validation_results.append(ValidationResult(
+                    status=WARN,
+                    location=validation_location,
+                    message='Computed multiRowAlign set to {}, '
+                            'differs from textAlign {} '
+                            '(Not expected in BBC requirements)'
+                            .format(mra, ta)
+                ))
+            # print('multiRowAlign = {}, textAlign = {}'.format(mra, ta))
 
             # For every p, check ebutts:linePadding - ERROR if absent,
             # ERROR if out of range

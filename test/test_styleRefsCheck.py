@@ -608,3 +608,81 @@ class testStyleRefsCheck(unittest.TestCase):
         self.assertListEqual(
             vr_errors,
             expected_validation_error_results)
+
+    def test_multiRowAlign(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="75%" tts:lineHeight="120%"/>
+        <style xml:id="mra_center" ebutts:multiRowAlign="center"/>
+        <style xml:id="ta_center" tts:textAlign="center"/>
+        <style xml:id="ta_right" tts:textAlign="right"/>
+    </styling>
+</head>
+<body>
+<div>
+<p xml:id="d1" style="s1"><span>text</span></p>
+<p xml:id="d2" style="s1 mra_center ta_center"><span>text</span></p>
+<p xml:id="d3" style="s1 mra_center ta_right"><span>text</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+
+        self.assertTrue(valid)
+
+        expected_validation_results = [
+            ValidationResult(
+                status=INFO,
+                location='p element xml:id d2',
+                message="Computed multiRowAlign set to "
+                        "center, matches textAlign"
+            ),
+            ValidationResult(
+                status=WARN,
+                location='p element xml:id d3',
+                message="Computed multiRowAlign set to "
+                        "center, differs from textAlign "
+                        "right (Not expected in BBC "
+                        "requirements)"
+            ),
+        ]
+        vr_mra = [r for r in vr if 'multiRowAlign' in r.message]
+        self.assertListEqual(
+            vr_mra,
+            expected_validation_results)
