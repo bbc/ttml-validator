@@ -433,7 +433,16 @@ class styleRefsXmlCheck(xmlCheck):
                 ))
 
             # For every p, check itts:fillLineGap - ERROR if not true
-            print('fillLineGap = {}'.format(el_css.get('fillLineGap')))
+            c_flg = el_css.get('fillLineGap')
+            print('fillLineGap = {}'.format(c_flg))
+            if c_flg != 'true':
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location=validation_location,
+                    message='Computed fillLineGap {} not BBC-allowed value'
+                            .format(c_flg)
+                ))
 
         if el_tag == 'span':
             # For every span, check tts:color - ERROR if not a permitted color

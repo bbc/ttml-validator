@@ -110,13 +110,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body style="not_an_id">
@@ -179,6 +180,7 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
@@ -186,7 +188,7 @@ class testStyleRefsCheck(unittest.TestCase):
         <style xml:id="s1" tts:lineHeight="150%"/>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body>
@@ -234,13 +236,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="s1" tts:color="#ffffff" style="s2"/>
         <style xml:id="s2" tts:fontSize="120%" style="s1"/>
         <style xml:id="s3" style="s4"/>
@@ -311,13 +314,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="s1" tts:backgroundColor="#000000"/>
         <style xml:id="s2" tts:backgroundColor="#00000000"/>
         <style xml:id="s3" tts:backgroundColor="[bogus value]"/>
@@ -387,13 +391,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        ebutts:linePadding="0.5c"/>
+        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body style="s1">
@@ -436,13 +441,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="s1"
         tts:fontFamily="jelly, ice cream, default"
-        ebutts:linePadding="0.5c"/>
+        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body style="s1">
@@ -505,6 +511,7 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
@@ -512,7 +519,7 @@ class testStyleRefsCheck(unittest.TestCase):
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
         tts:fontSize="75%"/>
-        <style xml:id="s2" ebutts:linePadding="0.5c"/>
+        <style xml:id="s2" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body>
@@ -555,13 +562,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="fontStyle"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        ebutts:linePadding="0.5c"/>
+        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="fontSize1"
         tts:fontSize="75%"/>
         <style xml:id="fontSize2"
@@ -636,6 +644,7 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
@@ -643,7 +652,7 @@ class testStyleRefsCheck(unittest.TestCase):
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
         tts:fontSize="75%" tts:lineHeight="120%"
-        ebutts:linePadding="0.5c"/>
+        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="mra_center" ebutts:multiRowAlign="center"/>
         <style xml:id="ta_center" tts:textAlign="center"/>
         <style xml:id="ta_right" tts:textAlign="right"/>
@@ -792,6 +801,82 @@ class testStyleRefsCheck(unittest.TestCase):
             ),
         ]
         vr_lp = [r for r in vr if 'linePadding' in r.message]
+        self.assertListEqual(
+            vr_lp,
+            expected_validation_results)
+
+    def test_fillLineGap(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="75%" tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
+        <style xml:id="flg_false" itts:fillLineGap="false"/>
+        <style xml:id="flg_true" itts:fillLineGap="true"/>
+    </styling>
+</head>
+<body>
+<div>
+<p xml:id="d1" style="s1"><span>text no fillLineGap</span></p>
+<p xml:id="d2" style="s1 flg_false"><span>fillLineGap false</span></p>
+<p xml:id="d3" style="s1 flg_true"><span>fillLineGap true</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+
+        self.assertFalse(valid)
+
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d1',
+                message="Computed fillLineGap false "
+                        "not BBC-allowed value"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d2',
+                message="Computed fillLineGap false "
+                        "not BBC-allowed value"
+            ),
+        ]
+        vr_lp = [r for r in vr if 'fillLineGap' in r.message]
         self.assertListEqual(
             vr_lp,
             expected_validation_results)
