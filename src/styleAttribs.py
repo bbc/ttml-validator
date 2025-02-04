@@ -53,7 +53,7 @@ def _computeUninheritedAttribute(
         parent: str,
         params: dict[str, str]
 ) -> str:
-    return specified
+    return specified if specified else self.defaultValue
 
 
 def _computeSimpleInheritedAttribute(
@@ -62,7 +62,11 @@ def _computeSimpleInheritedAttribute(
         parent: str,
         params: dict[str, str]
 ) -> str:
-    return parent if not specified else specified
+    rv = self.defaultValue if not specified else specified
+    if parent and not specified:
+        rv = parent
+    # return parent if not specified else specified
+    return rv
 
 
 def _getPercentRelativeSize(
@@ -282,7 +286,7 @@ styleAttribs = \
             nsIsRelative=False,
             tag='linePadding',
             appliesTo=['p'],
-            syntaxRegex=re.compile(r'^([\d]+(\.[\d]+)?c)$'),
+            syntaxRegex=re.compile(r'^([\d]+(\.[\d]+)?)c$'),
             defaultValue='0c',
             computeValue=_computeSimpleInheritedAttribute
         ),

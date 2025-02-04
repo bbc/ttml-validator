@@ -109,13 +109,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
     </styling>
 </head>
 <body style="not_an_id">
@@ -158,6 +159,11 @@ class testStyleRefsCheck(unittest.TestCase):
                 message='Computed fontSize 6.666667rh (within BBC-allowed range)'
             ),
             ValidationResult(
+                status=INFO,
+                location='p element xml:id omitted',
+                message='Computed linePadding 0.5c within BBC-allowed range'
+            ),
+            ValidationResult(
                 status=GOOD,
                 location='document',
                 message='Style references and attributes checked'
@@ -172,6 +178,7 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
@@ -179,7 +186,7 @@ class testStyleRefsCheck(unittest.TestCase):
         <style xml:id="s1" tts:lineHeight="150%"/>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
     </styling>
 </head>
 <body>
@@ -226,13 +233,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
         <style xml:id="s1" tts:color="#ffffff" style="s2"/>
         <style xml:id="s2" tts:fontSize="120%" style="s1"/>
         <style xml:id="s3" style="s4"/>
@@ -302,13 +310,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c"/>
         <style xml:id="s1" tts:backgroundColor="#000000"/>
         <style xml:id="s2" tts:backgroundColor="#00000000"/>
         <style xml:id="s3" tts:backgroundColor="[bogus value]"/>
@@ -377,11 +386,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1" tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"/>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        ebutts:linePadding="0.5c"/>
     </styling>
 </head>
 <body style="s1">
@@ -423,11 +435,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1" tts:fontFamily="jelly, ice cream, default"/>
+        <style xml:id="s1"
+        tts:fontFamily="jelly, ice cream, default"
+        ebutts:linePadding="0.5c"/>
     </styling>
 </head>
 <body style="s1">
@@ -489,6 +504,7 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
@@ -496,10 +512,11 @@ class testStyleRefsCheck(unittest.TestCase):
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
         tts:fontSize="75%"/>
+        <style xml:id="s2" ebutts:linePadding="0.5c"/>
     </styling>
 </head>
 <body>
-<div><p xml:id="d1" style="s1"><span style="s1">text</span><span tts:fontSize="150%">big</span></p></div>
+<div><p xml:id="d1" style="s1 s2"><span style="s1">text</span><span tts:fontSize="150%">big</span></p></div>
 </body>
 </tt>
 """
@@ -537,12 +554,14 @@ class testStyleRefsCheck(unittest.TestCase):
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="fontStyle"
-        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"/>
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        ebutts:linePadding="0.5c"/>
         <style xml:id="fontSize1"
         tts:fontSize="75%"/>
         <style xml:id="fontSize2"
@@ -623,7 +642,8 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        tts:fontSize="75%" tts:lineHeight="120%"/>
+        tts:fontSize="75%" tts:lineHeight="120%"
+        ebutts:linePadding="0.5c"/>
         <style xml:id="mra_center" ebutts:multiRowAlign="center"/>
         <style xml:id="ta_center" tts:textAlign="center"/>
         <style xml:id="ta_right" tts:textAlign="right"/>
@@ -685,4 +705,93 @@ class testStyleRefsCheck(unittest.TestCase):
         vr_mra = [r for r in vr if 'multiRowAlign' in r.message]
         self.assertListEqual(
             vr_mra,
+            expected_validation_results)
+
+    def test_linePadding(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="75%" tts:lineHeight="120%"/>
+        <style xml:id="lp_toosmall" ebutts:linePadding="0.1c"/>
+        <style xml:id="lp_good" ebutts:linePadding="0.5c"/>
+        <style xml:id="lp_toobig" ebutts:linePadding="10c"/>
+    </styling>
+</head>
+<body>
+<div>
+<p xml:id="d1" style="s1"><span>text no linepadding</span></p>
+<p xml:id="d2" style="s1 lp_toosmall"><span>linepadding too small</span></p>
+<p xml:id="d3" style="s1 lp_toobig"><span>linepadding too big</span></p>
+<p xml:id="d4" style="s1 lp_good"><span>linepadding just right</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+
+        self.assertFalse(valid)
+
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d1',
+                message="Computed linePadding 0c "
+                        "outside BBC-allowed range"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d2',
+                message="Computed linePadding 0.1c "
+                        "outside BBC-allowed range"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d3',
+                message="Computed linePadding 10c "
+                        "outside BBC-allowed range"
+            ),
+            ValidationResult(
+                status=INFO,
+                location='p element xml:id d4',
+                message="Computed linePadding 0.5c "
+                        "within BBC-allowed range"
+            ),
+        ]
+        vr_lp = [r for r in vr if 'linePadding' in r.message]
+        self.assertListEqual(
+            vr_lp,
             expected_validation_results)

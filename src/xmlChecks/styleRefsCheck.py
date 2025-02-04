@@ -386,30 +386,51 @@ class styleRefsXmlCheck(xmlCheck):
             # For every p, check if ebutts:multiRowAlign is present (INFO) and
             # if not auto and different from tts:textAlign,
             # WARN (BBC requirement)
-            ta = el_css.get('textAlign')
-            mra = el_css.get('multiRowAlign')
-            if mra and mra != 'auto' and mra == ta:
+            c_ta = el_css.get('textAlign')
+            c_mra = el_css.get('multiRowAlign')
+            # print('multiRowAlign = {}, textAlign = {}'.format(c_mra, c_ta))
+            if c_mra != 'auto' and c_mra == c_ta:
                 validation_results.append(ValidationResult(
                     status=INFO,
                     location=validation_location,
                     message='Computed multiRowAlign set to {}, '
                             'matches textAlign'
-                            .format(mra)
+                            .format(c_mra)
                 ))
-            elif mra and mra != 'auto':
+            elif c_mra != 'auto':
                 validation_results.append(ValidationResult(
                     status=WARN,
                     location=validation_location,
                     message='Computed multiRowAlign set to {}, '
                             'differs from textAlign {} '
                             '(Not expected in BBC requirements)'
-                            .format(mra, ta)
+                            .format(c_mra, c_ta)
                 ))
-            # print('multiRowAlign = {}, textAlign = {}'.format(mra, ta))
 
             # For every p, check ebutts:linePadding - ERROR if absent,
             # ERROR if out of range
-            print('linePadding = {}'.format(el_css.get('linePadding')))
+            c_lp = el_css.get('linePadding')
+            # print('linePadding = {}'.format(c_lp))
+
+            if c_lp[-1:] != 'c':
+                raise RuntimeError(
+                    'Non-canonical computed linePadding {}'.format(c_lp))
+            c_lp_val = float(c_lp[:-1])
+            if c_lp_val < 0.3 or c_lp_val > 0.8:
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location=validation_location,
+                    message='Computed linePadding {} outside BBC-allowed range'
+                            .format(c_lp)
+                ))
+            else:
+                validation_results.append(ValidationResult(
+                    status=INFO,
+                    location=validation_location,
+                    message='Computed linePadding {} within BBC-allowed range'
+                            .format(c_lp)
+                ))
 
             # For every p, check itts:fillLineGap - ERROR if not true
             print('fillLineGap = {}'.format(el_css.get('fillLineGap')))
