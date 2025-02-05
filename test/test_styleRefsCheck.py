@@ -1067,3 +1067,73 @@ class testStyleRefsCheck(unittest.TestCase):
         self.assertListEqual(
             vr_lp,
             expected_validation_results)
+
+    def test_fontStyle(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="75%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
+        itts:fillLineGap="true"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
+        <style xml:id="fs_normal" tts:fontStyle="normal"/>
+        <style xml:id="fs_italic" tts:fontStyle="italic"/>
+    </styling>
+</head>
+<body>
+<div style="s1">
+<p xml:id="d1"><span style="span_background">text default fontStyle</span></p>
+<p xml:id="d2"><span style="span_background fs_normal">also normal</span></p>
+<p xml:id="d3"><span style="span_background fs_italic">italic</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+
+        self.assertTrue(valid)
+
+        expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='span element xml:id omitted',
+                message='Computed fontStyle italic not in general use for BBC')
+            ]
+        vr_lp = [r for r in vr if 'fontStyle' in r.message]
+        self.assertListEqual(
+            vr_lp,
+            expected_validation_results)

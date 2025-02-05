@@ -451,7 +451,7 @@ class styleRefsXmlCheck(xmlCheck):
 
             # For every p, check itts:fillLineGap - ERROR if not true
             c_flg = el_css.get('fillLineGap')
-            print('fillLineGap = {}'.format(c_flg))
+            # print('fillLineGap = {}'.format(c_flg))
             if c_flg != 'true':
                 valid = False
                 validation_results.append(ValidationResult(
@@ -464,7 +464,7 @@ class styleRefsXmlCheck(xmlCheck):
         if el_tag == 'span':
             # For every span, check tts:color - ERROR if not a permitted color
             c_c = el_css.get('color')
-            print('color = {}'.format(c_c))
+            # print('color = {}'.format(c_c))
 
             if c_c not in permitted_color_values:
                 valid = False
@@ -478,7 +478,7 @@ class styleRefsXmlCheck(xmlCheck):
             # For every span, check tts:backgroundColor - ERROR if not a
             # permitted color (black)
             c_bc = el_css.get('backgroundColor')
-            print('backgroundColor = {}'.format(c_bc))
+            # print('backgroundColor = {}'.format(c_bc))
 
             if c_bc not in permitted_span_backgroundColor_values:
                 valid = False
@@ -490,7 +490,15 @@ class styleRefsXmlCheck(xmlCheck):
                 ))
 
             # For every span, check tts:fontStyle - WARN if "italic"
-            print('fontStyle = {}'.format(el_css.get('fontStyle')))
+            c_fs = el_css.get('fontStyle')
+            # print('fontStyle = {}'.format(c_fs))
+            if c_fs != 'normal':
+                validation_results.append(ValidationResult(
+                    status=WARN,
+                    location=validation_location,
+                    message='Computed fontStyle {} not in general use for BBC'
+                            .format(c_fs)
+                ))
 
         # Recursively call for each child element, passing in el_sss and el_css
         for child_el in el:
