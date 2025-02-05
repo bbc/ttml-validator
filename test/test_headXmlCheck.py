@@ -7,6 +7,10 @@ from src.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 class testheadXmlCheck(unittest.TestCase):
     maxDiff = None
 
+    ##################################
+    #  Head tests                    #
+    ##################################
+
     def test_headCheck_ok(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
@@ -20,6 +24,9 @@ class testheadXmlCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1" tts:color="#ffffffff"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -56,6 +63,18 @@ class testheadXmlCheck(unittest.TestCase):
             ),
             ValidationResult(
                 status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}head',
                 message='Head checked'
@@ -76,6 +95,9 @@ class testheadXmlCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1" tts:color="#ffffffff"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -111,6 +133,18 @@ class testheadXmlCheck(unittest.TestCase):
                 location='[{http://www.w3.org/ns/ttaf}styling/'
                          '{http://www.w3.org/ns/ttaf}style]',
                 message='Style elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttaf}head/'
+                         '{http://www.w3.org/ns/ttaf}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttaf}layout/'
+                         '{http://www.w3.org/ns/ttaf}region]',
+                message='Region elements checked'
             ),
             ValidationResult(
                 status=GOOD,
@@ -175,6 +209,10 @@ class testheadXmlCheck(unittest.TestCase):
         )
         self.assertListEqual(vr, [expected_validation_result])
 
+    ##################################
+    #  Copyright tests               #
+    ##################################
+
     def test_headCheck_copyright_missing_optional(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
@@ -184,6 +222,9 @@ class testheadXmlCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1" tts:color="#ffffffff"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -220,6 +261,18 @@ class testheadXmlCheck(unittest.TestCase):
             ),
             ValidationResult(
                 status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}head',
                 message='Head checked'
@@ -236,6 +289,9 @@ class testheadXmlCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1" tts:color="#ffffffff"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -270,6 +326,18 @@ class testheadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml}style]',
                 message='Style elements checked'
             ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -287,6 +355,9 @@ class testheadXmlCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1" tts:color="#ffffffff"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -325,6 +396,18 @@ class testheadXmlCheck(unittest.TestCase):
             ),
             ValidationResult(
                 status=GOOD,
+                location='{http://www.w3.org/ns/ttaf}head/'
+                         '{http://www.w3.org/ns/ttaf}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttaf}layout/'
+                         '{http://www.w3.org/ns/ttaf}region]',
+                message='Region elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}tt/'
                          '{http://www.w3.org/ns/ttaf}head',
                 message='Head checked'
@@ -332,15 +415,23 @@ class testheadXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
+    ##################################
+    #  Styling and style tests       #
+    ##################################
+
     def test_headCheck_styling_missing(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
     <ttm:copyright>valid"</ttm:copyright>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -375,6 +466,18 @@ class testheadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml}styling',
                 message='Skipping style element checks'
             ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -390,6 +493,9 @@ class testheadXmlCheck(unittest.TestCase):
     <ttm:copyright>valid"</ttm:copyright>
     <styling/>
     <styling/>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -424,6 +530,18 @@ class testheadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml}styling',
                 message='Skipping style element checks'
             ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -439,6 +557,9 @@ class testheadXmlCheck(unittest.TestCase):
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -473,6 +594,18 @@ class testheadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml}style',
                 message='At least one style element required, none found'
             ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -489,6 +622,9 @@ class testheadXmlCheck(unittest.TestCase):
     <styling>
         <style tts:color="#ffffffff"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -523,6 +659,18 @@ class testheadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/XML/1998/namespace}id',
                 message='style element found with no xml:id'
             ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -541,6 +689,9 @@ class testheadXmlCheck(unittest.TestCase):
         <style xml:id="s1"/>
         <style unknown="blah"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -587,6 +738,18 @@ class testheadXmlCheck(unittest.TestCase):
                          '(no xml:id)',
                 message='Style element has no recognised style attributes'
             ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -609,6 +772,9 @@ class testheadXmlCheck(unittest.TestCase):
             ebutts:linePadding="1%"
             itts:fillLineGap="curious"/>
     </styling>
+    <layout>
+        <region xml:id="r1" tts:origin="10% 10%"/>
+    </layout>
 </head>
 </tt>
 """
@@ -655,6 +821,440 @@ class testheadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml/profile/imsc1#styling}'
                          'fillLineGap',
                 message='Attribute value [curious] is invalid'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region]',
+                message='Region elements checked'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    ##################################
+    #  Layout and region tests       #
+    ##################################
+
+    def test_headCheck_layout_missing(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:fontSize="100%"/>
+    </styling>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}styling/'
+                         '{http://www.w3.org/ns/ttml}style]',
+                message='Style elements checked'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='Required layout element absent'
+            ),
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='Skipping region element checks'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_headCheck_too_many_layout(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:fontSize="100%"/>
+    </styling>
+    <layout/>
+    <layout/>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}styling/'
+                         '{http://www.w3.org/ns/ttml}style]',
+                message='Style elements checked'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='2 layout elements found, expected 1'
+            ),
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='Skipping region element checks'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_headCheck_regions_missing(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:fontSize="100%"/>
+    </styling>
+    <layout>
+    </layout>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}styling/'
+                         '{http://www.w3.org/ns/ttml}style]',
+                message='Style elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}layout/'
+                         '{http://www.w3.org/ns/ttml}region',
+                message='At least one region element required, none found'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_headCheck_region_no_xml_id(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:color="#ffffffff"/>
+    </styling>
+    <layout>
+        <region tts:origin="10% 10%"/>
+    </layout>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}styling/'
+                         '{http://www.w3.org/ns/ttml}style]',
+                message='Style elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}region@'
+                         '{http://www.w3.org/XML/1998/namespace}id',
+                message='region element found with no xml:id'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_headCheck_region_no_style_attribs(self):
+        pass
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:fontSize="100%"/>
+    </styling>
+    <layout>
+        <region xml:id="r1"/>
+        <region unknown="blah"/>
+    </layout>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}styling/'
+                         '{http://www.w3.org/ns/ttml}style]',
+                message='Style elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}region '
+                         'r1',
+                message='Region element has no recognised style attributes'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}region@'
+                         '{http://www.w3.org/XML/1998/namespace}id',
+                message='region element found with no xml:id'
+            ),
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}region '
+                         '(no xml:id)',
+                message='Region element has no recognised style attributes'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_headCheck_region_invalid_attribs(self):
+        pass
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1" tts:color="#ffffff"/>
+    </styling>
+    <layout>
+        <region xml:id="r1"
+            tts:origin="the big bang"
+            tts:extent="mahoosive"
+            tts:backgroundColor="purple"/>
+    </layout>
+</head>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        headCheck = headXmlCheck.headCheck(
+            copyright_required=False
+        )
+        vr = []
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml#metadata}copyright',
+                message='Copyright element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}styling',
+                message='styling element found'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='[{http://www.w3.org/ns/ttml}styling/'
+                         '{http://www.w3.org/ns/ttml}style]',
+                message='Style elements checked'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}head/'
+                         '{http://www.w3.org/ns/ttml}layout',
+                message='layout element found'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}region@'
+                         '{http://www.w3.org/ns/ttml#styling}origin',
+                message='Attribute value [the big bang] is invalid'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}region@'
+                         '{http://www.w3.org/ns/ttml#styling}extent',
+                message='Attribute value [mahoosive] is invalid'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}region@'
+                         '{http://www.w3.org/ns/ttml#styling}'
+                         'backgroundColor',
+                message='Attribute value [purple] is invalid'
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

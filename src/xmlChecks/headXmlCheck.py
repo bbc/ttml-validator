@@ -116,6 +116,47 @@ class headCheck(xmlCheck):
 
         return valid
 
+    def _checkRegion(
+            self,
+            region_el: Element,
+            context: dict,
+            validation_results: list[ValidationResult],
+            tt_ns: str) -> bool:
+        valid = True
+
+        if xmlIdAttr not in region_el.keys():
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='{}@{}'.format(region_el.tag, xmlIdAttr),
+                message='region element found with no xml:id'
+            ))
+        else:
+            # Store in context for later use
+            region_map = context.get('id_to_region_map', {})
+            region_map[region_el.get(xmlIdAttr)] = region_el
+            context['id_to_region_map'] = region_map
+
+        # region-only style attributes should be inline in EBU-TT-D
+        style_attr_keys = set(
+            getStyleAttributeKeys(
+                tt_ns=tt_ns,
+                elements=['region']))
+        if style_attr_keys.isdisjoint(region_el.keys()):
+            validation_results.append(ValidationResult(
+                status=WARN,
+                location='{} {}'.format(
+                    region_el.tag,
+                    region_el.get(xmlIdAttr, '(no xml:id)')),
+                message='Region element has no recognised style attributes'
+            ))
+        valid &= self._validateStyleAttr(style_el=region_el,
+                                         context=context,
+                                         validation_results=validation_results,
+                                         tt_ns=tt_ns)
+
+        return valid
+
     def _checkStyles(
             self,
             styling_el: Element,
@@ -148,6 +189,42 @@ class headCheck(xmlCheck):
                 status=GOOD,
                 location='[{}/{}]'.format(styling_el.tag, style_el_tag),
                 message='Style elements checked'
+            ))
+
+        return valid
+
+    def _checkRegions(
+            self,
+            layout_el: Element,
+            context: dict,
+            validation_results: list[ValidationResult],
+            tt_ns: str) -> bool:
+        region_el_tag = make_qname(tt_ns, 'region')
+        valid = True
+
+        region_els = [el for el in layout_el if el.tag == region_el_tag]
+        if len(region_els) == 0:
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='{}/{}'.format(layout_el.tag, region_el_tag),
+                message='At least one region element required, none found'
+            ))
+            context['id_to_region_map'] = {}  # expected downstream
+        else:
+            for region_el in region_els:
+                valid &= self._checkRegion(
+                    region_el=region_el,
+                    context=context,
+                    validation_results=validation_results,
+                    tt_ns=tt_ns
+                )
+
+        if valid:
+            validation_results.append(ValidationResult(
+                status=GOOD,
+                location='[{}/{}]'.format(layout_el.tag, region_el_tag),
+                message='Region elements checked'
             ))
 
         return valid
@@ -202,6 +279,56 @@ class headCheck(xmlCheck):
 
         return valid
 
+    def _checkForLayout(
+            self,
+            head_el: Element,
+            context: dict,
+            validation_results: list[ValidationResult],
+            tt_ns: str) -> bool:
+        layout_el_tag = make_qname(tt_ns, 'layout')
+
+        layout_els = [el for el in head_el if el.tag == layout_el_tag]
+        valid = True
+        if len(layout_els) == 0:
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='{}/{}'.format(head_el.tag, layout_el_tag),
+                message='Required layout element absent'
+            ))
+        elif len(layout_els) > 1:
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='{}/{}'.format(head_el.tag, layout_el_tag),
+                message='{} layout elements found, expected 1'.format(
+                    len(layout_els)
+                )
+            ))
+        else:  # 1 layout element
+            validation_results.append(ValidationResult(
+                status=GOOD,
+                location='{}/{}'.format(head_el.tag, layout_el_tag),
+                message='layout element found'
+                )
+            )
+
+        if not valid:
+            validation_results.append(ValidationResult(
+                status=WARN,
+                location='{}/{}'.format(head_el.tag, layout_el_tag),
+                message='Skipping region element checks'
+                )
+            )
+        else:
+            valid = self._checkRegions(
+                layout_el=layout_els[0],
+                context=context,
+                validation_results=validation_results,
+                tt_ns=tt_ns)
+
+        return valid
+
     def run(
             self,
             input: Element,
@@ -230,6 +357,11 @@ class headCheck(xmlCheck):
                 validation_results=validation_results,
                 ttm_ns=ttm_ns)
             valid &= self._checkForStyling(
+                head_el=head_el,
+                context=context,
+                validation_results=validation_results,
+                tt_ns=tt_ns)
+            valid &= self._checkForLayout(
                 head_el=head_el,
                 context=context,
                 validation_results=validation_results,
