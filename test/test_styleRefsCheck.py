@@ -185,10 +185,11 @@ class testStyleRefsCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1" tts:lineHeight="150%"/>
+        <style xml:id="s1" tts:lineHeight="150%" tts:backgroundColor="#000000"/>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c"
+            itts:fillLineGap="true" tts:color="#ffffff"/>
     </styling>
 </head>
 <body>
@@ -243,8 +244,10 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="style_bbc_ok"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
-        <style xml:id="s1" tts:color="#ffffff" style="s2"/>
+            tts:lineHeight="120%" ebutts:linePadding="0.5c"
+            itts:fillLineGap="true"/>
+        <style xml:id="s1" tts:color="#ffffff" tts:backgroundColor="#000000"
+            style="s2"/>
         <style xml:id="s2" tts:fontSize="120%" style="s1"/>
         <style xml:id="s3" style="s4"/>
         <style xml:id="s4" style="s5"/>
@@ -328,8 +331,8 @@ class testStyleRefsCheck(unittest.TestCase):
     </styling>
 </head>
 <body style="s1 s3 style_bbc_ok">
-<div style="s2"><p xml:id="d1" style="s1"><span style="s1">text</span><span style="s2"> more text</span></p></div>
-<div style="s2" tts:backgroundColor="#ff0000"><p xml:id="d2"><span></span></p></div>
+<div style="s2"><p xml:id="d1" style="s1"><span style="s1">text</span></p></div>
+<div style="s2" tts:backgroundColor="#ff0000"><p xml:id="d2"><span style="s1"></span></p></div>
 </body>
 </tt>
 """
@@ -396,13 +399,14 @@ class testStyleRefsCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1"
+        <style xml:id="style_bbc_ok"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+        ebutts:linePadding="0.5c" itts:fillLineGap="true" tts:color="#ffffff"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
     </styling>
 </head>
-<body style="s1">
-<div><p xml:id="d1" style="s1"><span>text</span></p></div>
+<body style="style_bbc_ok">
+<div><p xml:id="d1" style="s1"><span style="span_background">text</span></p></div>
 </body>
 </tt>
 """
@@ -446,13 +450,15 @@ class testStyleRefsCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1"
+        <style xml:id="style_bbc_ok"
         tts:fontFamily="jelly, ice cream, default"
-        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+        ebutts:linePadding="0.5c" itts:fillLineGap="true"
+        tts:color="#ffffff"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
     </styling>
 </head>
-<body style="s1">
-<div><p xml:id="d1" style="s1"><span>text</span></p></div>
+<body style="style_bbc_ok">
+<div><p xml:id="d1" style="style_bbc_ok"><span style="span_background">text</span></p></div>
 </body>
 </tt>
 """
@@ -516,14 +522,15 @@ class testStyleRefsCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1"
+        <style xml:id="style_bbc_ok"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        tts:fontSize="75%"/>
+        tts:fontSize="75%" tts:color="#ffffff"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="s2" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body>
-<div><p xml:id="d1" style="s1 s2"><span style="s1">text</span><span tts:fontSize="150%">big</span></p></div>
+<div><p xml:id="d1" style="style_bbc_ok s2"><span style="style_bbc_ok span_background">text</span><span tts:fontSize="150%" style="span_background">big</span></p></div>
 </body>
 </tt>
 """
@@ -568,17 +575,19 @@ class testStyleRefsCheck(unittest.TestCase):
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
         <style xml:id="fontStyle"
-        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+            tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+            ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="fontSize1"
-        tts:fontSize="75%"/>
+            tts:fontSize="75%"/>
         <style xml:id="fontSize2"
-        tts:fontSize="200%"/>
+            tts:fontSize="200%"/>
+        <style xml:id="span_background"
+            tts:backgroundColor="#000000ff"/>
     </styling>
 </head>
 <body style="fontStyle">
-<div><p xml:id="d1" style="fontSize1"><span style="fontSize1">text</span><span tts:fontSize="20%">tiny</span></p></div>
-<div><p xml:id="d2" style="fontSize2"><span style="fontSize2" xml:id="sp3">text</span><span xml:id="sp4" tts:fontSize="20%">tiny</span></p></div>
+<div><p xml:id="d1" style="fontSize1"><span style="fontSize1 span_background">text</span><span tts:fontSize="20%" tts:backgroundColor="#000000">tiny</span></p></div>
+<div><p xml:id="d2" style="fontSize2"><span style="fontSize2 span_background" xml:id="sp3">text</span><span xml:id="sp4" tts:fontSize="20%" tts:backgroundColor="#000000">tiny</span></p></div>
 </body>
 </tt>
 """
@@ -649,10 +658,11 @@ class testStyleRefsCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
-        <style xml:id="s1"
+        <style xml:id="style_bbc_ok"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
         tts:fontSize="75%" tts:lineHeight="120%"
         ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="mra_center" ebutts:multiRowAlign="center"/>
         <style xml:id="ta_center" tts:textAlign="center"/>
         <style xml:id="ta_right" tts:textAlign="right"/>
@@ -660,9 +670,9 @@ class testStyleRefsCheck(unittest.TestCase):
 </head>
 <body>
 <div>
-<p xml:id="d1" style="s1"><span>text</span></p>
-<p xml:id="d2" style="s1 mra_center ta_center"><span>text</span></p>
-<p xml:id="d3" style="s1 mra_center ta_right"><span>text</span></p>
+<p xml:id="d1" style="style_bbc_ok"><span style="span_background">text</span></p>
+<p xml:id="d2" style="style_bbc_ok mra_center ta_center"><span style="span_background">text</span></p>
+<p xml:id="d3" style="style_bbc_ok mra_center ta_right"><span style="span_background">text</span></p>
 </div>
 </body>
 </tt>
@@ -877,6 +887,183 @@ class testStyleRefsCheck(unittest.TestCase):
             ),
         ]
         vr_lp = [r for r in vr if 'fillLineGap' in r.message]
+        self.assertListEqual(
+            vr_lp,
+            expected_validation_results)
+
+    def test_colors_ok(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="75%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
+        itts:fillLineGap="true"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
+        <style xml:id="white" tts:color="#ffffff"/>
+        <style xml:id="yellow" tts:color="#ffff00ff"/>
+        <style xml:id="green" tts:color="#00ff00"/>
+        <style xml:id="cyan" tts:color="#00ffff"/>
+    </styling>
+</head>
+<body>
+<div style="s1">
+<p xml:id="d1"><span style="span_background">text default colour</span></p>
+<p xml:id="d2" style="s1 white"><span style="span_background">white</span></p>
+<p xml:id="d3"><span style="yellow span_background">yellow</span></p>
+<p xml:id="d4"><span style="green span_background">green</span></p>
+<p xml:id="d5"><span style="cyan span_background">cyan</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+
+        self.assertTrue(valid)
+
+        expected_validation_results = [
+        ]
+        vr_lp = [r for r in vr if 'color' in r.message]
+        self.assertListEqual(
+            vr_lp,
+            expected_validation_results)
+
+    def test_colors_bad(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="s1"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="75%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
+        itts:fillLineGap="true" tts:color="#ffffff"/>
+        <style xml:id="span_background_1" tts:backgroundColor="#00000080"/>
+        <style xml:id="span_background_2" tts:backgroundColor="#ffffff00"/>
+        <style xml:id="span_background_3" tts:backgroundColor="#ffff00ff"/>
+        <style xml:id="blue" tts:color="#0000ff"/>
+        <style xml:id="lime" tts:color="#00ff00ff"/>
+        <style xml:id="reddish" tts:color="#99111180"/>
+    </styling>
+</head>
+<body>
+<div style="s1">
+<p xml:id="d1"><span>text no background colour</span></p>
+<p xml:id="d2" style="blue"><span style="span_background_1">blue</span></p>
+<p xml:id="d3"><span style="reddish span_background_2">reddish</span></p>
+<p xml:id="d4"><span style="lime span_background_3">lime</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = []
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = []
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+
+        self.assertFalse(valid)
+
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed backgroundColor #00000000 "
+                        "not BBC-allowed value"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed color #0000ff "
+                        "not BBC-allowed value"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed backgroundColor #00000080 "
+                        "not BBC-allowed value"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed color #99111180 "
+                        "not BBC-allowed value"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed backgroundColor #ffffff00 "
+                        "not BBC-allowed value"
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed backgroundColor #ffff00ff "
+                        "not BBC-allowed value"
+            ),
+        ]
+        vr_lp = [r for r in vr
+                 if 'color' in r.message or 'backgroundColor' in r.message]
         self.assertListEqual(
             vr_lp,
             expected_validation_results)

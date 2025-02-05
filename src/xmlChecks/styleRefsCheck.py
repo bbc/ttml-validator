@@ -8,6 +8,23 @@ from ..styleAttribs import getAllStyleAttributeKeys, \
 import logging
 
 
+permitted_color_values = [
+    '#ffffff',   # white
+    '#ffffffff',
+    '#00ffff',   # cyan
+    '#00ffffff',
+    '#ffff00',   # yellow
+    '#ffff00ff',
+    '#00ff00',   # green
+    '#00ff00ff',
+]
+
+permitted_span_backgroundColor_values = [
+    '#000000',
+    '#000000ff'
+]
+
+
 class styleRefsXmlCheck(xmlCheck):
     """
     Checks for unreferenced styles and inappropriate style attributes.
@@ -446,11 +463,31 @@ class styleRefsXmlCheck(xmlCheck):
 
         if el_tag == 'span':
             # For every span, check tts:color - ERROR if not a permitted color
-            print('color = {}'.format(el_css.get('color')))
+            c_c = el_css.get('color')
+            print('color = {}'.format(c_c))
+
+            if c_c not in permitted_color_values:
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location=validation_location,
+                    message='Computed color {} not BBC-allowed value'
+                            .format(c_c)
+                ))
 
             # For every span, check tts:backgroundColor - ERROR if not a
             # permitted color (black)
-            print('backgroundColor = {}'.format(el_css.get('backgroundColor')))
+            c_bc = el_css.get('backgroundColor')
+            print('backgroundColor = {}'.format(c_bc))
+
+            if c_bc not in permitted_span_backgroundColor_values:
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location=validation_location,
+                    message='Computed backgroundColor {} not BBC-allowed value'
+                            .format(c_bc)
+                ))
 
             # For every span, check tts:fontStyle - WARN if "italic"
             print('fontStyle = {}'.format(el_css.get('fontStyle')))

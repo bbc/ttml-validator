@@ -224,7 +224,7 @@ styleAttribs = \
             tag='backgroundColor',
             appliesTo=['region', 'body', 'div', 'p', 'span'],
             syntaxRegex=re.compile(ebutt_distribution_color_type_regex),
-            defaultValue='#ffffffff',
+            defaultValue='#00000000',
             computeValue=_computeUninheritedAttribute
         ),
         StyleAttribute(
