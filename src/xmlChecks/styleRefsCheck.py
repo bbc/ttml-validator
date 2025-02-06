@@ -463,7 +463,7 @@ class styleRefsXmlCheck(xmlCheck):
 
         if el_tag == 'span':
             # For every span, check tts:color - ERROR if not a permitted color
-            c_c = el_css.get('color')
+            c_c = el_css.get('color').lower()
             # print('color = {}'.format(c_c))
 
             if c_c not in permitted_color_values:
@@ -477,7 +477,7 @@ class styleRefsXmlCheck(xmlCheck):
 
             # For every span, check tts:backgroundColor - ERROR if not a
             # permitted color (black)
-            c_bc = el_css.get('backgroundColor')
+            c_bc = el_css.get('backgroundColor').lower()
             # print('backgroundColor = {}'.format(c_bc))
 
             if c_bc not in permitted_span_backgroundColor_values:

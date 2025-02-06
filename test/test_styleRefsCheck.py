@@ -910,9 +910,9 @@ class testStyleRefsCheck(unittest.TestCase):
         itts:fillLineGap="true"/>
         <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="white" tts:color="#ffffff"/>
-        <style xml:id="yellow" tts:color="#ffff00ff"/>
+        <style xml:id="yellow" tts:color="#ffff00FF"/>
         <style xml:id="green" tts:color="#00ff00"/>
-        <style xml:id="cyan" tts:color="#00ffff"/>
+        <style xml:id="cyan" tts:color="#00FFFF"/>
     </styling>
 </head>
 <body>
