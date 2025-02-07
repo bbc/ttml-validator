@@ -258,3 +258,45 @@ class testBodyXmlCheck(unittest.TestCase):
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
+
+    def test_timing_on_body_and_div(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body begin="00:00:01" dur="00:01:00">
+<div end="00:00:30.123" xml:id="div_end">
+<p xml:id="p1"><span>p1 content here</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        bodyCheck = bodyXmlCheck.bodyCheck()
+        vr = []
+        context = {}
+        valid = bodyCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}body element '
+                         'xml:id omitted',
+                message='Prohibited timing attributes '
+                        '{\'begin\', \'dur\'} present'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}div element '
+                         'xml:id div_end',
+                message='Prohibited timing attributes '
+                        '{\'end\'} present'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)

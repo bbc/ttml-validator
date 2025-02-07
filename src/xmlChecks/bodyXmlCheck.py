@@ -5,11 +5,36 @@ from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
 from .xmlCheck import xmlCheck
 import re
 
+timing_attr_keys = set([
+    'begin',
+    'end',
+    'dur'
+])
 
 class bodyCheck(xmlCheck):
     """
     Checks body element and content descendants
     """
+
+    def _checkNoTimingAttributes(
+            self,
+            el: Element,
+            validation_results: list[ValidationResult],
+    ) -> bool:
+        valid = True
+
+        attr_key_set = set(el.keys())
+        if not attr_key_set.isdisjoint(timing_attr_keys):
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='{} element xml:id {}'
+                         .format(el.tag, el.get(xmlIdAttr, 'omitted')),
+                message='Prohibited timing attributes {} present'
+                        .format(attr_key_set.intersection(timing_attr_keys))
+            ))
+
+        return valid
 
     def _checkSpanChildren(
             self,
@@ -131,6 +156,10 @@ class bodyCheck(xmlCheck):
 
         # Check each div child
         for div in divs:
+            valid &= self._checkNoTimingAttributes(
+                el=div,
+                validation_results=validation_results,
+            )
             valid &= self._checkDivChildren(
                 parent_el=div,
                 context=context,
@@ -167,6 +196,10 @@ class bodyCheck(xmlCheck):
             ))
         else:
             body_el = bodys[0]
+            valid &= self._checkNoTimingAttributes(
+                el=body_el,
+                validation_results=validation_results,
+            )
             valid &= self._checkDivChildren(
                 parent_el=body_el,
                 context=context,
