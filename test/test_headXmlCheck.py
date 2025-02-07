@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ElementTree
 from src.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 
 
-class testheadXmlCheck(unittest.TestCase):
+class testHeadXmlCheck(unittest.TestCase):
     maxDiff = None
 
     ##################################

@@ -13,6 +13,7 @@ from .xmlChecks.headXmlCheck import headCheck
 from .xmlChecks.styleRefsCheck import styleRefsXmlCheck
 from .xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from .xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
+from .xmlChecks.bodyXmlCheck import bodyCheck
 from io import TextIOBase
 
 logging.getLogger().setLevel(logging.INFO)
@@ -34,6 +35,7 @@ xmlChecks = [
     styleRefsXmlCheck(),
     inlineStyleAttributesCheck(),
     regionRefsXmlCheck(),
+    bodyCheck(),
 ]
 
 
