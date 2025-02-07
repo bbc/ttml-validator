@@ -1,7 +1,9 @@
 import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from .xmlUtils import make_qname, get_unqualified_name
+from xml.etree.ElementTree import Element
+from .xmlUtils import make_qname, get_unqualified_name, get_namespace
+from .validationResult import ValidationResult, ERROR
 # import logging
 import types
 from typing import TypeVar
@@ -10,11 +12,16 @@ styling_ns_suffix = '#styling'
 ebutts_ns = 'urn:ebu:tt:style'
 itts_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#styling'
 
-ebutt_distribution_color_type_regex = \
-    r'^#(?P<r>[0-9a-fA-F]{2})' \
-    r'(?P<g>[0-9a-fA-F]{2})' \
-    r'(?P<b>[0-9a-fA-F]{2})' \
-    r'(?P<a>[0-9a-fA-F]{2})?$'
+ebutt_distribution_color_type_regex = re.compile(
+    r'^#(?P<r>[0-9a-fA-F]{2})'
+    r'(?P<g>[0-9a-fA-F]{2})'
+    r'(?P<b>[0-9a-fA-F]{2})'
+    r'(?P<a>[0-9a-fA-F]{2})?$')
+
+two_percent_vals_regex = re.compile(
+    r'^(?P<x>[0]*((100(\.[0]+)?)|[\d]{1,2}(\.[\d]+)?))%'
+    r'[\s]+'
+    r'(?P<y>[0]*((100(\.[0]+)?)|[\d]{1,2}(\.[\d]+)?))%$')
 
 percent_regex = \
     re.compile(r'^(?P<percent>[0-9]+(\.[0-9]+)?)%$')
@@ -214,7 +221,7 @@ styleAttribs = \
             nsIsRelative=True,
             tag='color',
             appliesTo=['span'],
-            syntaxRegex=re.compile(ebutt_distribution_color_type_regex),
+            syntaxRegex=ebutt_distribution_color_type_regex,
             defaultValue='#ffffffff',
             computeValue=_computeSimpleInheritedAttribute
         ),
@@ -223,7 +230,7 @@ styleAttribs = \
             nsIsRelative=True,
             tag='backgroundColor',
             appliesTo=['region', 'body', 'div', 'p', 'span'],
-            syntaxRegex=re.compile(ebutt_distribution_color_type_regex),
+            syntaxRegex=ebutt_distribution_color_type_regex,
             defaultValue='#00000000',
             computeValue=_computeUninheritedAttribute
         ),
@@ -304,10 +311,7 @@ styleAttribs = \
             nsIsRelative=True,
             tag='origin',
             appliesTo=['region'],
-            syntaxRegex=re.compile(
-                r'^([0]*((100(\.[0]+)?)|[\d]{1,2}(\.[\d]+)?)%)'
-                r'[\s]+'
-                r'([0]*((100(\.[0]+)?)|[\d]{1,2}(\.[\d]+)?)%)$'),
+            syntaxRegex=two_percent_vals_regex,
             defaultValue='0% 0%',
             computeValue=_computeUninheritedAttribute
         ),
@@ -316,10 +320,7 @@ styleAttribs = \
             nsIsRelative=True,
             tag='extent',
             appliesTo=['region'],
-            syntaxRegex=re.compile(
-                r'^([0]*((100(\.[0]+)?)|[\d]{1,2}(\.[\d]+)?)%)'
-                r'[\s]+'
-                r'([0]*((100(\.[0]+)?)|[\d]{1,2}(\.[\d]+)?)%)$'),
+            syntaxRegex=two_percent_vals_regex,
             defaultValue='100% 100%',
             computeValue=_computeUninheritedAttribute
         ),
@@ -444,3 +445,62 @@ def canonicaliseFontFamily(fontFamily: str) -> list[str]:
     return [
         ff.strip() for ff in fontFamily.split(',')
     ]
+
+
+def getMergedStyleSet(
+        el: Element,
+        id_to_styleattribs_map: dict[str, dict[str, str]],
+) -> dict[str, str]:
+
+    style_attr_val = el.get('style', '')
+    ref_style_ids = style_attr_val.split()
+    style_set = {}
+    # Merge referential and chained referential styles
+    for ref_style_id in ref_style_ids:
+        attrib_dict = id_to_styleattribs_map.get(ref_style_id, {})
+        for key, value in attrib_dict.items():
+            if key != 'style':
+                style_set[key] = value
+    # Merge inline styles (even though there shouldn't be any)
+    tt_ns = get_namespace(el.tag)
+    style_attr_keys = getAllStyleAttributeKeys(tt_ns=tt_ns)
+    for key in style_attr_keys:
+        if key != 'style' and key in el.keys():
+            style_set[key] = el.get(key)
+
+    return style_set
+
+
+def computeStyles(
+        tt_ns: str,
+        validation_results: list[ValidationResult],
+        el_sss: dict[str, str],
+        el_css: dict[str, str],
+        parent_css: dict[str, str],
+        params: dict[str, str],
+        error_significance: int = ERROR) -> bool:
+    valid = True
+
+    style_attrib_dict = getAllStyleAttributeDict(
+        tt_ns=tt_ns)
+
+    for style_key, style_attr in style_attrib_dict.items():
+        try:
+            specified = el_sss.get(style_key)
+            if specified and not style_attr.validateValue(specified):
+                raise ValueError('Value has invalid format')
+            el_css[style_attr.tag] = style_attr.computeValue(
+                specified=specified,
+                parent=parent_css.get(style_attr.tag),
+                params=params
+            )
+        except Exception as e:
+            valid = False
+            validation_results.append(ValidationResult(
+                error_significance,
+                '{} styling attribute with value "{}"'.format(
+                    style_key, el_sss.get(style_key)),
+                str(e)
+            ))
+
+    return valid

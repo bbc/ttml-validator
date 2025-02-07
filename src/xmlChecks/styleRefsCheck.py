@@ -4,7 +4,7 @@ from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name, get_namespac
 from .xmlCheck import xmlCheck
 from ..styleAttribs import getAllStyleAttributeKeys, \
     getAllStyleAttributeDict, attributeIsApplicableToElement, \
-    canonicaliseFontFamily
+    canonicaliseFontFamily, computeStyles, getMergedStyleSet
 import logging
 
 
@@ -162,30 +162,6 @@ class styleRefsXmlCheck(xmlCheck):
                             ))
         return valid
 
-    def _get_merged_style_attribs(
-            self,
-            el: Element,
-            id_to_styleattribs_map: dict[str, dict[str, str]],
-    ) -> dict[str, str]:
-
-        style_attr_val = el.get('style', '')
-        ref_style_ids = style_attr_val.split()
-        style_set = {}
-        # Merge referential and chained referential styles
-        for ref_style_id in ref_style_ids:
-            attrib_dict = id_to_styleattribs_map.get(ref_style_id, {})
-            for key, value in attrib_dict.items():
-                if key != 'style':
-                    style_set[key] = value
-        # Merge inline styles (even though there shouldn't be any)
-        tt_ns = get_namespace(el.tag)
-        style_attr_keys = getAllStyleAttributeKeys(tt_ns=tt_ns)
-        for key in style_attr_keys:
-            if key != 'style' and key in el.keys():
-                style_set[key] = el.get(key)
-
-        return style_set
-
     def _check_no_backgroundColor(
             self,
             sss: dict[str, str],
@@ -234,47 +210,12 @@ class styleRefsXmlCheck(xmlCheck):
 
         return valid
 
-    def _compute_styles(
-            self,
-            tt_ns: str,
-            validation_results: list[ValidationResult],
-            el_sss: dict[str, str],
-            el_css: dict[str, str],
-            parent_css: dict[str, str],
-            params: dict[str, str]) -> bool:
-        valid = True
-
-        style_attrib_dict = getAllStyleAttributeDict(
-            tt_ns=tt_ns)
-
-        for style_key, style_attr in style_attrib_dict.items():
-            try:
-                specified = el_sss.get(style_key)
-                if specified and not style_attr.validateValue(specified):
-                    raise ValueError('Value has invalid format')
-                el_css[style_attr.tag] = style_attr.computeValue(
-                    specified=specified,
-                    parent=parent_css.get(style_attr.tag),
-                    params=params
-                )
-            except Exception as e:
-                valid = False
-                validation_results.append(ValidationResult(
-                    ERROR,
-                    '{} styling attribute with value "{}"'.format(
-                        style_key, el_sss.get(style_key)),
-                    str(e)
-                ))
-
-        return valid
-
     def _check_styles(
                     self,
                     el: Element,
                     context: dict,
                     validation_results: list[ValidationResult],
                     tt_ns: str,
-                    parent_sss: dict,
                     parent_css: dict) -> bool:
         valid = True
 
@@ -290,7 +231,7 @@ class styleRefsXmlCheck(xmlCheck):
         # and compute the computed styles, then pass the
         # computed style set down to each child to compute
         # its style set.
-        el_sss = self._get_merged_style_attribs(
+        el_sss = getMergedStyleSet(
             el=el,
             id_to_styleattribs_map=id_to_styleattribs_map
         )
@@ -320,7 +261,7 @@ class styleRefsXmlCheck(xmlCheck):
         if cell_resolution_key in context:
             params[cell_resolution_key] = context[cell_resolution_key]
 
-        valid &= self._compute_styles(
+        valid &= computeStyles(
             tt_ns=tt_ns,
             validation_results=validation_results,
             el_sss=el_sss,
@@ -507,7 +448,6 @@ class styleRefsXmlCheck(xmlCheck):
                 context=context,
                 validation_results=validation_results,
                 tt_ns=tt_ns,
-                parent_sss=el_sss,
                 parent_css=el_css
             )
         return valid
@@ -575,7 +515,6 @@ class styleRefsXmlCheck(xmlCheck):
                     context=context,
                     validation_results=validation_results,
                     tt_ns=tt_ns,
-                    parent_sss={},
                     parent_css={})
 
         if valid:
