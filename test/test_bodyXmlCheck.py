@@ -225,6 +225,38 @@ class testBodyXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
+    def test_p_no_text_children(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p xml:id="p1">Bad<span>p1 content here</span>Bad 2<span>OK</span>Bad 3</p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        bodyCheck = bodyXmlCheck.bodyCheck()
+        vr = []
+        context = {}
+        valid = bodyCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}p element xml:id p1',
+                message='Text content found in prohibited location.'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
     def test_nested_span(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"

@@ -83,6 +83,30 @@ class bodyCheck(xmlCheck):
 
         return valid
 
+    def _checkNoTextChildren(
+            self,
+            el: Element,
+            context: dict,
+            validation_results: list[ValidationResult],
+    ) -> bool:
+        valid = True
+
+        text_children_present = el.text is not None  # and el.text != ''
+        for child_el in el:
+            text_children_present |= child_el.tail is not None  # and el.tail != ''
+
+        if text_children_present:
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='{} element xml:id {}'.format(
+                    el.tag,
+                    el.get(xmlIdAttr, 'omitted')),
+                message='Text content found in prohibited location.'
+            ))
+
+        return valid
+
     def _checkPChildren(
             self,
             parent_el: Element,
@@ -118,6 +142,11 @@ class bodyCheck(xmlCheck):
                     ),
                     message='p element missing required xml:id')
                 )
+            valid &= self._checkNoTextChildren(
+                el=p,
+                context=context,
+                validation_results=validation_results,
+            )
             valid &= self._checkSpanChildren(
                 parent_el=p,
                 context=context,
