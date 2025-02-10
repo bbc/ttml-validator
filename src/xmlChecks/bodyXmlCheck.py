@@ -11,6 +11,7 @@ timing_attr_keys = set([
     'dur'
 ])
 
+
 class bodyCheck(xmlCheck):
     """
     Checks body element and content descendants
@@ -91,9 +92,9 @@ class bodyCheck(xmlCheck):
     ) -> bool:
         valid = True
 
-        text_children_present = el.text is not None  # and el.text != ''
+        text_children_present = el.text is not None
         for child_el in el:
-            text_children_present |= child_el.tail is not None  # and el.tail != ''
+            text_children_present |= child_el.tail is not None
 
         if text_children_present:
             valid = False
@@ -103,6 +104,32 @@ class bodyCheck(xmlCheck):
                     el.tag,
                     el.get(xmlIdAttr, 'omitted')),
                 message='Text content found in prohibited location.'
+            ))
+
+        return valid
+
+    def _checkLineBreaks(
+            self,
+            el: Element,
+            context: dict,
+            validation_results: list[ValidationResult],
+            tt_ns: str,
+    ) -> bool:
+        valid = True
+
+        all_text = "".join(el.itertext())
+        br_tag = make_qname(tt_ns, 'br')
+        br_subelements = el.findall('.//'+br_tag)
+        lines = all_text.splitlines()
+
+        if len(lines) > 1 and len(br_subelements) == 0:
+            validation_results.append(ValidationResult(
+                status=WARN,
+                location='{} element xml:id {}'.format(
+                    el.tag,
+                    el.get(xmlIdAttr, 'omitted')),
+                message='Text content contains line breaks '
+                        'but no <br> elements.'
             ))
 
         return valid
@@ -146,6 +173,12 @@ class bodyCheck(xmlCheck):
                 el=p,
                 context=context,
                 validation_results=validation_results,
+            )
+            valid &= self._checkLineBreaks(
+                el=p,
+                context=context,
+                validation_results=validation_results,
+                tt_ns=tt_ns
             )
             valid &= self._checkSpanChildren(
                 parent_el=p,

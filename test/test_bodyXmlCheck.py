@@ -257,6 +257,51 @@ class testBodyXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
+    def test_p_line_breaks_no_brs(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p xml:id="p0"><span>p0 content here with no line break</span></p>
+<p xml:id="p1"><span>p1 content here
+with bad line break</span></p>
+<p xml:id="p2"><span>p2 content here<br/>with good line break</span></p>
+<p xml:id="p3"><span>p3 content here</span><br/><span>with good line break</span></p>
+<p xml:id="p4"><span>p4 content here
+<br/>
+with good line break</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        bodyCheck = bodyXmlCheck.bodyCheck()
+        vr = []
+        context = {}
+        valid = bodyCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}p element xml:id p1',
+                message='Text content contains line breaks '
+                        'but no <br> elements.'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt/'
+                         '{http://www.w3.org/ns/ttml}body',
+                message='Body checked'
+            ),        ]
+        self.assertListEqual(vr, expected_validation_results)
+
     def test_nested_span(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
@@ -321,6 +366,8 @@ class testBodyXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}body element '
                          'xml:id omitted',
                 message='Prohibited timing attributes '
+                        # The tests don't always return begin and dur
+                        # in the same order here, for reasons unclear
                         '{\'begin\', \'dur\'} present'
             ),
             ValidationResult(
