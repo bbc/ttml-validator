@@ -70,11 +70,22 @@ def validate_ttml(args) -> int:
     context = {}
     root = ElementTree.fromstring(in_xml_str)
     for xml_check in xmlChecks:
-        xml_check.run(
-            input=root,
-            context=context,
-            validation_results=validation_results
-        )
+        current_check_name = ''
+        try:
+            current_check_name = type(xml_check).__name__
+            xml_check.run(
+                input=root,
+                context=context,
+                validation_results=validation_results
+            )
+        except Exception as e:
+            validation_results.append(
+                ValidationResult(
+                    status=ERROR,
+                    location='While running '+ current_check_name,
+                    message='Exception raised: '+str(e)
+                )
+            )
 
     write_results(validation_results, args.results_out)
     return len(validation_results)
