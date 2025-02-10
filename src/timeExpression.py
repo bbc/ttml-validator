@@ -104,3 +104,7 @@ class TimeExpressionHandler:
         raise ValueError(
             '{} is not a recognised time expression'.format(
                 time_value))
+
+    def isOffsetTime(self, time_expression: str) -> bool:
+        match = _hms_regex.match(time_expression)
+        return match is not None
