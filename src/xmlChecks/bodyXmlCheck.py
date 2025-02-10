@@ -17,6 +17,13 @@ class bodyCheck(xmlCheck):
     Checks body element and content descendants
     """
 
+    def _getTimingAttributes(
+            self,
+            el: Element
+    ) -> bool:
+        attr_key_set = set(el.keys())
+        return attr_key_set.intersection(timing_attr_keys)
+
     def _checkNoTimingAttributes(
             self,
             el: Element,
@@ -24,15 +31,15 @@ class bodyCheck(xmlCheck):
     ) -> bool:
         valid = True
 
-        attr_key_set = set(el.keys())
-        if not attr_key_set.isdisjoint(timing_attr_keys):
+        timing_attributes = self._getTimingAttributes(el)
+        if len(timing_attributes) > 0:
             valid = False
             validation_results.append(ValidationResult(
                 status=ERROR,
                 location='{} element xml:id {}'
                          .format(el.tag, el.get(xmlIdAttr, 'omitted')),
                 message='Prohibited timing attributes {} present'
-                        .format(attr_key_set.intersection(timing_attr_keys))
+                        .format(timing_attributes)
             ))
 
         return valid
@@ -40,6 +47,7 @@ class bodyCheck(xmlCheck):
     def _checkSpanChildren(
             self,
             parent_el: Element,
+            parent_timing_attributes: set[str],
             context: dict,
             validation_results: list[ValidationResult],
             tt_ns: str,
@@ -75,8 +83,23 @@ class bodyCheck(xmlCheck):
             ))
 
         for span in spans:
+            timing_attributes = self._getTimingAttributes(span)
+            if len(timing_attributes) > 0 \
+               and len(parent_timing_attributes) > 0:
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location='{}@xml:id {}/{} element'.format(
+                        parent_el.tag,
+                        parent_el.get(xmlIdAttr, 'omitted'),
+                        span.tag),
+                    message='Nested elements with timing attributes prohibited'
+                ))
+
             valid &= self._checkSpanChildren(
                 parent_el=span,
+                parent_timing_attributes=parent_timing_attributes.union(
+                    timing_attributes),
                 context=context,
                 validation_results=validation_results,
                 tt_ns=tt_ns,
@@ -180,8 +203,10 @@ class bodyCheck(xmlCheck):
                 validation_results=validation_results,
                 tt_ns=tt_ns
             )
+            timing_attributes = self._getTimingAttributes(el=p)
             valid &= self._checkSpanChildren(
                 parent_el=p,
+                parent_timing_attributes=timing_attributes,
                 context=context,
                 validation_results=validation_results,
                 tt_ns=tt_ns
