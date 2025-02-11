@@ -42,25 +42,38 @@ xmlChecks = [
 
 
 def write_results(
+        valid: bool,
         validation_results: list[ValidationResult],
         stream: TextIOBase,
         ):
     for result in validation_results:
         stream.write(result.asString() + '\n')
+    if valid:
+        stream.write(
+            'Document appears to be valid EBU-TT-D meeting BBC requirements '
+            'and should play okay in the BBC\'s player.\n')
+    else:
+        stream.write(
+            'Errors found: document is not valid EBU-TT-D meeting BBC '
+            'requirements and is likely not to play properly if at all '
+            'in the BBC\'s player.\n')
 
 
 def validate_ttml(args) -> int:
     logging.info('Validating {}'.format(args.ttml_in.name))
     logging.info('Writing results to {}'.format(args.results_out.name))
     validation_results = []
+    overall_valid = True
 
     in_bytes = args.ttml_in.read()
     for pre_parse_check in preParseChecks:
-        in_bytes = pre_parse_check.run(in_bytes, validation_results)
+        (check_valid, in_bytes) = pre_parse_check.run(in_bytes, validation_results)
+        overall_valid &= check_valid
 
     try:
         in_xml_str = str(in_bytes, encoding='utf-8', errors='strict')
     except Exception as e:
+        overall_valid = False
         validation_results.append(
             ValidationResult(
                 status=ERROR,
@@ -75,12 +88,13 @@ def validate_ttml(args) -> int:
         current_check_name = ''
         try:
             current_check_name = type(xml_check).__name__
-            xml_check.run(
+            overall_valid &= xml_check.run(
                 input=root,
                 context=context,
                 validation_results=validation_results
             )
         except Exception as e:
+            overall_valid = False
             validation_results.append(
                 ValidationResult(
                     status=ERROR,
@@ -89,7 +103,7 @@ def validate_ttml(args) -> int:
                 )
             )
 
-    write_results(validation_results, args.results_out)
+    write_results(overall_valid, validation_results, args.results_out)
     return len(validation_results)
 
 

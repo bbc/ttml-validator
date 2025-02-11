@@ -148,7 +148,12 @@ class regionRefsXmlCheck(xmlCheck):
         c_extent = css.get('extent', '[invalid value]')
         c_extent_match = two_percent_vals_regex.match(c_extent)
         if not c_origin_match or not c_extent_match:
-            logging.error('Not got computed values for both origin and extent')
+            valid = error_validity
+            validation_results.append(ValidationResult(
+                status=error_significance,
+                location=location,
+                message='Not got computed values for both origin and extent'
+            ))
         else:
             right_edge = \
                 float(c_origin_match.group('x')) \

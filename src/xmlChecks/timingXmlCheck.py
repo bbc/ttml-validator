@@ -148,7 +148,6 @@ class timingCheck(xmlCheck):
 
         for begin, el_list in time_el_map.items():
             if begin >= self._early_begin_threshold:
-                print('begin {} too late, continuing'.format(begin))
                 continue
 
             count_early_begins += len(

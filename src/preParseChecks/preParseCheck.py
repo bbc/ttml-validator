@@ -6,7 +6,7 @@ class PreParseCheck:
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> bytes:
+            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
         raise NotImplementedError()
 
 
@@ -15,7 +15,7 @@ class NullByteCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> bytes:
+            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
         null_byte = b'\x00'
         if null_byte in input:
             validation_results.append(ValidationResult(
@@ -23,14 +23,14 @@ class NullByteCheck(PreParseCheck):
                 location='1st at byte {}'.format(input.index(null_byte)),
                 message='Null byte(s) found in input'
             ))
-            return input.replace(null_byte, b'')
+            return (False, input.replace(null_byte, b''))
         else:
             validation_results.append(ValidationResult(
                 status=GOOD,
                 location='',
                 message='No null bytes found'
             ))
-        return input
+        return (True, input)
 
 
 class BadEncodingCheck(PreParseCheck):
@@ -38,7 +38,7 @@ class BadEncodingCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> bytes:
+            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
 
         # sirens for bad encoding - there's a chance of getting
         # false positives or false negatives. False positives
@@ -61,7 +61,7 @@ class BadEncodingCheck(PreParseCheck):
                 message='Bad encoding found, re-encoding as UTF-8'
             ))
             output = str(input, encoding='utf-8').encode('latin-1')
-            return output
+            return (False, output)
         else:
             validation_results.append(ValidationResult(
                 status=GOOD,
@@ -69,4 +69,4 @@ class BadEncodingCheck(PreParseCheck):
                 message='No bad encoding sirens found'
             ))
 
-        return input
+        return (True, input)
