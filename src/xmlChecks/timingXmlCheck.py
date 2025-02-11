@@ -1,3 +1,4 @@
+from math import floor
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
@@ -5,7 +6,6 @@ from ..xmlUtils import get_unqualified_name, make_qname, \
 from .xmlCheck import xmlCheck
 from ..timeExpression import TimeExpressionHandler
 from operator import itemgetter
-import logging
 import traceback
 
 timing_attr_keys = [
@@ -22,6 +22,8 @@ class timingCheck(xmlCheck):
 
     _min_short_gap = 0.8
     _desired_min_gap = 1.5
+    _min_count_early_begins = 2
+    _early_begin_threshold = 23 * 60  # First 23 minutes
 
     def _collect_timed_elements(
             self,
@@ -135,6 +137,41 @@ class timingCheck(xmlCheck):
             tickrate=tt.get(tickRateKey)
         )
 
+    def _checkEnoughSubsAtBeginning(
+            self,
+            time_el_map: dict[float, list[tuple[Element, float]]],
+            validation_results: list[ValidationResult],
+            ) -> bool:
+        valid = True
+
+        count_early_begins = 0
+
+        for begin, el_list in time_el_map.items():
+            if begin >= self._early_begin_threshold:
+                print('begin {} too late, continuing'.format(begin))
+                continue
+
+            count_early_begins += len(
+                [el[1] for el in el_list
+                 if get_unqualified_name(el[0].tag) in ['p']])
+
+        if count_early_begins < self._min_count_early_begins:
+            valid = False
+            validation_results.append(ValidationResult(
+                status=ERROR,
+                location='p elements beginning before {:02}:{:02}:{:02}'
+                         .format(
+                             floor(self._early_begin_threshold / 3600),
+                             floor(self._early_begin_threshold / 60),
+                             floor(self._early_begin_threshold % 60)),
+                message='{} subtitle(s) found, minimum {} required'
+                        .format(
+                            count_early_begins,
+                            self._min_count_early_begins)
+            ))
+
+        return valid
+
     def _checkForShortGaps(
             self,
             time_el_map: dict[float, list[tuple[Element, float]]],
@@ -225,6 +262,11 @@ class timingCheck(xmlCheck):
                 validation_results=validation_results
             )
 
+            valid &= self._checkEnoughSubsAtBeginning(
+                time_el_map=time_el_map,
+                validation_results=validation_results
+            )
+
             validation_results.append(ValidationResult(
                 status=INFO,
                 location='Document',
@@ -239,7 +281,8 @@ class timingCheck(xmlCheck):
                 status=ERROR,
                 location='body element or descendants',
                 message='Exception encountered while trying to compute times:'
-                        ' {}, trace: {}'.format(str(e), ''.join(traceback.format_exception(e)))
+                        ' {}, trace: {}'
+                        .format(str(e), ''.join(traceback.format_exception(e)))
             ))
 
         return valid

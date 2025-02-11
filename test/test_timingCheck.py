@@ -19,7 +19,10 @@ class testTimingXmlCheck(unittest.TestCase):
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     ttp:cellResolution="32 15" ttp:timeBase="media">
-<body><div><p xml:id="p1"><span>content here</span></p></div></body>
+<body><div>
+<p xml:id="p1"><span>content here</span></p>
+<p xml:id="p2"><span>content here</span></p>
+</div></body>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
@@ -296,6 +299,84 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=INFO,
                 location='Document',
                 message='First text appears at 1.234s, end of doc is 10.7s'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_not_enough_early_subs_p_times(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p xml:id="p1" begin="00:00:01.234" end="00:00:02"><span>early content here</span></p>
+<p xml:id="p2" begin="00:23:00" end="00:23:03.4"><span>late content here</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck()
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='p elements beginning before 00:23:00',
+                message='1 subtitle(s) found, minimum 2 required'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 1.234s, end of doc is 1383.4s'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_not_enough_early_subs_span_times(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p xml:id="p1"><span begin="00:00:01.234" end="00:00:02">early content here</span></p>
+<p xml:id="p2"><span begin="00:23:00" end="00:23:03.4">late content here</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck()
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='p elements beginning before 00:23:00',
+                message='1 subtitle(s) found, minimum 2 required'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 1.234s, end of doc is 1383.4s'
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
