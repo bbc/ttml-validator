@@ -37,7 +37,7 @@ class xsdValidator(xmlCheck):
             validation_results.append(
                 ValidationResult(
                     status=GOOD,
-                    location='',
+                    location='Parsed document',
                     message='XSD Validation passes'
                 )
             )

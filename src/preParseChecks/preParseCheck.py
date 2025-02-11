@@ -27,7 +27,7 @@ class NullByteCheck(PreParseCheck):
         else:
             validation_results.append(ValidationResult(
                 status=GOOD,
-                location='',
+                location='Unparsed file',
                 message='No null bytes found'
             ))
         return (True, input)
@@ -57,7 +57,7 @@ class BadEncodingCheck(PreParseCheck):
         if needs_reencoding:
             validation_results.append(ValidationResult(
                 status=ERROR,
-                location='',
+                location='Unparsed file',
                 message='Bad encoding found, re-encoding as UTF-8'
             ))
             output = str(input, encoding='utf-8').encode('latin-1')
@@ -65,7 +65,7 @@ class BadEncodingCheck(PreParseCheck):
         else:
             validation_results.append(ValidationResult(
                 status=GOOD,
-                location='',
+                location='Unparsed file',
                 message='No bad encoding sirens found'
             ))
 

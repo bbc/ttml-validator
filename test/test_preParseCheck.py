@@ -19,7 +19,9 @@ class testPreParseCheck(unittest.TestCase):
         self.assertTrue(valid)
         self.assertListEqual(vr, [
             ValidationResult(
-                status=GOOD, location='', message='No null bytes found')
+                status=GOOD,
+                location='Unparsed file',
+                message='No null bytes found')
         ])
 
         vr = []
@@ -56,7 +58,7 @@ class testPreParseCheck(unittest.TestCase):
         self.assertListEqual(vr, [
             ValidationResult(
                 status=GOOD,
-                location='',
+                location='Unparsed file',
                 message='No bad encoding sirens found'
             )
         ])
@@ -72,6 +74,6 @@ class testPreParseCheck(unittest.TestCase):
         self.assertListEqual(vr, [
             ValidationResult(
                 status=ERROR,
-                location='',
+                location='Unparsed file',
                 message='Bad encoding found, re-encoding as UTF-8')
         ])

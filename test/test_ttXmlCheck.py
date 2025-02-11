@@ -36,7 +36,7 @@ class testTtXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_result = ValidationResult(
             status=GOOD,
-            location='',
+            location='Parsed document',
             message='xml:id values are unique'
         )
         self.assertListEqual(vr, [expected_validation_result])

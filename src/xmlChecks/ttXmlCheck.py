@@ -38,7 +38,7 @@ class duplicateXmlIdCheck(xmlCheck):
         if valid:
             validation_results.append(ValidationResult(
                 status=GOOD,
-                location='',
+                location='Parsed document',
                 message='xml:id values are unique'
             ))
 
