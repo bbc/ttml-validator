@@ -155,12 +155,12 @@ class testStyleRefsCheck(unittest.TestCase):
                 message='Referenced id does not point to a style element'
             ),
             ValidationResult(
-                status=INFO,
+                status=GOOD,
                 location='p element xml:id omitted',
                 message='Computed fontSize 6.666667rh (within BBC-allowed range)'
             ),
             ValidationResult(
-                status=INFO,
+                status=GOOD,
                 location='p element xml:id omitted',
                 message='Computed linePadding 0.5c within BBC-allowed range'
             ),
@@ -804,7 +804,7 @@ class testStyleRefsCheck(unittest.TestCase):
                         "outside BBC-allowed range"
             ),
             ValidationResult(
-                status=INFO,
+                status=GOOD,
                 location='p element xml:id d4',
                 message="Computed linePadding 0.5c "
                         "within BBC-allowed range"

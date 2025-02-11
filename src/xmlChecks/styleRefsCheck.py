@@ -290,7 +290,7 @@ class styleRefsXmlCheck(xmlCheck):
             # Compute fontSize for every p and span,
             # and check it is within BBC range 2% - 8%
             # ERROR if not
-            c_font_size = el_css.get('fontSize')
+            c_font_size = el_css.get('fontSize', '')
             if c_font_size[-2:] != 'rh':
                 raise RuntimeError(
                     'Non-canonical computed fontSize {}'.format(c_font_size))
@@ -305,7 +305,7 @@ class styleRefsXmlCheck(xmlCheck):
                 ))
             else:
                 validation_results.append(ValidationResult(
-                    status=INFO,
+                    status=GOOD,
                     location=validation_location,
                     message='Computed fontSize {} (within BBC-allowed range)'
                             .format(c_font_size)
@@ -384,7 +384,7 @@ class styleRefsXmlCheck(xmlCheck):
                 ))
             else:
                 validation_results.append(ValidationResult(
-                    status=INFO,
+                    status=GOOD,
                     location=validation_location,
                     message='Computed linePadding {} within BBC-allowed range'
                             .format(c_lp)
