@@ -42,19 +42,21 @@ xmlChecks = [
 
 
 def write_results(
-        valid: bool,
         validation_results: list[ValidationResult],
         stream: TextIOBase,
         ):
     for result in validation_results:
         stream.write(result.asString() + '\n')
+
+
+def log_results_summary(valid: bool):
     if valid:
-        stream.write(
+        logging.info(
             'Document appears to be valid EBU-TT-D meeting BBC requirements '
             'and should play okay in the BBC\'s player.\n')
     else:
-        stream.write(
-            'Errors found: document is not valid EBU-TT-D meeting BBC '
+        logging.error(
+            'Document is not valid EBU-TT-D meeting BBC '
             'requirements and is likely not to play properly if at all '
             'in the BBC\'s player.\n')
 
@@ -67,7 +69,8 @@ def validate_ttml(args) -> int:
 
     in_bytes = args.ttml_in.read()
     for pre_parse_check in preParseChecks:
-        (check_valid, in_bytes) = pre_parse_check.run(in_bytes, validation_results)
+        (check_valid, in_bytes) = \
+            pre_parse_check.run(in_bytes, validation_results)
         overall_valid &= check_valid
 
     try:
@@ -103,8 +106,29 @@ def validate_ttml(args) -> int:
                 )
             )
 
-    write_results(overall_valid, validation_results, args.results_out)
-    return len(validation_results)
+    if overall_valid:
+        validation_results.append(
+            ValidationResult(
+                status=GOOD,
+                location='Document',
+                message='Document appears to be valid EBU-TT-D meeting '
+                        'BBC requirements '
+                        'and should play okay in the BBC\'s player.'
+            ))
+    else:
+        validation_results.append(
+            ValidationResult(
+                status=ERROR,
+                location='Document',
+                message='Document is not valid EBU-TT-D meeting BBC '
+                        'requirements and is likely not to play properly'
+                        ' if at all in the BBC\'s player.\n'
+            ))
+
+    write_results(validation_results, args.results_out)
+    log_results_summary(overall_valid)
+
+    return 0 if overall_valid else len(validation_results)
 
 
 def main():
@@ -137,4 +161,4 @@ def main():
 
 if __name__ == "__main__":
     # execute only if run as a script
-    main()
+    sys.exit(main())
