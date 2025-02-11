@@ -366,16 +366,14 @@ with good line break</span></p>
                 location='{http://www.w3.org/ns/ttml}body element '
                          'xml:id omitted',
                 message='Prohibited timing attributes '
-                        # The tests don't always return begin and dur
-                        # in the same order here, for reasons unclear
-                        '{\'begin\', \'dur\'} present'
+                        '[\'begin\', \'dur\'] present'
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div element '
                          'xml:id div_end',
                 message='Prohibited timing attributes '
-                        '{\'end\'} present'
+                        '[\'end\'] present'
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

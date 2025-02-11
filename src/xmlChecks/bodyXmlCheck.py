@@ -20,7 +20,7 @@ class bodyCheck(xmlCheck):
     def _getTimingAttributes(
             self,
             el: Element
-    ) -> bool:
+    ) -> set:
         attr_key_set = set(el.keys())
         return attr_key_set.intersection(timing_attr_keys)
 
@@ -31,7 +31,7 @@ class bodyCheck(xmlCheck):
     ) -> bool:
         valid = True
 
-        timing_attributes = self._getTimingAttributes(el)
+        timing_attributes = list(sorted(self._getTimingAttributes(el)))
         if len(timing_attributes) > 0:
             valid = False
             validation_results.append(ValidationResult(
