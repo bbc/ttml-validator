@@ -19,3 +19,13 @@ poetry run validate-ttml -ttml_in input_file.ttml -results_out results_file.txt
 
 `stdin` and `stdout` can be used instead of specifying the files.
 
+### -csv
+
+Outputs validation results as a CSV file.
+
+Headers are:
+* status   - Pass, Info, Warn, Fail
+* location - where the validation relates to
+* message  - the validation result
+
+

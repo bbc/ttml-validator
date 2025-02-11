@@ -1,9 +1,8 @@
 import argparse
 import sys
 import logging
-# from csv import writer as csvWriter
+from csv import writer as csvWriter
 import xml.etree.ElementTree as ElementTree
-from .timeExpression import TimeExpressionHandler
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck
 from .xmlChecks.xmlCheck import xsdValidator
@@ -15,7 +14,7 @@ from .xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from .xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from .xmlChecks.bodyXmlCheck import bodyCheck
 from .xmlChecks.timingXmlCheck import timingCheck
-from io import TextIOBase
+from io import TextIOWrapper
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -41,9 +40,31 @@ xmlChecks = [
 ]
 
 
+def write_csv(
+        validation_results: list[ValidationResult],
+        stream: TextIOWrapper,
+        ):
+    headers = ['status', 'location', 'message']
+    status_string_map = {
+        GOOD: 'Pass',
+        INFO: 'Info',
+        WARN: 'Warn',
+        ERROR: 'Fail',
+    }
+    stream.reconfigure(newline='')
+    csv_writer = csvWriter(stream)
+    csv_writer.writerow(headers)
+    for result in validation_results:
+        csv_writer.writerow([
+            status_string_map.get(result.status),
+            result.location,
+            result.message
+        ])
+
+
 def write_results(
         validation_results: list[ValidationResult],
-        stream: TextIOBase,
+        stream: TextIOWrapper,
         ):
     for result in validation_results:
         stream.write(result.asString() + '\n')
@@ -125,7 +146,11 @@ def validate_ttml(args) -> int:
                         ' if at all in the BBC\'s player.\n'
             ))
 
-    write_results(validation_results, args.results_out)
+    if args.csv:
+        write_csv(validation_results, args.results_out)
+    else:
+        write_results(validation_results, args.results_out)
+
     log_results_summary(overall_valid)
 
     return 0 if overall_valid else len(validation_results)
