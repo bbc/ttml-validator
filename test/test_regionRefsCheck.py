@@ -555,5 +555,10 @@ class testRegionRefsCheck(unittest.TestCase):
                          'attribute with value "80px 80px"',
                 message='Value has invalid format'
             ),
+            ValidationResult(
+                status=ERROR,
+                location='region element xml:id r1',
+                message='Not got computed values for both origin and extent'
+            ),
         ]
         self.assertListEqual(vr, expected_validation_results)

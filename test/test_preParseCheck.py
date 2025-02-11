@@ -10,24 +10,26 @@ class testPreParseCheck(unittest.TestCase):
         bad_input = b'abc\x00de\x00f'
 
         vr = []
-        good_result = nullByteCheck.run(
+        valid, good_result = nullByteCheck.run(
             input=good_input,
             validation_results=vr
         )
 
         self.assertEqual(good_input, good_result)
+        self.assertTrue(valid)
         self.assertListEqual(vr, [
             ValidationResult(
                 status=GOOD, location='', message='No null bytes found')
         ])
 
         vr = []
-        bad_result = nullByteCheck.run(
+        valid, bad_result = nullByteCheck.run(
             input=bad_input,
             validation_results=vr
         )
         # output should have null bytes removed
         self.assertEqual(good_input, bad_result)
+        self.assertFalse(valid)
         expected_vr = ValidationResult(
             status=ERROR,
             location='1st at byte 3',
@@ -44,12 +46,13 @@ class testPreParseCheck(unittest.TestCase):
             b'\x20\x62\x6f\x79\x73\x20\x64\x6f\x6e\xc3\xa2\xc2\x80\xc2\x99\x74'
 
         vr = []
-        good_result = badEncodingCheck.run(
+        valid, good_result = badEncodingCheck.run(
             input=good_input,
             validation_results=vr
         )
 
         self.assertEqual(good_result, good_input)
+        self.assertTrue(valid)
         self.assertListEqual(vr, [
             ValidationResult(
                 status=GOOD,
@@ -59,12 +62,13 @@ class testPreParseCheck(unittest.TestCase):
         ])
 
         vr = []
-        bad_result = badEncodingCheck.run(
+        valid, bad_result = badEncodingCheck.run(
             input=bad_input,
             validation_results=vr
         )
 
         self.assertEqual(bad_result, good_input)
+        self.assertFalse(valid)
         self.assertListEqual(vr, [
             ValidationResult(
                 status=ERROR,
