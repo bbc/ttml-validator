@@ -25,6 +25,13 @@ class timingCheck(xmlCheck):
     _min_count_early_begins = 2
     _early_begin_threshold = 23 * 60  # First 23 minutes
 
+    def __init__(self,
+                 epoch: float = 0.0,
+                 segment_dur: float | None = None):
+        super().__init__()
+        self._epoch = epoch
+        self._segment_dur = segment_dur
+
     def _collect_timed_elements(
             self,
             te: TimeExpressionHandler,
@@ -146,8 +153,9 @@ class timingCheck(xmlCheck):
 
         count_early_begins = 0
 
+        early_begin_threshold = self._early_begin_threshold + self._epoch
         for begin, el_list in time_el_map.items():
-            if begin >= self._early_begin_threshold:
+            if begin >= early_begin_threshold:
                 continue
 
             count_early_begins += len(
@@ -156,13 +164,16 @@ class timingCheck(xmlCheck):
 
         if count_early_begins < self._min_count_early_begins:
             valid = False
+            hours = floor(early_begin_threshold / 3600)
+            minutes = floor((early_begin_threshold - hours * 3600) / 60)
+            seconds = early_begin_threshold % 60
             validation_results.append(ValidationResult(
                 status=ERROR,
-                location='p elements beginning before {:02}:{:02}:{:02}'
+                location='p elements beginning before {:02}:{:02}:{:06.3f}'
                          .format(
-                             floor(self._early_begin_threshold / 3600),
-                             floor(self._early_begin_threshold / 60),
-                             floor(self._early_begin_threshold % 60)),
+                             hours,
+                             minutes,
+                             seconds),
                 message='{} subtitle(s) found, minimum {} required'
                         .format(
                             count_early_begins,
@@ -261,10 +272,20 @@ class timingCheck(xmlCheck):
                 validation_results=validation_results
             )
 
-            valid &= self._checkEnoughSubsAtBeginning(
-                time_el_map=time_el_map,
-                validation_results=validation_results
-            )
+            if self._segment_dur is None \
+               or self._early_begin_threshold <= self._segment_dur:
+                valid &= self._checkEnoughSubsAtBeginning(
+                    time_el_map=time_el_map,
+                    validation_results=validation_results
+                )
+            else:
+                validation_results.append(ValidationResult(
+                    status=INFO,
+                    location='Document',
+                    message='Skipping check for enough early subtitles '
+                            'because segment duration is shorter than '
+                            'search period.'
+                ))
 
             validation_results.append(ValidationResult(
                 status=INFO,

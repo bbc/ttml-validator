@@ -28,4 +28,24 @@ Headers are:
 * location - where the validation relates to
 * message  - the validation result
 
+### -segment and -segdur
 
+Useful when the file is a segment used when streaming
+for example in DASH.
+
+When `-segment` is set,
+extracts digits from the beginning of the filename,
+and uses as the segment number,
+with a default segment duration of 3.84s.
+
+If the segment duration is not 3.84s,
+it can be set using the `-segdur` parameter.
+
+If `-segment` is set and the `-segdur` is less than
+23 minutes no check is made for some subtitles being
+required within the first 23 minutes.
+
+Otherwise, if the segment duration is at least 23 minutes,
+the check for a minimum number of subtitles
+within the first 23 minutes begins at the epoch
+computed from the segment number and segment duration.

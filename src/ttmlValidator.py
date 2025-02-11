@@ -1,6 +1,7 @@
 import argparse
 import sys
 import logging
+import re
 from csv import writer as csvWriter
 import xml.etree.ElementTree as ElementTree
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
@@ -15,29 +16,9 @@ from .xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from .xmlChecks.bodyXmlCheck import bodyCheck
 from .xmlChecks.timingXmlCheck import timingCheck
 from io import TextIOWrapper
+from pathlib import Path
 
 logging.getLogger().setLevel(logging.INFO)
-
-
-preParseChecks = [
-    BadEncodingCheck(),  # check encoding before null bytes
-    NullByteCheck(),
-]
-
-xmlChecks = [
-    xsdValidator(),
-    duplicateXmlIdCheck(),
-    ttTagAndNamespaceCheck(),
-    timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
-    activeAreaCheck(activeArea_required=False),
-    cellResolutionCheck(cellResolution_required=False),
-    headCheck(copyright_required=False),
-    styleRefsXmlCheck(),
-    inlineStyleAttributesCheck(),
-    regionRefsXmlCheck(),
-    bodyCheck(),
-    timingCheck(),
-]
 
 
 def write_csv(
@@ -82,9 +63,52 @@ def log_results_summary(valid: bool):
             'in the BBC\'s player.\n')
 
 
+def get_epoch(args) -> float:
+    epoch = 0.0
+    if args.segment:
+        filename = Path(args.ttml_in.name).name
+        digits_re = re.compile(r'([0-9]+)[.]*')
+        digits_match = digits_re.match(filename)
+        if digits_match is not None:
+            segment_number = float(digits_match.groups()[0])
+            epoch = (segment_number - 1) * args.segdur
+            logging.info(
+                'Working epoch is {}s'.format(epoch)
+            )
+        else:
+            logging.warning(
+                'Could not gather epoch from input name {}'.format(filename))
+
+    return epoch
+
+
 def validate_ttml(args) -> int:
     logging.info('Validating {}'.format(args.ttml_in.name))
     logging.info('Writing results to {}'.format(args.results_out.name))
+
+    epoch = get_epoch(args)
+    dur = args.segdur if args.segment else None
+
+    preParseChecks = [
+        BadEncodingCheck(),  # check encoding before null bytes
+        NullByteCheck(),
+    ]
+
+    xmlChecks = [
+        xsdValidator(),
+        duplicateXmlIdCheck(),
+        ttTagAndNamespaceCheck(),
+        timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
+        activeAreaCheck(activeArea_required=False),
+        cellResolutionCheck(cellResolution_required=False),
+        headCheck(copyright_required=False),
+        styleRefsXmlCheck(),
+        inlineStyleAttributesCheck(),
+        regionRefsXmlCheck(),
+        bodyCheck(),
+        timingCheck(epoch=epoch, segment_dur=dur),
+    ]
+
     validation_results = []
     overall_valid = True
 
@@ -178,6 +202,22 @@ def main():
         required=False,
         action='store_true',
         help='If set, output in CSV format, with times')
+    parser.add_argument(
+        '-segment',
+        default=False,
+        required=False,
+        action='store_true',
+        help='If set, get the segment number from the filename and '
+             'use it to compute the expected begin time of the document.'
+    )
+    parser.add_argument(
+        '-segdur',
+        default='3.84',
+        required=False,
+        action='store',
+        type=float,
+        help='The segment duration in seconds (default 3.84).'
+    )
     parser.set_defaults(func=validate_ttml)
 
     args = parser.parse_args()

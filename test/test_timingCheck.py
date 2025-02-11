@@ -331,7 +331,7 @@ class testTimingXmlCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=ERROR,
-                location='p elements beginning before 00:23:00',
+                location='p elements beginning before 00:23:00.000',
                 message='1 subtitle(s) found, minimum 2 required'
             ),
             ValidationResult(
@@ -370,7 +370,7 @@ class testTimingXmlCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=ERROR,
-                location='p elements beginning before 00:23:00',
+                location='p elements beginning before 00:23:00.000',
                 message='1 subtitle(s) found, minimum 2 required'
             ),
             ValidationResult(
