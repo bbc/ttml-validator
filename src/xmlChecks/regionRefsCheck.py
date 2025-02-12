@@ -155,11 +155,13 @@ class regionRefsXmlCheck(xmlCheck):
                 message='Not got computed values for both origin and extent'
             ))
         else:
+            left_edge = float(c_origin_match.group('x'))
             right_edge = \
-                float(c_origin_match.group('x')) \
+                left_edge \
                 + float(c_extent_match.group('x'))
+            top_edge = float(c_origin_match.group('y'))
             bottom_edge = \
-                float(c_origin_match.group('y')) \
+                top_edge \
                 + float(c_extent_match.group('y'))
             if round(right_edge, 3) > 100.0:
                 valid = error_validity
@@ -178,6 +180,19 @@ class regionRefsXmlCheck(xmlCheck):
                     message='Region bottom edge {}% '
                             'goes beyond 100%'
                             .format(bottom_edge)
+                ))
+
+            # Also check for BBC-defined limits
+            if round(left_edge) < 5.0 \
+               or round(right_edge) > 95.0 \
+               or round(top_edge) < 5.0 \
+               or round(bottom_edge) > 95.0:
+                valid = error_validity
+                validation_results.append(ValidationResult(
+                    status=error_significance,
+                    location=location,
+                    message='Region extends out of BBC-defined '
+                            'permitted area (90% height and width)'
                 ))
 
         # displayAlign - BBC requirement to be in specified set,

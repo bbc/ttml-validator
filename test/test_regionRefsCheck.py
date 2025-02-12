@@ -336,6 +336,12 @@ class testRegionRefsCheck(unittest.TestCase):
                         'missing from region element'
             ),
             ValidationResult(
+                status=ERROR,
+                location='region element xml:id r1',
+                message='Region extends out of BBC-defined '
+                        'permitted area (90% height and width)'
+            ),
+            ValidationResult(
                 status=WARN,
                 location='region element xml:id r2',
                 message='Unreferenced region element'
@@ -358,6 +364,12 @@ class testRegionRefsCheck(unittest.TestCase):
                 location='region element xml:id r2',
                 message='Region bottom edge '
                         '115.5% goes beyond 100%'
+            ),
+            ValidationResult(
+                status=WARN,
+                location='region element xml:id r2',
+                message='Region extends out of BBC-defined '
+                        'permitted area (90% height and width)'
             ),
             ValidationResult(
                 status=WARN,
