@@ -183,6 +183,8 @@ class headCheck(xmlCheck):
                     validation_results=validation_results,
                     tt_ns=tt_ns
                 )
+            if 'id_to_style_map' not in context:
+                context['id_to_style_map'] = {}
 
         if valid:
             validation_results.append(ValidationResult(
