@@ -5,7 +5,8 @@ import re
 from csv import writer as csvWriter
 import xml.etree.ElementTree as ElementTree
 from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
-from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck
+from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
+    ByteOrderMarkCheck
 from .xmlChecks.xmlCheck import xsdValidator
 from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
@@ -124,6 +125,7 @@ def validate_ttml(args) -> int:
 
     preParseChecks = [
         BadEncodingCheck(),  # check encoding before null bytes
+        ByteOrderMarkCheck(),
         NullByteCheck(),
     ]
 
@@ -147,9 +149,21 @@ def validate_ttml(args) -> int:
 
     in_bytes = args.ttml_in.read()
     for pre_parse_check in preParseChecks:
-        (check_valid, in_bytes) = \
-            pre_parse_check.run(in_bytes, validation_results)
-        overall_valid &= check_valid
+        current_check_name = ''
+        try:
+            current_check_name = type(pre_parse_check).__name__
+            (check_valid, in_bytes) = \
+                pre_parse_check.run(in_bytes, validation_results)
+            overall_valid &= check_valid
+        except Exception as e:
+            overall_valid = False
+            validation_results.append(
+                ValidationResult(
+                    status=ERROR,
+                    location='While running '+ current_check_name,
+                    message='Exception raised: '+str(e)
+                )
+            )
 
     try:
         in_xml_str = str(in_bytes, encoding='utf-8', errors='strict')
@@ -164,25 +178,37 @@ def validate_ttml(args) -> int:
         )
 
     context = {}
-    root = ElementTree.fromstring(in_xml_str)
-    for xml_check in xmlChecks:
-        current_check_name = ''
-        try:
-            current_check_name = type(xml_check).__name__
-            overall_valid &= xml_check.run(
-                input=root,
-                context=context,
-                validation_results=validation_results
+    root = None
+    try:
+        root = ElementTree.fromstring(in_xml_str)
+    except Exception as e:
+        overall_valid = False
+        validation_results.append(
+            ValidationResult(
+                status=ERROR,
+                location='Document',
+                message='Could not parse XML: '+str(e)
             )
-        except Exception as e:
-            overall_valid = False
-            validation_results.append(
-                ValidationResult(
-                    status=ERROR,
-                    location='While running '+ current_check_name,
-                    message='Exception raised: '+str(e)
+        )
+    if root is not None:
+        for xml_check in xmlChecks:
+            current_check_name = ''
+            try:
+                current_check_name = type(xml_check).__name__
+                overall_valid &= xml_check.run(
+                    input=root,
+                    context=context,
+                    validation_results=validation_results
                 )
-            )
+            except Exception as e:
+                overall_valid = False
+                validation_results.append(
+                    ValidationResult(
+                        status=ERROR,
+                        location='While running '+ current_check_name,
+                        message='Exception raised: '+str(e)
+                    )
+                )
 
     if overall_valid:
         validation_results.append(

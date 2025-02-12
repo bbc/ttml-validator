@@ -1,5 +1,6 @@
 import unittest
 import src.preParseChecks.preParseCheck as preParseCheck
+import codecs
 from src.validationResult import ValidationResult, ERROR, GOOD
 
 
@@ -75,5 +76,89 @@ class testPreParseCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='Unparsed file',
-                message='Bad encoding found, re-encoding as UTF-8')
+                message='Bad latin-1 encoding found, re-encoding as UTF-8')
+        ])
+
+    def testBOMCheck(self):
+        bomCheck = preParseCheck.ByteOrderMarkCheck()
+        # two versions of the same string, one correctly UTF-8 encoded,
+        # the other badly encoded, as we've seen in some files
+        stimulus = 'some funky \u0800 text'
+        good_result = stimulus.encode('utf-8')
+        good_input = stimulus.encode('utf-8')
+        utf8_bom_input = stimulus.encode('utf_8_sig')
+        utf16_bom_input = stimulus.encode('utf-16')  # comes with a BOM!
+        weird_input = \
+            b'\xc3\xaf\xc2\xbb\xc2\xbf' \
+            + good_input  # UTF-8 BOM encoded as UTF-8!
+
+        # No BOM
+        vr = []
+        valid, actual_result = bomCheck.run(
+            input=good_input,
+            validation_results=vr
+        )
+
+        self.assertEqual(good_result, actual_result)
+        self.assertTrue(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=GOOD,
+                location='Unparsed file',
+                message='No Byte Order Mark (BOM) found'
+            )
+        ])
+
+        # UTF-8 BOM
+        vr = []
+        valid, actual_result = bomCheck.run(
+            input=utf8_bom_input,
+            validation_results=vr
+        )
+
+        self.assertEqual(good_result, actual_result)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='First 3 bytes',
+                message='File has a prohibited Byte Order Mark (BOM): '
+                        'b\'\\xef\\xbb\\xbf\''
+                        ' - stripping UTF-8 BOM and continuing.')
+        ])
+
+        # UTF-16 BOM
+        vr = []
+        valid, actual_result = bomCheck.run(
+            input=utf16_bom_input,
+            validation_results=vr
+        )
+
+        self.assertEqual(good_result, actual_result)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='First 2 bytes',
+                message='File has a prohibited Byte Order Mark (BOM): '
+                        'b\'\\xff\\xfe\''
+                        ' - attempting to re-encode using codec utf_16_le')
+        ])
+
+        # Weird BOM
+        vr = []
+        valid, actual_result = bomCheck.run(
+            input=weird_input,
+            validation_results=vr
+        )
+
+        self.assertEqual(good_result, actual_result)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='First 6 bytes',
+                message='File has a corrupt Byte Order Mark (BOM): '
+                        'b\'\\xc3\\xaf\\xc2\\xbb\\xc2\\xbf\' '
+                        '- removing and hoping for the best.')
         ])
