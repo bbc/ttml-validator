@@ -51,6 +51,39 @@ def write_results(
         stream.write(result.asString() + '\n')
 
 
+def collate_validation_results(
+        validation_results: list[ValidationResult],
+        more_than: int) -> list[ValidationResult]:
+    # When we see the same status and message for more than
+    # more_than messages, replace with a ValidationMessage
+    # with the same status and message but set the location
+    # to the number of messages found
+    seen_messages = {}
+    for vr in validation_results:
+        seen_key = (vr.status, vr.message)
+        seen_count = seen_messages.get(seen_key, 0)
+        seen_count += 1
+        seen_messages[seen_key] = seen_count
+
+    messages_written = set()
+    rv = []
+    for vr in validation_results:
+        seen_key = (vr.status, vr.message)
+        seen_count = seen_messages.get(seen_key)
+        if seen_count > more_than \
+           and seen_key not in messages_written:
+            rv.append(ValidationResult(
+                status=vr.status,
+                location='{} locations'.format(seen_count),
+                message=vr.message
+            ))
+        elif seen_count <= more_than:
+            rv.append(vr)
+        messages_written.add(seen_key)
+
+    return rv
+
+
 def log_results_summary(valid: bool):
     if valid:
         logging.info(
@@ -170,6 +203,10 @@ def validate_ttml(args) -> int:
                         ' if at all in the BBC\'s player.\n'
             ))
 
+    if args.collate_more_than and args.collate_more_than > 0:
+        validation_results = collate_validation_results(
+            validation_results=validation_results,
+            more_than=args.collate_more_than)
     if args.csv:
         write_csv(validation_results, args.results_out)
     else:
@@ -217,6 +254,15 @@ def main():
         action='store',
         type=float,
         help='The segment duration in seconds (default 3.84).'
+    )
+    parser.add_argument(
+        '-collate_more_than',
+        default='5',
+        required=False,
+        action='store',
+        type=int,
+        help='If more than zero, collates similar messages '
+             'when there are more than the specified number.'
     )
     parser.set_defaults(func=validate_ttml)
 

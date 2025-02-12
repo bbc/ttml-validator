@@ -49,3 +49,13 @@ Otherwise, if the segment duration is at least 23 minutes,
 the check for a minimum number of subtitles
 within the first 23 minutes begins at the epoch
 computed from the segment number and segment duration.
+
+### -collate_more_than
+
+By default, if a validation message is seen in more than
+5 locations with the same status, those messages will be
+collated and the output will include one message stating
+the number of locations. Set to a different number to
+adjust from 5.
+
+If set to 0, will not collate any messages.
