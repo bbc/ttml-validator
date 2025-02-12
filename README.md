@@ -19,6 +19,20 @@ poetry run validate-ttml -ttml_in input_file.ttml -results_out results_file.txt
 
 `stdin` and `stdout` can be used instead of specifying the files.
 
+A useful bash script to validate many files, assuming there's a subdirectory called `validation` is:
+
+```sh
+function validatemany { for arg in "$@"; do [[ -f $arg ]] && ttmlfile="${arg##*/}" && ttmlpath="${arg%$ttmlfile}" && poetry run validate-ttml -ttml_in "$arg" -results_out "${ttmlpath}/validation/${ttmlfile}.csv" -csv; done }
+```
+
+Then if you have a directory containing a bunch of subtitle files to validate, whose filenames
+have a .xml extension, say, you can do:
+
+```sh
+mkdir /path/to/many/validation
+validatemany /path/to/many/*.xml
+```
+
 ### -csv
 
 Outputs validation results as a CSV file.
