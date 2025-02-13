@@ -6,6 +6,9 @@ and if not, to list the errors.
 
 For requirements, see [Subtitle File Validation Checks (BBC internal Confluence page)](https://confluence.dev.bbc.co.uk/x/GDiPGQ)
 
+TODO: Later, we should add the ability to check EBU-TT files too,
+and/or other flavours of TTML
+
 ## Usage
 
 Built with python 3.11, so you might want to make sure you have that version available.
