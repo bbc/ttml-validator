@@ -380,3 +380,230 @@ class testTimingXmlCheck(unittest.TestCase):
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_subs_overlap_segment(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p xml:id="p1" begin="00:06:20.0" end="00:06:24.001"><span>just overlaps the beginning</span></p>
+<p xml:id="p2"><span begin="00:06:27.83" end="00:06:30.4">just overlaps the end</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck(
+            epoch=384,
+            segment_dur=3.84,
+            segment_relative_timing=False)
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='Skipping check for enough early subtitles because '
+                        'segment duration is shorter than search period.'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='Timed content',
+                message='Document content overlaps the segment '
+                        'interval [384s..387.84s)'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 380.0s, end of doc is 390.4s'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_subs_wholly_within_segment(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p begin="00:06:24.5" end="00:06:25.5" xml:id="p1"><span>within the segment 1</span></p>
+<p begin="00:06:25.500" end="00:06:27" xml:id="p2"><span>within the segment 2</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck(
+            epoch=384,
+            segment_dur=3.84,
+            segment_relative_timing=False)
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='Skipping check for enough early subtitles because '
+                        'segment duration is shorter than search period.'
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='Timed content',
+                message='Document content overlaps the segment '
+                        'interval [384s..387.84s)'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 384.5s, end of doc is 387.0s'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_empty_doc_within_segment(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck()
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='{http://www.w3.org/ns/ttml}tt element',
+                message='No body element found, skipping timing tests'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_subs_end_before_segment(self):
+        # TODO
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p begin="00:06:20.5" end="00:06:21.0" xml:id="p1"><span>within the segment 1</span></p>
+<p begin="00:06:22.500" end="00:06:24.0" xml:id="p2"><span>within the segment 2</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck(
+            epoch=384,
+            segment_dur=3.84,
+            segment_relative_timing=False)
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='Skipping check for enough early subtitles because '
+                        'segment duration is shorter than search period.'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='Timed content',
+                message='Document content is timed outside the segment '
+                        'interval [384s..387.84s)'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 380.5s, end of doc is 384.0s'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_subs_begin_after_segment(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p begin="00:06:27.841" end="00:06:28.5" xml:id="p1"><span>after the segment 1</span></p>
+<p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        timingCheck = timingXmlCheck.timingCheck(
+            epoch=384,
+            segment_dur=3.84,
+            segment_relative_timing=False)
+        vr = []
+        context = {}
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='Skipping check for enough early subtitles because '
+                        'segment duration is shorter than search period.'
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='Timed content',
+                message='Document content is timed outside the segment '
+                        'interval [384s..387.84s)'
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 387.841s, end of doc is 390.0s'
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)

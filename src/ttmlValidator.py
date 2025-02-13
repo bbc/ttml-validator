@@ -143,7 +143,10 @@ def validate_ttml(args) -> int:
         inlineStyleAttributesCheck(),
         regionRefsXmlCheck(),
         bodyCheck(),
-        timingCheck(epoch=epoch, segment_dur=dur),
+        timingCheck(
+            epoch=epoch,
+            segment_dur=dur,
+            segment_relative_timing=args.segment_relative_timing),
     ]
 
     validation_results = []
@@ -282,6 +285,15 @@ def main():
         action='store',
         type=float,
         help='The segment duration in seconds (default 3.84).'
+    )
+    parser.add_argument(
+        '-segment_relative_timing',
+        default=False,
+        required=False,
+        action='store_true',
+        help='If the content timings in the document are '
+             'relative to the segment begin time (true) '
+             'rather than the media timeline (false) (default false).'
     )
     parser.add_argument(
         '-collate_more_than',

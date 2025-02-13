@@ -45,7 +45,7 @@ Headers are:
 * location - where the validation relates to
 * message  - the validation result
 
-### -segment and -segdur
+### -segment and -segdur and -segment_relative_timing
 
 Useful when the file is a segment used when streaming
 for example in DASH.
@@ -64,8 +64,11 @@ required within the first 23 minutes.
 
 Otherwise, if the segment duration is at least 23 minutes,
 the check for a minimum number of subtitles
-within the first 23 minutes begins at the epoch
-computed from the segment number and segment duration.
+within the first 23 minutes begins at the epoch.
+
+If `-segment_relative_timing` is not set (the default),
+the epoch is computed from the segment number and segment duration.
+Otherwise, for segment-relative timing, the epoch is set to 0s.
 
 ### -collate_more_than
 

@@ -27,10 +27,12 @@ class timingCheck(xmlCheck):
 
     def __init__(self,
                  epoch: float = 0.0,
-                 segment_dur: float | None = None):
+                 segment_dur: float | None = None,
+                 segment_relative_timing: bool = False):
         super().__init__()
         self._epoch = epoch
         self._segment_dur = segment_dur
+        self._segment_relative_timing = segment_relative_timing
 
     def _collect_timed_elements(
             self,
@@ -227,6 +229,36 @@ class timingCheck(xmlCheck):
 
         return valid
 
+    def _checkSubsOverlapSegment(
+            self,
+            doc_begin: float,
+            doc_end: float,
+            validation_results: list[ValidationResult]) -> bool:
+        valid = True
+
+        if self._segment_dur is not None:
+            epoch = 0 if self._segment_relative_timing else self._epoch
+            max_end = epoch + self._segment_dur
+
+            if doc_begin > max_end or \
+               (doc_end is not None and doc_end <= epoch):
+                valid = False
+                validation_results.append(ValidationResult(
+                    status=ERROR,
+                    location='Timed content',
+                    message='Document content is timed outside the segment '
+                            'interval [{}s..{}s)'.format(epoch, max_end)
+                ))
+            else:
+                validation_results.append(ValidationResult(
+                    status=GOOD,
+                    location='Timed content',
+                    message='Document content overlaps the segment '
+                            'interval [{}s..{}s)'.format(epoch, max_end)
+                ))
+
+        return valid
+
     def run(
             self,
             input: Element,
@@ -286,6 +318,11 @@ class timingCheck(xmlCheck):
                             'because segment duration is shorter than '
                             'search period.'
                 ))
+                valid &= self._checkSubsOverlapSegment(
+                    doc_begin=doc_begin,
+                    doc_end=doc_end,
+                    validation_results=validation_results
+                )
 
             validation_results.append(ValidationResult(
                 status=INFO,
