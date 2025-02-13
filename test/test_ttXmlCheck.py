@@ -7,6 +7,37 @@ from src.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 class testTtXmlCheck(unittest.TestCase):
     maxDiff = None
 
+    def test_unqualifiedIdAttributeCheck(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml">
+<head>
+<styling>
+<style xml:id="s1"/>
+<style xml:id="s2" id="s2"/>
+<style id="s3"/></styling>
+</head>
+</tt>"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        unqualifiedIdAttributeCheck = ttXmlCheck.unqualifiedIdAttributeCheck()
+        vr = []
+        context = {}
+        valid = unqualifiedIdAttributeCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='Parsed document',
+                message='2 elements have unqualified id attributes, '
+                        'of which 1 have no xml:id attribute. '
+                        'Check if they should have xml:id attributes!'
+            ),
+            ]
+        self.assertListEqual(vr, expected_validation_results)
+
     def test_xmlIdCheck_no_duplicates(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"

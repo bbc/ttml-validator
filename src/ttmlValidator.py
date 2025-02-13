@@ -9,7 +9,8 @@ from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
 from .xmlChecks.xmlCheck import xsdValidator
 from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
-    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
+    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
+    unqualifiedIdAttributeCheck
 from .xmlChecks.headXmlCheck import headCheck
 from .xmlChecks.styleRefsCheck import styleRefsXmlCheck
 from .xmlChecks.regionRefsCheck import regionRefsXmlCheck
@@ -131,6 +132,7 @@ def validate_ttml(args) -> int:
 
     xmlChecks = [
         xsdValidator(),
+        unqualifiedIdAttributeCheck(),
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),

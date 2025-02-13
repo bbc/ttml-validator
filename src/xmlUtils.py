@@ -1,4 +1,5 @@
 xmlIdAttr = '{http://www.w3.org/XML/1998/namespace}id'
+unqualifiedIdAttr = 'id'
 
 
 def make_qname(namespace: str, name: str) -> str:

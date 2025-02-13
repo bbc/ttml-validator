@@ -1,7 +1,7 @@
 from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
-    xmlIdAttr
+    xmlIdAttr, unqualifiedIdAttr
 from .xmlCheck import xmlCheck
 import re
 
@@ -45,6 +45,41 @@ class duplicateXmlIdCheck(xmlCheck):
         context['xmlId_to_element_map'] = xmlIdToElementMap
 
         return valid
+
+
+class unqualifiedIdAttributeCheck(xmlCheck):
+    def run(
+            self,
+            input: Element,
+            context: dict,
+            validation_results: list[ValidationResult]) -> bool:
+
+        elements_with_xml_id = \
+            set(input.findall('.//*[@{}]'.format(xmlIdAttr)))
+        elements_with_unq_id = \
+            set(input.findall('.//*[@{}]'.format(unqualifiedIdAttr)))
+        num_elements_with_unq_id = len(elements_with_unq_id)
+        num_elements_with_unq_id_and_xml_id = \
+            len(elements_with_unq_id.intersection(elements_with_xml_id))
+        num_elements_with_unq_id_and_no_xml_id = \
+            num_elements_with_unq_id - num_elements_with_unq_id_and_xml_id
+
+        if num_elements_with_unq_id_and_no_xml_id > 0 \
+           or num_elements_with_unq_id > 0:
+            validation_results.append(ValidationResult(
+                status=WARN,
+                location='Parsed document',
+                message='{} elements have unqualified id attributes, '
+                        'of which {} have no xml:id attribute. '
+                        'Check if they should have xml:id attributes!'
+                        .format(
+                            num_elements_with_unq_id,
+                            num_elements_with_unq_id_and_no_xml_id
+                        )
+            ))
+
+        # Never fail on this
+        return True
 
 
 class ttTagAndNamespaceCheck(xmlCheck):
