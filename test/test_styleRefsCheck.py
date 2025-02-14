@@ -3,7 +3,7 @@ import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 
 
 class testStyleRefsCheck(unittest.TestCase):

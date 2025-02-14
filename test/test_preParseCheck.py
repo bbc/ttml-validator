@@ -1,7 +1,7 @@
 import unittest
 import src.preParseChecks.preParseCheck as preParseCheck
 import codecs
-from src.validationResult import ValidationResult, ERROR, GOOD
+from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD
 
 
 class testPreParseCheck(unittest.TestCase):

@@ -1,4 +1,4 @@
-from ..validationResult import ValidationResult, ERROR, GOOD
+from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD
 from xml.etree.ElementTree import Element
 from ..ebuttdSchema import EBUTTDSchema
 from xmlschema import XMLSchemaValidationError

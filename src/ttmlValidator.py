@@ -4,7 +4,7 @@ import logging
 import re
 from csv import writer as csvWriter
 import xml.etree.ElementTree as ElementTree
-from .validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
+from .validationLogging.validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
 from .xmlChecks.xmlCheck import xsdValidator

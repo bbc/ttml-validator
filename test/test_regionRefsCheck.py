@@ -3,7 +3,7 @@ import src.xmlChecks.regionRefsCheck as regionRefsCheck
 import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationResult import ValidationResult, ERROR, GOOD, WARN
+from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN
 
 
 class testRegionRefsCheck(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 
 
 class testTtXmlCheck(unittest.TestCase):

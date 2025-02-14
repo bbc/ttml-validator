@@ -3,7 +3,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from xml.etree.ElementTree import Element
 from .xmlUtils import make_qname, get_unqualified_name, get_namespace
-from .validationResult import ValidationResult, ERROR
+from .validationLogging.validationResult import ValidationResult, ERROR
 # import logging
 import types
 from typing import TypeVar

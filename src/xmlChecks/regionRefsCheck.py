@@ -1,4 +1,4 @@
-from ..validationResult import ValidationResult, ERROR, GOOD, WARN
+from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, get_unqualified_name
 from .xmlCheck import xmlCheck

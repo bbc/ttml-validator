@@ -1,4 +1,4 @@
-from ..validationResult import ValidationResult, ERROR, GOOD
+from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD
 import codecs
 
 

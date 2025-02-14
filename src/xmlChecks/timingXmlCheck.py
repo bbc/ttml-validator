@@ -1,5 +1,5 @@
 from math import floor
-from ..validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
