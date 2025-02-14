@@ -77,6 +77,14 @@ adjust from 5.
 
 If set to 0, will not collate any messages.
 
+## Testing
+
+After installation you can run the tests:
+
+```sh
+poetry run python -m unittest
+```
+
 ## To Do list
 
 * add the ability to check EBU-TT files too,
