@@ -85,6 +85,27 @@ After installation you can run the tests:
 poetry run python -m unittest
 ```
 
+To generate coverage data while testing:
+```sh
+poetry run python -m coverage run -m unittest
+```
+
+To view the coverage report in the shell:
+```sh
+poetry run python -m coverage report
+```
+
+To view the coverage report in a navigable HTML page:
+```sh
+poetry run python -m coverage html
+```
+
+then open the resulting HTML file in your browser, e.g.
+
+```sh
+open htmlcov/index.html
+```
+
 ## To Do list
 
 * add the ability to check EBU-TT files too,
