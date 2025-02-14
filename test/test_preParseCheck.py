@@ -5,6 +5,17 @@ from src.validationResult import ValidationResult, ERROR, GOOD
 
 
 class testPreParseCheck(unittest.TestCase):
+
+    def test_no_direct_instantiation(self):
+        not_impl_preparseCheck = preParseCheck.PreParseCheck()
+        good_input = b'acdef'
+        vr = []
+
+        with self.assertRaises(NotImplementedError):
+            not_impl_preparseCheck.run(
+                input=good_input,
+                validation_results=vr)
+
     def testNullByteCheck(self):
         nullByteCheck = preParseCheck.NullByteCheck()
         good_input = b'abcdef'

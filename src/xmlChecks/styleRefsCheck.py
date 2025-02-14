@@ -131,37 +131,6 @@ class styleRefsXmlCheck(xmlCheck):
 
         return valid
 
-    def _check_attr_applicability_old(
-            self,
-            element_tags: list[str],
-            id_to_styleattribs_map: dict[str, dict[str, str]],
-            id_to_referencing_els_map: dict[str, list[Element]],
-            validation_results: list[ValidationResult]
-            ) -> bool:
-        valid = True
-
-        for style_id, referencing_els in id_to_referencing_els_map.items():
-            attrib_dict = id_to_styleattribs_map.get(style_id, {})
-            el_tags = set(get_unqualified_name(el.tag)
-                          for el in referencing_els
-                          if get_unqualified_name(el.tag) in element_tags)
-            for el_tag in el_tags:
-                for attr_key in attrib_dict.keys():
-                    if not attributeIsApplicableToElement(
-                            attr_key=get_unqualified_name(
-                                attr_key), el_tag=el_tag):
-                        valid = False
-                        validation_results.append(
-                            ValidationResult(
-                                status=ERROR,
-                                location='{} element referencing style id {}'
-                                         .format(el_tag, style_id),
-                                message='Specified style attribute {} is not '
-                                        'applicable to element type'
-                                        .format(attr_key)
-                            ))
-        return valid
-
     def _check_no_backgroundColor(
             self,
             sss: dict[str, str],
