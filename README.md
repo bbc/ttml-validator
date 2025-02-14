@@ -6,9 +6,6 @@ and if not, to list the errors.
 
 For requirements, see [Subtitle File Validation Checks (BBC internal Confluence page)](https://confluence.dev.bbc.co.uk/x/GDiPGQ)
 
-TODO: Later, we should add the ability to check EBU-TT files too,
-and/or other flavours of TTML
-
 ## Usage
 
 Built with python 3.11, so you might want to make sure you have that version available.
@@ -79,3 +76,29 @@ the number of locations. Set to a different number to
 adjust from 5.
 
 If set to 0, will not collate any messages.
+
+## To Do list
+
+* add the ability to check EBU-TT files too,
+and/or other flavours of TTML
+* tag each validation failure so that we can extract specific
+types of failure as being more or less relevant or severe,
+for example syntactic, semantic, aesthetic, spec-conformance,
+BBC requirement, etc. A spec-conformant file should play
+in some way, but might just not look right. But one that is
+both spec-conformant, and passes the aesthetic tests and
+the BBC requirements should play and look right
+* be more specific about how we handle subtitles intended
+for portrait (vertical), square or landscape videos,
+including adjusting safe areas and font size acceptable
+ranges.
+* check the metadata
+* identify if a file is actually a valid EBU-TT document
+* compute font size even if the wrong units are used,
+e.g. "1c" does mean something even if it isn't allowed in EBU-TT-D
+* when id attributes are used instead of xml:id attributes,
+treat those as though they'd been correctly specified as xml:id
+and then see how well the document works
+* check conformance to the IMSC HRM
+* see how feasible it is to construct a valid document
+from an invalid input based on the validation failures
