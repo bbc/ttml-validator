@@ -1,7 +1,9 @@
 import unittest
 import src.xmlChecks.timingXmlCheck as timingXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD, WARN, INFO
 
 
 class testTimingXmlCheck(unittest.TestCase):
@@ -27,7 +29,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -61,7 +63,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -95,7 +97,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -129,7 +131,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -178,7 +180,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -228,7 +230,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -274,7 +276,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -319,7 +321,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -358,7 +360,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -400,7 +402,7 @@ class testTimingXmlCheck(unittest.TestCase):
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -449,7 +451,7 @@ class testTimingXmlCheck(unittest.TestCase):
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -491,7 +493,7 @@ class testTimingXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timingCheck = timingXmlCheck.timingCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -529,7 +531,7 @@ class testTimingXmlCheck(unittest.TestCase):
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,
@@ -578,7 +580,7 @@ class testTimingXmlCheck(unittest.TestCase):
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timingCheck.run(
             input=input_elementtree,

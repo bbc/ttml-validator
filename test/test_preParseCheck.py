@@ -1,7 +1,8 @@
 import unittest
 import src.preParseChecks.preParseCheck as preParseCheck
-import codecs
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD
 
 
 class testPreParseCheck(unittest.TestCase):
@@ -9,7 +10,7 @@ class testPreParseCheck(unittest.TestCase):
     def test_no_direct_instantiation(self):
         not_impl_preparseCheck = preParseCheck.PreParseCheck()
         good_input = b'acdef'
-        vr = []
+        vr = ValidationLogger()
 
         with self.assertRaises(NotImplementedError):
             not_impl_preparseCheck.run(
@@ -21,7 +22,7 @@ class testPreParseCheck(unittest.TestCase):
         good_input = b'abcdef'
         bad_input = b'abc\x00de\x00f'
 
-        vr = []
+        vr = ValidationLogger()
         valid, good_result = nullByteCheck.run(
             input=good_input,
             validation_results=vr
@@ -36,7 +37,7 @@ class testPreParseCheck(unittest.TestCase):
                 message='No null bytes found')
         ])
 
-        vr = []
+        vr = ValidationLogger()
         valid, bad_result = nullByteCheck.run(
             input=bad_input,
             validation_results=vr
@@ -59,7 +60,7 @@ class testPreParseCheck(unittest.TestCase):
         bad_input = \
             b'\x20\x62\x6f\x79\x73\x20\x64\x6f\x6e\xc3\xa2\xc2\x80\xc2\x99\x74'
 
-        vr = []
+        vr = ValidationLogger()
         valid, good_result = badEncodingCheck.run(
             input=good_input,
             validation_results=vr
@@ -75,7 +76,7 @@ class testPreParseCheck(unittest.TestCase):
             )
         ])
 
-        vr = []
+        vr = ValidationLogger()
         valid, bad_result = badEncodingCheck.run(
             input=bad_input,
             validation_results=vr
@@ -104,7 +105,7 @@ class testPreParseCheck(unittest.TestCase):
             + good_input  # UTF-8 BOM encoded as UTF-8!
 
         # No BOM
-        vr = []
+        vr = ValidationLogger()
         valid, actual_result = bomCheck.run(
             input=good_input,
             validation_results=vr
@@ -121,7 +122,7 @@ class testPreParseCheck(unittest.TestCase):
         ])
 
         # UTF-8 BOM
-        vr = []
+        vr = ValidationLogger()
         valid, actual_result = bomCheck.run(
             input=utf8_bom_input,
             validation_results=vr
@@ -139,7 +140,7 @@ class testPreParseCheck(unittest.TestCase):
         ])
 
         # UTF-16 BOM
-        vr = []
+        vr = ValidationLogger()
         valid, actual_result = bomCheck.run(
             input=utf16_bom_input,
             validation_results=vr
@@ -157,7 +158,7 @@ class testPreParseCheck(unittest.TestCase):
         ])
 
         # Weird BOM
-        vr = []
+        vr = ValidationLogger()
         valid, actual_result = bomCheck.run(
             input=weird_input,
             validation_results=vr

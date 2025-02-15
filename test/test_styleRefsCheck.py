@@ -3,7 +3,9 @@ import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD, WARN, INFO
 
 
 class testStyleRefsCheck(unittest.TestCase):
@@ -29,7 +31,7 @@ class testStyleRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -37,7 +39,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -73,7 +75,7 @@ class testStyleRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -81,7 +83,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -128,7 +130,7 @@ class testStyleRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -136,7 +138,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -200,7 +202,7 @@ class testStyleRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -208,7 +210,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -262,7 +264,7 @@ class testStyleRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -270,7 +272,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -339,7 +341,7 @@ class testStyleRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -347,7 +349,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -414,7 +416,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -429,7 +431,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -466,7 +468,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -481,7 +483,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -538,7 +540,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -553,7 +555,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -595,7 +597,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -610,7 +612,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -681,7 +683,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -696,7 +698,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -760,7 +762,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -775,7 +777,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -848,7 +850,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -863,7 +865,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -930,7 +932,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -945,7 +947,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -1000,7 +1002,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -1015,7 +1017,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,
@@ -1103,7 +1105,7 @@ class testStyleRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # cellResolutionCheck is a dependency so it populates
         # context['cellResolution']
@@ -1118,7 +1120,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = stylesCheck.run(
             input=input_elementtree,
             context=context,

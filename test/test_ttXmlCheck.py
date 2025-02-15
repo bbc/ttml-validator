@@ -1,7 +1,9 @@
 import unittest
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD, WARN, INFO
 
 
 class testTtXmlCheck(unittest.TestCase):
@@ -19,7 +21,7 @@ class testTtXmlCheck(unittest.TestCase):
 </tt>"""
         input_elementtree = ElementTree.fromstring(input_xml)
         unqualifiedIdAttributeCheck = ttXmlCheck.unqualifiedIdAttributeCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = unqualifiedIdAttributeCheck.run(
             input=input_elementtree,
@@ -57,7 +59,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         duplicateCheck = ttXmlCheck.duplicateXmlIdCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = duplicateCheck.run(
             input=input_elementtree,
@@ -91,7 +93,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         duplicateCheck = ttXmlCheck.duplicateXmlIdCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = duplicateCheck.run(
             input=input_elementtree,
@@ -124,7 +126,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         ttTagAndNamespaceCheck = ttXmlCheck.ttTagAndNamespaceCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = ttTagAndNamespaceCheck.run(
             input=input_elementtree,
@@ -149,7 +151,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         ttTagAndNamespaceCheck = ttXmlCheck.ttTagAndNamespaceCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = ttTagAndNamespaceCheck.run(
             input=input_elementtree,
@@ -174,7 +176,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         ttTagAndNamespaceCheck = ttXmlCheck.ttTagAndNamespaceCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = ttTagAndNamespaceCheck.run(
             input=input_elementtree,
@@ -200,7 +202,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         ttTagAndNamespaceCheck = ttXmlCheck.ttTagAndNamespaceCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = ttTagAndNamespaceCheck.run(
             input=input_elementtree,
@@ -233,7 +235,7 @@ class testTtXmlCheck(unittest.TestCase):
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
             timeBase_whitelist=['media'],
             timeBase_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timeBaseCheck.run(
             input=input_elementtree,
@@ -262,7 +264,7 @@ class testTtXmlCheck(unittest.TestCase):
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
             timeBase_whitelist=['media'],
             timeBase_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timeBaseCheck.run(
             input=input_elementtree,
@@ -291,7 +293,7 @@ class testTtXmlCheck(unittest.TestCase):
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
             timeBase_whitelist=['media'],
             timeBase_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         context['root_ns'] = 'http://www.w3.org/ns/ttaf'
         valid = timeBaseCheck.run(
@@ -321,7 +323,7 @@ class testTtXmlCheck(unittest.TestCase):
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
             timeBase_whitelist=['media'],
             timeBase_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = timeBaseCheck.run(
             input=input_elementtree,
@@ -351,7 +353,7 @@ class testTtXmlCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         activeAreaCheck = ttXmlCheck.activeAreaCheck(
             activeArea_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = activeAreaCheck.run(
             input=input_elementtree,
@@ -379,7 +381,7 @@ class testTtXmlCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         activeAreaCheck_required = ttXmlCheck.activeAreaCheck(
             activeArea_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = activeAreaCheck_required.run(
             input=input_elementtree,
@@ -400,7 +402,7 @@ class testTtXmlCheck(unittest.TestCase):
 
         activeAreaCheck_optional = ttXmlCheck.activeAreaCheck(
             activeArea_required=False)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = activeAreaCheck_optional.run(
             input=input_elementtree,
@@ -436,7 +438,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         activeAreaCheck = ttXmlCheck.activeAreaCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = activeAreaCheck.run(
             input=input_elementtree,
@@ -466,7 +468,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         activeAreaCheck = ttXmlCheck.activeAreaCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = activeAreaCheck.run(
             input=input_elementtree,
@@ -497,7 +499,7 @@ class testTtXmlCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck(
             cellResolution_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = cellResolutionCheck.run(
             input=input_elementtree,
@@ -527,7 +529,7 @@ class testTtXmlCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck(
             cellResolution_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {
             'root_ns': 'http://www.w3.org/ns/ttaf'
         }
@@ -557,7 +559,7 @@ class testTtXmlCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         cellResolutionCheck_required = ttXmlCheck.cellResolutionCheck(
             cellResolution_required=True)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = cellResolutionCheck_required.run(
             input=input_elementtree,
@@ -585,7 +587,7 @@ class testTtXmlCheck(unittest.TestCase):
 
         cellResolutionCheck_optional = ttXmlCheck.cellResolutionCheck(
             cellResolution_required=False)
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = cellResolutionCheck_optional.run(
             input=input_elementtree,
@@ -628,7 +630,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = cellResolutionCheck.run(
             input=input_elementtree,
@@ -658,7 +660,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = cellResolutionCheck.run(
             input=input_elementtree,

@@ -3,7 +3,9 @@ import src.xmlChecks.regionRefsCheck as regionRefsCheck
 import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD, WARN
 
 
 class testRegionRefsCheck(unittest.TestCase):
@@ -39,7 +41,7 @@ class testRegionRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -52,7 +54,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -93,7 +95,7 @@ class testRegionRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -106,7 +108,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -162,7 +164,7 @@ class testRegionRefsCheck(unittest.TestCase):
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_region_map']
         headCheck.run(
@@ -175,7 +177,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -236,7 +238,7 @@ class testRegionRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -249,7 +251,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -306,7 +308,7 @@ class testRegionRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -319,7 +321,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -448,7 +450,7 @@ class testRegionRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -461,7 +463,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -539,7 +541,7 @@ class testRegionRefsCheck(unittest.TestCase):
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         headCheck = headXmlCheck.headCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
         headCheck.run(
@@ -552,7 +554,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = []
+        vr = ValidationLogger()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,

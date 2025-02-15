@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from xml.etree.ElementTree import Element
 from .xmlUtils import make_qname, get_unqualified_name, get_namespace
 from .validationLogging.validationResult import ValidationResult, ERROR
+from .validationLogging.validationLogger import ValidationLogger
 # import logging
 import types
 from typing import TypeVar
@@ -473,7 +474,7 @@ def getMergedStyleSet(
 
 def computeStyles(
         tt_ns: str,
-        validation_results: list[ValidationResult],
+        validation_results: ValidationLogger,
         el_sss: dict[str, str],
         el_css: dict[str, str],
         parent_css: dict[str, str],

@@ -1,7 +1,9 @@
 import unittest
 import src.xmlChecks.bodyXmlCheck as bodyXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD, WARN
 
 
 class testBodyXmlCheck(unittest.TestCase):
@@ -24,7 +26,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -54,7 +56,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -86,7 +88,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -117,7 +119,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -155,7 +157,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -207,7 +209,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -240,7 +242,7 @@ class testBodyXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -279,7 +281,7 @@ with good line break</span></p>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -299,7 +301,8 @@ with good line break</span></p>
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}body',
                 message='Body checked'
-            ),        ]
+            ),
+        ]
         self.assertListEqual(vr, expected_validation_results)
 
     def test_nested_span(self):
@@ -318,7 +321,7 @@ with good line break</span></p>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -352,7 +355,7 @@ with good line break</span></p>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,
@@ -396,7 +399,7 @@ with good line break</span></p>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         bodyCheck = bodyXmlCheck.bodyCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = bodyCheck.run(
             input=input_elementtree,

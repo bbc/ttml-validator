@@ -1,9 +1,8 @@
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
+from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
 from .xmlCheck import xmlCheck
-import re
 
 timing_attr_keys = set([
     'begin',
@@ -27,20 +26,19 @@ class bodyCheck(xmlCheck):
     def _checkNoTimingAttributes(
             self,
             el: Element,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
     ) -> bool:
         valid = True
 
         timing_attributes = list(sorted(self._getTimingAttributes(el)))
         if len(timing_attributes) > 0:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{} element xml:id {}'
                          .format(el.tag, el.get(xmlIdAttr, 'omitted')),
                 message='Prohibited timing attributes {} present'
                         .format(timing_attributes)
-            ))
+            )
 
         return valid
 
@@ -49,7 +47,7 @@ class bodyCheck(xmlCheck):
             parent_el: Element,
             parent_timing_attributes: set[str],
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str,
     ) -> bool:
         valid = True
@@ -59,8 +57,7 @@ class bodyCheck(xmlCheck):
         spans = [el for el in parent_el if el.tag == span_el_tag]
         if len(spans) == 0 and parent_el.tag == p_el_tag:
             valid = False
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{}/{} xml:id {}'.format(
                     parent_el.tag,
                     span_el_tag,
@@ -68,11 +65,10 @@ class bodyCheck(xmlCheck):
                 ),
                 message='Found 0 span elements; '
                         'text content needs to be in a styled span'
-            ))
+            )
         if len(spans) > 0 and parent_el.tag == span_el_tag:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{} xml:id {}'.format(
                     parent_el.tag,
                     span_el_tag,
@@ -80,21 +76,20 @@ class bodyCheck(xmlCheck):
                 ),
                 message='Found {} span element children of span, require 0'
                         .format(len(spans))
-            ))
+            )
 
         for span in spans:
             timing_attributes = self._getTimingAttributes(span)
             if len(timing_attributes) > 0 \
                and len(parent_timing_attributes) > 0:
                 valid = False
-                validation_results.append(ValidationResult(
-                    status=ERROR,
+                validation_results.error(
                     location='{}@xml:id {}/{} element'.format(
                         parent_el.tag,
                         parent_el.get(xmlIdAttr, 'omitted'),
                         span.tag),
                     message='Nested elements with timing attributes prohibited'
-                ))
+                )
 
             valid &= self._checkSpanChildren(
                 parent_el=span,
@@ -111,7 +106,7 @@ class bodyCheck(xmlCheck):
             self,
             el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
     ) -> bool:
         valid = True
 
@@ -121,13 +116,12 @@ class bodyCheck(xmlCheck):
 
         if text_children_present:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{} element xml:id {}'.format(
                     el.tag,
                     el.get(xmlIdAttr, 'omitted')),
                 message='Text content found in prohibited location.'
-            ))
+            )
 
         return valid
 
@@ -135,7 +129,7 @@ class bodyCheck(xmlCheck):
             self,
             el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str,
     ) -> bool:
         valid = True
@@ -146,14 +140,13 @@ class bodyCheck(xmlCheck):
         lines = all_text.splitlines()
 
         if len(lines) > 1 and len(br_subelements) == 0:
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{} element xml:id {}'.format(
                     el.tag,
                     el.get(xmlIdAttr, 'omitted')),
                 message='Text content contains line breaks '
                         'but no <br> elements.'
-            ))
+            )
 
         return valid
 
@@ -161,7 +154,7 @@ class bodyCheck(xmlCheck):
             self,
             parent_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str,
     ) -> bool:
         valid = True
@@ -170,27 +163,25 @@ class bodyCheck(xmlCheck):
         ps = [el for el in parent_el if el.tag == p_el_tag]
         if len(ps) == 0:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{} xml:id {}'.format(
                     parent_el.tag,
                     p_el_tag,
                     parent_el.get(xmlIdAttr, 'omitted'),
                 ),
-                message='Found 0 p children of a div, require >0')
+                message='Found 0 p children of a div, require >0'
             )
 
         for p in ps:
             if xmlIdAttr not in p.keys():
                 valid = False
-                validation_results.append(ValidationResult(
-                    status=ERROR,
+                validation_results.error(
                     location='{}/{} xml:id {}'.format(
                         parent_el.tag,
                         p_el_tag,
                         p.get(xmlIdAttr, 'omitted'),
                     ),
-                    message='p element missing required xml:id')
+                    message='p element missing required xml:id'
                 )
             valid &= self._checkNoTextChildren(
                 el=p,
@@ -218,7 +209,7 @@ class bodyCheck(xmlCheck):
             self,
             parent_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str,
     ) -> bool:
         valid = True
@@ -227,18 +218,16 @@ class bodyCheck(xmlCheck):
         divs = [el for el in parent_el if el.tag == div_el_tag]
         if len(divs) == 0 and get_unqualified_name(parent_el.tag) == 'body':
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(parent_el.tag, div_el_tag),
-                message='Found 0 div elements, require >0')
+                message='Found 0 div elements, require >0'
             )
         elif len(divs) > 0 and get_unqualified_name(parent_el.tag) == 'div':
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(parent_el.tag, div_el_tag),
                 message='Found {} div children of a div, require 0'
-                        .format(len(divs)))
+                        .format(len(divs))
             )
 
         # Check each div child
@@ -266,7 +255,7 @@ class bodyCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         tt_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml')
         body_el_tag = make_qname(tt_ns, 'body')
@@ -276,11 +265,10 @@ class bodyCheck(xmlCheck):
         bodys = [el for el in input if el.tag == body_el_tag]
         if len(bodys) != 1:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(input.tag, body_el_tag),
                 message='Found {} body elements, expected 1'.format(len(bodys))
-            ))
+            )
         else:
             body_el = bodys[0]
             valid &= self._checkNoTimingAttributes(
@@ -294,10 +282,9 @@ class bodyCheck(xmlCheck):
                 tt_ns=tt_ns)
 
         if valid:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='{}/{}'.format(input.tag, body_el_tag),
-                message='Body checked')
+                message='Body checked'
             )
 
         return valid

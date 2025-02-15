@@ -2,9 +2,8 @@ import argparse
 import sys
 import logging
 import re
-from csv import writer as csvWriter
 import xml.etree.ElementTree as ElementTree
-from .validationLogging.validationResult import ValidationResult, GOOD, INFO, WARN, ERROR
+from .validationLogging.validationLogger import ValidationLogger
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
 from .xmlChecks.xmlCheck import xsdValidator
@@ -17,73 +16,9 @@ from .xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from .xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from .xmlChecks.bodyXmlCheck import bodyCheck
 from .xmlChecks.timingXmlCheck import timingCheck
-from io import TextIOWrapper
 from pathlib import Path
 
 logging.getLogger().setLevel(logging.INFO)
-
-
-def write_csv(
-        validation_results: list[ValidationResult],
-        stream: TextIOWrapper,
-        ):
-    headers = ['status', 'location', 'message']
-    status_string_map = {
-        GOOD: 'Pass',
-        INFO: 'Info',
-        WARN: 'Warn',
-        ERROR: 'Fail',
-    }
-    stream.reconfigure(newline='')
-    csv_writer = csvWriter(stream)
-    csv_writer.writerow(headers)
-    for result in validation_results:
-        csv_writer.writerow([
-            status_string_map.get(result.status),
-            result.location,
-            result.message
-        ])
-
-
-def write_results(
-        validation_results: list[ValidationResult],
-        stream: TextIOWrapper,
-        ):
-    for result in validation_results:
-        stream.write(result.asString() + '\n')
-
-
-def collate_validation_results(
-        validation_results: list[ValidationResult],
-        more_than: int) -> list[ValidationResult]:
-    # When we see the same status and message for more than
-    # more_than messages, replace with a ValidationMessage
-    # with the same status and message but set the location
-    # to the number of messages found
-    seen_messages = {}
-    for vr in validation_results:
-        seen_key = (vr.status, vr.message)
-        seen_count = seen_messages.get(seen_key, 0)
-        seen_count += 1
-        seen_messages[seen_key] = seen_count
-
-    messages_written = set()
-    rv = []
-    for vr in validation_results:
-        seen_key = (vr.status, vr.message)
-        seen_count = seen_messages.get(seen_key)
-        if seen_count > more_than \
-           and seen_key not in messages_written:
-            rv.append(ValidationResult(
-                status=vr.status,
-                location='{} locations'.format(seen_count),
-                message=vr.message
-            ))
-        elif seen_count <= more_than:
-            rv.append(vr)
-        messages_written.add(seen_key)
-
-    return rv
 
 
 def log_results_summary(valid: bool):
@@ -149,7 +84,7 @@ def validate_ttml(args) -> int:
             segment_relative_timing=args.segment_relative_timing),
     ]
 
-    validation_results = []
+    validation_results = ValidationLogger()
     overall_valid = True
 
     in_bytes = args.ttml_in.read()
@@ -162,24 +97,18 @@ def validate_ttml(args) -> int:
             overall_valid &= check_valid
         except Exception as e:
             overall_valid = False
-            validation_results.append(
-                ValidationResult(
-                    status=ERROR,
-                    location='While running '+ current_check_name,
-                    message='Exception raised: '+str(e)
-                )
+            validation_results.error(
+                location='While running ' + current_check_name,
+                message='Exception raised: '+str(e)
             )
 
     try:
         in_xml_str = str(in_bytes, encoding='utf-8', errors='strict')
     except Exception as e:
         overall_valid = False
-        validation_results.append(
-            ValidationResult(
-                status=ERROR,
+        validation_results.error(
                 location='Unknown',
                 message='Could not decode into UTF-8: '+str(e)
-            )
         )
 
     context = {}
@@ -188,12 +117,9 @@ def validate_ttml(args) -> int:
         root = ElementTree.fromstring(in_xml_str)
     except Exception as e:
         overall_valid = False
-        validation_results.append(
-            ValidationResult(
-                status=ERROR,
-                location='Document',
-                message='Could not parse XML: '+str(e)
-            )
+        validation_results.error(
+            location='Document',
+            message='Could not parse XML: '+str(e)
         )
     if root is not None:
         for xml_check in xmlChecks:
@@ -207,41 +133,33 @@ def validate_ttml(args) -> int:
                 )
             except Exception as e:
                 overall_valid = False
-                validation_results.append(
-                    ValidationResult(
-                        status=ERROR,
-                        location='While running '+ current_check_name,
-                        message='Exception raised: '+str(e)
-                    )
+                validation_results.error(
+                    location='While running ' + current_check_name,
+                    message='Exception raised: '+str(e)
                 )
 
     if overall_valid:
-        validation_results.append(
-            ValidationResult(
-                status=GOOD,
-                location='Document',
-                message='Document appears to be valid EBU-TT-D meeting '
-                        'BBC requirements '
-                        'and should play okay in the BBC\'s player.'
-            ))
+        validation_results.good(
+            location='Document',
+            message='Document appears to be valid EBU-TT-D meeting '
+                    'BBC requirements '
+                    'and should play okay in the BBC\'s player.'
+        )
     else:
-        validation_results.append(
-            ValidationResult(
-                status=ERROR,
-                location='Document',
-                message='Document is not valid EBU-TT-D meeting BBC '
-                        'requirements and is likely not to play properly'
-                        ' if at all in the BBC\'s player.\n'
-            ))
+        validation_results.error(
+            location='Document',
+            message='Document is not valid EBU-TT-D meeting BBC '
+                    'requirements and is likely not to play properly'
+                    ' if at all in the BBC\'s player.\n'
+        )
 
     if args.collate_more_than and args.collate_more_than > 0:
-        validation_results = collate_validation_results(
-            validation_results=validation_results,
+        validation_results = validation_results.collateResults(
             more_than=args.collate_more_than)
     if args.csv:
-        write_csv(validation_results, args.results_out)
+        validation_results.write_csv(args.results_out)
     else:
-        write_results(validation_results, args.results_out)
+        validation_results.write_plaintext(args.results_out)
 
     log_results_summary(overall_valid)
 

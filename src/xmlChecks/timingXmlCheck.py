@@ -1,5 +1,7 @@
 from math import floor
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationResult import \
+    ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
@@ -43,7 +45,7 @@ class timingCheck(xmlCheck):
             begin_defined: bool,
             end_defined: bool,
             time_el_map: dict[float, list[tuple[Element, float]]],
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             # depth: int = 0
             ) -> tuple[bool, float, float]:
         # prefix = '  ' * depth
@@ -55,15 +57,14 @@ class timingCheck(xmlCheck):
             if timing_attr in el.keys():
                 if not te.isOffsetTime(el.get(timing_attr)):
                     valid = False
-                    validation_results.append(ValidationResult(
-                        status=ERROR,
+                    validation_results.error(
                         location='{} element xml:id {}'.format(
                             el.tag,
                             el.get(xmlIdAttr, 'omitted')),
                         message='{}={} is not a valid offset time'.format(
                             timing_attr,
                             el.get(timing_attr))
-                    ))
+                    )
 
         this_begin = te.seconds(el.get('begin')) \
             if 'begin' in el.keys() \
@@ -149,7 +150,7 @@ class timingCheck(xmlCheck):
     def _checkEnoughSubsAtBeginning(
             self,
             time_el_map: dict[float, list[tuple[Element, float]]],
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             ) -> bool:
         valid = True
 
@@ -169,8 +170,7 @@ class timingCheck(xmlCheck):
             hours = floor(early_begin_threshold / 3600)
             minutes = floor((early_begin_threshold - hours * 3600) / 60)
             seconds = early_begin_threshold % 60
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='p elements beginning before {:02}:{:02}:{:06.3f}'
                          .format(
                              hours,
@@ -180,14 +180,14 @@ class timingCheck(xmlCheck):
                         .format(
                             count_early_begins,
                             self._min_count_early_begins)
-            ))
+            )
 
         return valid
 
     def _checkForShortGaps(
             self,
             time_el_map: dict[float, list[tuple[Element, float]]],
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             ) -> bool:
         valid = True
 
@@ -204,8 +204,7 @@ class timingCheck(xmlCheck):
 
             if gap_to_next > 0 and gap_to_next < self._min_short_gap:
                 valid = False
-                validation_results.append(ValidationResult(
-                    status=ERROR,
+                validation_results.error(
                     location='Gap from {}s to {}s'.format(
                         begin_end_list[i][1],
                         begin_end_list[i+1][0]
@@ -213,11 +212,10 @@ class timingCheck(xmlCheck):
                     message='Non-zero gap between subtitles is '
                             'shorter than {}s'
                             .format(self._min_short_gap)
-                ))
+                )
             elif gap_to_next >= self._min_short_gap \
                     and gap_to_next < self._desired_min_gap:
-                validation_results.append(ValidationResult(
-                    status=WARN,
+                validation_results.warn(
                     location='Gap from {}s to {}s'.format(
                         begin_end_list[i][1],
                         begin_end_list[i+1][0]
@@ -225,7 +223,7 @@ class timingCheck(xmlCheck):
                     message='Short gap between subtitles should be '
                             'at least {}s'
                             .format(self._desired_min_gap)
-                ))
+                )
 
         return valid
 
@@ -233,7 +231,7 @@ class timingCheck(xmlCheck):
             self,
             doc_begin: float,
             doc_end: float,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         valid = True
 
         if self._segment_dur is not None:
@@ -243,19 +241,17 @@ class timingCheck(xmlCheck):
             if doc_begin > max_end or \
                (doc_end is not None and doc_end <= epoch):
                 valid = False
-                validation_results.append(ValidationResult(
-                    status=ERROR,
+                validation_results.error(
                     location='Timed content',
                     message='Document content is timed outside the segment '
                             'interval [{}s..{}s)'.format(epoch, max_end)
-                ))
+                )
             else:
-                validation_results.append(ValidationResult(
-                    status=GOOD,
+                validation_results.good(
                     location='Timed content',
                     message='Document content overlaps the segment '
                             'interval [{}s..{}s)'.format(epoch, max_end)
-                ))
+                )
 
         return valid
 
@@ -263,7 +259,7 @@ class timingCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         tt_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml')
 
@@ -280,11 +276,10 @@ class timingCheck(xmlCheck):
         if body_el is None:
             body_el = input.find('./{*}body')
         if body_el is None:
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{} element'.format(input.tag),
                 message='No body element found, skipping timing tests'
-            ))
+            )
             return valid
 
         try:
@@ -311,35 +306,32 @@ class timingCheck(xmlCheck):
                     validation_results=validation_results
                 )
             else:
-                validation_results.append(ValidationResult(
-                    status=INFO,
+                validation_results.info(
                     location='Document',
                     message='Skipping check for enough early subtitles '
                             'because segment duration is shorter than '
                             'search period.'
-                ))
+                )
                 valid &= self._checkSubsOverlapSegment(
                     doc_begin=doc_begin,
                     doc_end=doc_end,
                     validation_results=validation_results
                 )
 
-            validation_results.append(ValidationResult(
-                status=INFO,
+            validation_results.info(
                 location='Document',
                 message='First text appears at {}s, end of doc is {}'.format(
                     doc_begin,
                     'undefined' if doc_end is None else '{}s'.format(doc_end)
                 )
-            ))
+            )
         except Exception as e:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='body element or descendants',
                 message='Exception encountered while trying to compute times:'
                         ' {}, trace: {}'
                         .format(str(e), ''.join(traceback.format_exception(e)))
-            ))
+            )
 
         return valid

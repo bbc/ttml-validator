@@ -1,4 +1,6 @@
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN
+from ..validationLogging.validationResult import ValidationResult, \
+    ERROR, WARN
+from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, get_unqualified_name
 from .xmlCheck import xmlCheck
@@ -80,7 +82,7 @@ class regionRefsXmlCheck(xmlCheck):
             self,
             tt_ns: str,
             sss: dict[str, str],
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             location: str,
             error_significance: int = ERROR,
             ) -> bool:
@@ -103,21 +105,20 @@ class regionRefsXmlCheck(xmlCheck):
 
         for sss_key in sss:
             if sss_key not in ns_qualified_required_region_style_attribs:
-                validation_results.append(ValidationResult(
-                    status=WARN,
+                validation_results.warn(
                     location=location,
                     message='Non-required style attribute {} '
                             'present on region element - '
                             'presentation may differ from expectation'
                             .format(sss_key)
-                ))
+                )
 
         return valid
 
     def checkComputedStyles(
             self,
             css: dict[str, str],
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             location: str,
             error_significance: int = ERROR,
             ) -> bool:
@@ -224,7 +225,7 @@ class regionRefsXmlCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         valid = True
 
         # Gather region references from body, div, p and span
@@ -234,14 +235,13 @@ class regionRefsXmlCheck(xmlCheck):
         body_el_tag = make_qname(tt_ns, 'body')
         bodies = [el for el in input if el.tag == body_el_tag]
         if len(bodies) != 1:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(input.tag, body_el_tag),
                 message='Found {} body elements, expected 1; '
                         'skipping region reference checks'
                         .format(
                             len(bodies))
-            ))
+            )
             valid = False
         else:
             body_el = bodies[0]
@@ -266,22 +266,20 @@ class regionRefsXmlCheck(xmlCheck):
                     style_error_significance = ERROR
                     if region_id not in dropped_refs \
                        and region_id not in valid_refs:
-                        validation_results.append(ValidationResult(
-                            status=WARN,
+                        validation_results.warn(
                             location='region element xml:id {}'
                                      .format(region_id),
                             message='Unreferenced region element'
-                        ))
+                        )
                     if region_id in dropped_refs:
-                        validation_results.append(ValidationResult(
-                            status=WARN,
+                        validation_results.warn(
                             location='region element xml:id {}'
                                      .format(region_id),
                             message='{} elements pruned because their '
                                     'ancestor references a different '
                                     'region element'
                                     .format(len(dropped_refs[region_id]))
-                        ))
+                        )
                     if region_id not in valid_refs:
                         style_error_significance = WARN
 
@@ -331,41 +329,35 @@ class regionRefsXmlCheck(xmlCheck):
                 for region_id in valid_refs.keys():
                     if region_id not in context['id_to_region_map']:
                         valid = False
-                        validation_results.append(ValidationResult(
-                            status=ERROR,
+                        validation_results.error(
                             location='{} element(s)'
                                      .format(len(valid_refs[region_id])),
                             message='Referenced region {} does not point '
                                     'to a region element'
                                     .format(region_id)
-                        ))
+                        )
                 for region_id in dropped_refs.keys():
                     if region_id not in context['id_to_region_map']:
                         valid = False
-                        validation_results.append(ValidationResult(
-                            status=ERROR,
+                        validation_results.error(
                             location='{} element(s)'
                                      .format(len(dropped_refs[region_id])),
                             message='Dropped referenced region {} does not '
                                     'point to a region element'
                                     .format(region_id)
-                        ))
+                        )
 
             # Report ERROR for any p elements not associated with a region
             if len(no_region_ps) > 0:
                 valid = False
-                validation_results.append(ValidationResult(
-                    status=ERROR,
+                validation_results.error(
                     location='{} p element(s)'.format(len(no_region_ps)),
                     message='Elements not associated with a region'
-                ))
+                )
 
         if valid:
-            validation_results.append(
-                ValidationResult(
-                    status=GOOD,
+            validation_results.good(
                     location='document',
                     message='Region references and attributes checked'
-                )
             )
         return valid

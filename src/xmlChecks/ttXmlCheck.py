@@ -1,4 +1,6 @@
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationResult import ValidationResult, \
+    ERROR, WARN
+from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
     xmlIdAttr, unqualifiedIdAttr
@@ -20,7 +22,7 @@ class duplicateXmlIdCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         xmlIdToElementMap = {}
 
         for e in input.iter():
@@ -30,17 +32,15 @@ class duplicateXmlIdCheck(xmlCheck):
         for (xmlId, elist) in xmlIdToElementMap.items():
             if len(elist) > 1:
                 valid = False
-                validation_results.append(ValidationResult(
-                    status=ERROR,
+                validation_results.error(
                     location=', '.join(e.tag for e in elist),
                     message='Duplicate xml:id found with value ' + xmlId
-                ))
+                )
         if valid:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='Parsed document',
                 message='xml:id values are unique'
-            ))
+            )
 
         context['xmlId_to_element_map'] = xmlIdToElementMap
 
@@ -52,7 +52,7 @@ class unqualifiedIdAttributeCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
 
         elements_with_xml_id = \
             set(input.findall('.//*[@{}]'.format(xmlIdAttr)))
@@ -66,8 +66,7 @@ class unqualifiedIdAttributeCheck(xmlCheck):
 
         if num_elements_with_unq_id_and_no_xml_id > 0 \
            or num_elements_with_unq_id > 0:
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='Parsed document',
                 message='{} elements have unqualified id attributes, '
                         'of which {} have no xml:id attribute. '
@@ -76,7 +75,7 @@ class unqualifiedIdAttributeCheck(xmlCheck):
                             num_elements_with_unq_id,
                             num_elements_with_unq_id_and_no_xml_id
                         )
-            ))
+            )
 
         # Never fail on this
         return True
@@ -87,7 +86,7 @@ class ttTagAndNamespaceCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         ns = get_namespace(input.tag)
         unq_name = get_unqualified_name(input.tag)
         ttml_ns = 'http://www.w3.org/ns/ttml'
@@ -96,29 +95,20 @@ class ttTagAndNamespaceCheck(xmlCheck):
         valid = True
         if ns != ttml_ns:
             valid = False
-            validation_results.append(
-                ValidationResult(
-                    status=ERROR,
-                    location=input.tag,
-                    message='Element has unexpected namespace "{}"'.format(ns)
-                )
+            validation_results.error(
+                location=input.tag,
+                message='Element has unexpected namespace "{}"'.format(ns)
             )
         if unq_name != ttml_root_el_name:
             valid = False
-            validation_results.append(
-                ValidationResult(
-                    status=ERROR,
-                    location=input.tag,
-                    message='Element has unexpected tag <{}>'.format(unq_name)
-                )
+            validation_results.error(
+                location=input.tag,
+                message='Element has unexpected tag <{}>'.format(unq_name)
             )
         if valid:
-            validation_results.append(
-                ValidationResult(
-                    status=GOOD,
-                    location='Root element',
-                    message='Document root has correct tag and namespace'
-                )
+            validation_results.good(
+                location='Root element',
+                message='Document root has correct tag and namespace'
             )
 
         context['root_ns'] = ns
@@ -140,7 +130,7 @@ class timeBaseCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         ttp_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml') \
             + '#parameter'
@@ -149,37 +139,28 @@ class timeBaseCheck(xmlCheck):
 
         if self._timeBase_required and timeBase_attr_key not in input.attrib:
             valid = False
-            validation_results.append(
-                ValidationResult(
-                    status=ERROR,
-                    location='{} {} attribute'.format(
-                        input.tag, timeBase_attr_key),
-                    message='Required timeBase attribute absent'
-                )
+            validation_results.error(
+                location='{} {} attribute'.format(
+                    input.tag, timeBase_attr_key),
+                message='Required timeBase attribute absent'
             )
 
         timeBase_attr_val = \
             input.get(timeBase_attr_key, self.default_timeBase)
         if timeBase_attr_val not in self._timeBase_whitelist:
             valid = False
-            validation_results.append(
-                ValidationResult(
-                    status=ERROR,
-                    location='{} {} attribute'.format(
-                        input.tag, timeBase_attr_key),
-                    message='timeBase {} not in the allowed set {}'.format(
-                        timeBase_attr_val, self._timeBase_whitelist)
-                )
+            validation_results.error(
+                location='{} {} attribute'.format(
+                    input.tag, timeBase_attr_key),
+                message='timeBase {} not in the allowed set {}'.format(
+                    timeBase_attr_val, self._timeBase_whitelist)
             )
 
         if valid:
-            validation_results.append(
-                ValidationResult(
-                    status=GOOD,
-                    location='{} {} attribute'.format(
-                        input.tag, timeBase_attr_key),
-                    message='timeBase checked'
-                )
+            validation_results.good(
+                location='{} {} attribute'.format(
+                    input.tag, timeBase_attr_key),
+                message='timeBase checked'
             )
 
         return valid
@@ -201,7 +182,7 @@ class activeAreaCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         ittp_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#parameter'
         ittp_attr_key = make_qname(ittp_ns, 'activeArea')
         valid = True
@@ -227,38 +208,29 @@ class activeAreaCheck(xmlCheck):
                     if float(matches.group(g)) > 100:
                         valid = False
                 if not valid:
-                    validation_results.append(
-                        ValidationResult(
-                            status=ERROR,
-                            location='{} {} attribute'.format(
-                                input.tag, ittp_attr_key),
-                            message='activeArea {} has '
-                                    'at least one component >100%'.format(
-                                ittp_attr_val)
-                        )
+                    validation_results.error(
+                        location='{} {} attribute'.format(
+                            input.tag, ittp_attr_key),
+                        message='activeArea {} has '
+                                'at least one component >100%'.format(
+                            ittp_attr_val)
                     )
 
             else:
                 valid = False
-                validation_results.append(
-                    ValidationResult(
-                        status=ERROR,
-                        location='{} {} attribute'.format(
-                            input.tag, ittp_attr_key),
-                        message='activeArea {} does not '
-                                'match syntax requirements'.format(
-                            ittp_attr_val)
-                    )
+                validation_results.error(
+                    location='{} {} attribute'.format(
+                        input.tag, ittp_attr_key),
+                    message='activeArea {} does not '
+                            'match syntax requirements'.format(
+                        ittp_attr_val)
                 )
 
         if valid:
-            validation_results.append(
-                ValidationResult(
-                    status=GOOD,
-                    location='{} {} attribute'.format(
-                        input.tag, ittp_attr_key),
-                    message='activeArea checked'
-                )
+            validation_results.good(
+                location='{} {} attribute'.format(
+                    input.tag, ittp_attr_key),
+                message='activeArea checked'
             )
 
         return valid
@@ -279,7 +251,7 @@ class cellResolutionCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         ttp_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml') \
             + '#parameter'
@@ -299,14 +271,11 @@ class cellResolutionCheck(xmlCheck):
                 )
             )
             cellResolution_attr_val = self.default_cellResolution
-            validation_results.append(
-                ValidationResult(
-                    status=INFO,
-                    location='{} {} attribute'.format(
-                        input.tag, cellResolution_attr_key),
-                    message='using default cellResolution value {}'.format(
-                        cellResolution_attr_val
-                    )
+            validation_results.info(
+                location='{} {} attribute'.format(
+                    input.tag, cellResolution_attr_key),
+                message='using default cellResolution value {}'.format(
+                    cellResolution_attr_val
                 )
             )
         else:
@@ -318,38 +287,29 @@ class cellResolutionCheck(xmlCheck):
                     if int(matches.group(g)) == 0:
                         valid = False
                 if not valid:
-                    validation_results.append(
-                        ValidationResult(
-                            status=ERROR,
-                            location='{} {} attribute'.format(
-                                input.tag, cellResolution_attr_key),
-                            message='cellResolution {} has '
-                                    'at least one component == 0'.format(
-                                cellResolution_attr_val)
-                        )
+                    validation_results.error(
+                        location='{} {} attribute'.format(
+                            input.tag, cellResolution_attr_key),
+                        message='cellResolution {} has '
+                                'at least one component == 0'.format(
+                            cellResolution_attr_val)
                     )
 
             else:
                 valid = False
-                validation_results.append(
-                    ValidationResult(
-                        status=ERROR,
-                        location='{} {} attribute'.format(
-                            input.tag, cellResolution_attr_key),
-                        message='cellResolution {} does not '
-                                'match syntax requirements'.format(
-                            cellResolution_attr_val)
-                    )
+                validation_results.error(
+                    location='{} {} attribute'.format(
+                        input.tag, cellResolution_attr_key),
+                    message='cellResolution {} does not '
+                            'match syntax requirements'.format(
+                        cellResolution_attr_val)
                 )
 
         if valid:
-            validation_results.append(
-                ValidationResult(
-                    status=GOOD,
-                    location='{} {} attribute'.format(
-                        input.tag, cellResolution_attr_key),
-                    message='cellResolution checked'
-                )
+            validation_results.good(
+                location='{} {} attribute'.format(
+                    input.tag, cellResolution_attr_key),
+                message='cellResolution checked'
             )
             context['cellResolution'] = cellResolution_attr_val
         else:

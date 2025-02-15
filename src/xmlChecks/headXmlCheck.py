@@ -1,4 +1,6 @@
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN
+from ..validationLogging.validationResult import ValidationResult, \
+    ERROR, WARN
+from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import xmlCheck
@@ -18,7 +20,7 @@ class headCheck(xmlCheck):
             self,
             head_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             ttm_ns: str) -> bool:
         copyright_el_tag = make_qname(ttm_ns, 'copyright')
         copyright_els = [el for el in head_el if el.tag == copyright_el_tag]
@@ -33,19 +35,16 @@ class headCheck(xmlCheck):
                     )
             ))
         elif len(copyright_els) > 1:
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{}/{}'.format(head_el.tag, copyright_el_tag),
                 message='{} copyright elements found, expected 1'.format(
                     len(copyright_els)
                 )
-            ))
+            )
         else:  # 1 copyright element
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='{}/{}'.format(head_el.tag, copyright_el_tag),
                 message='Copyright element found'
-                )
             )
         return valid
 
@@ -53,7 +52,7 @@ class headCheck(xmlCheck):
             self,
             style_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         valid = True
         style_attr_dict = getAllStyleAttributeDict(tt_ns=tt_ns)
@@ -62,15 +61,12 @@ class headCheck(xmlCheck):
                 match = style_attr_dict[a_key].syntaxRegex.match(a_val)
                 if match is None:
                     valid = False
-                    validation_results.append(
-                        ValidationResult(
-                            status=ERROR,
-                            location='{}@{}'.format(
-                                style_el.tag,
-                                a_key),
-                            message='Attribute value [{}] is invalid'.format(
-                                a_val)
-                        )
+                    validation_results.error(
+                        location='{}@{}'.format(
+                            style_el.tag,
+                            a_key),
+                        message='Attribute value [{}] is invalid'.format(
+                            a_val)
                     )
 
         return valid
@@ -79,17 +75,16 @@ class headCheck(xmlCheck):
             self,
             style_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         valid = True
 
         if xmlIdAttr not in style_el.keys():
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}@{}'.format(style_el.tag, xmlIdAttr),
                 message='style element found with no xml:id'
-            ))
+            )
         else:
             # Store in context for later use
             style_map = context.get('id_to_style_map', {})
@@ -102,13 +97,12 @@ class headCheck(xmlCheck):
                 tt_ns=tt_ns,
                 elements=['body', 'div', 'p', 'span']))
         if style_attr_keys.isdisjoint(style_el.keys()):
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{} {}'.format(
                     style_el.tag,
                     style_el.get(xmlIdAttr, '(no xml:id)')),
                 message='Style element has no recognised style attributes'
-            ))
+            )
         valid &= self._validateStyleAttr(style_el=style_el,
                                          context=context,
                                          validation_results=validation_results,
@@ -120,17 +114,16 @@ class headCheck(xmlCheck):
             self,
             region_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         valid = True
 
         if xmlIdAttr not in region_el.keys():
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}@{}'.format(region_el.tag, xmlIdAttr),
                 message='region element found with no xml:id'
-            ))
+            )
         else:
             # Store in context for later use
             region_map = context.get('id_to_region_map', {})
@@ -143,13 +136,12 @@ class headCheck(xmlCheck):
                 tt_ns=tt_ns,
                 elements=['region']))
         if style_attr_keys.isdisjoint(region_el.keys()):
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{} {}'.format(
                     region_el.tag,
                     region_el.get(xmlIdAttr, '(no xml:id)')),
                 message='Region element has no recognised style attributes'
-            ))
+            )
         valid &= self._validateStyleAttr(style_el=region_el,
                                          context=context,
                                          validation_results=validation_results,
@@ -161,7 +153,7 @@ class headCheck(xmlCheck):
             self,
             styling_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         style_el_tag = make_qname(tt_ns, 'style')
         valid = True
@@ -169,11 +161,10 @@ class headCheck(xmlCheck):
         style_els = [el for el in styling_el if el.tag == style_el_tag]
         if len(style_els) == 0:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(styling_el.tag, style_el_tag),
                 message='At least one style element required, none found'
-            ))
+            )
             context['id_to_style_map'] = {}  # expected downstream
         else:
             for style_el in style_els:
@@ -187,11 +178,10 @@ class headCheck(xmlCheck):
                 context['id_to_style_map'] = {}
 
         if valid:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='[{}/{}]'.format(styling_el.tag, style_el_tag),
                 message='Style elements checked'
-            ))
+            )
 
         return valid
 
@@ -199,7 +189,7 @@ class headCheck(xmlCheck):
             self,
             layout_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         region_el_tag = make_qname(tt_ns, 'region')
         valid = True
@@ -207,11 +197,10 @@ class headCheck(xmlCheck):
         region_els = [el for el in layout_el if el.tag == region_el_tag]
         if len(region_els) == 0:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(layout_el.tag, region_el_tag),
                 message='At least one region element required, none found'
-            ))
+            )
             context['id_to_region_map'] = {}  # expected downstream
         else:
             for region_el in region_els:
@@ -223,11 +212,10 @@ class headCheck(xmlCheck):
                 )
 
         if valid:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='[{}/{}]'.format(layout_el.tag, region_el_tag),
                 message='Region elements checked'
-            ))
+            )
 
         return valid
 
@@ -235,7 +223,7 @@ class headCheck(xmlCheck):
             self,
             head_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         styling_el_tag = make_qname(tt_ns, 'styling')
 
@@ -243,34 +231,27 @@ class headCheck(xmlCheck):
         valid = True
         if len(styling_els) == 0:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
                 message='Required styling element absent'
-            ))
+            )
         elif len(styling_els) > 1:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
                 message='{} styling elements found, expected 1'.format(
-                    len(styling_els)
-                )
-            ))
+                    len(styling_els))
+            )
         else:  # 1 styling element
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
                 message='styling element found'
-                )
             )
 
         if not valid:
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
                 message='Skipping style element checks'
-                )
             )
         else:
             valid = self._checkStyles(
@@ -285,7 +266,7 @@ class headCheck(xmlCheck):
             self,
             head_el: Element,
             context: dict,
-            validation_results: list[ValidationResult],
+            validation_results: ValidationLogger,
             tt_ns: str) -> bool:
         layout_el_tag = make_qname(tt_ns, 'layout')
 
@@ -293,34 +274,28 @@ class headCheck(xmlCheck):
         valid = True
         if len(layout_els) == 0:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
                 message='Required layout element absent'
-            ))
+            )
         elif len(layout_els) > 1:
             valid = False
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
                 message='{} layout elements found, expected 1'.format(
                     len(layout_els)
                 )
-            ))
+            )
         else:  # 1 layout element
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
                 message='layout element found'
-                )
             )
 
         if not valid:
-            validation_results.append(ValidationResult(
-                status=WARN,
+            validation_results.warn(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
                 message='Skipping region element checks'
-                )
             )
         else:
             valid = self._checkRegions(
@@ -335,7 +310,7 @@ class headCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         tt_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml')
         head_el_tag = make_qname(tt_ns, 'head')
@@ -345,11 +320,10 @@ class headCheck(xmlCheck):
 
         heads = [el for el in input if el.tag == head_el_tag]
         if len(heads) != 1:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='{}/{}'.format(input.tag, head_el_tag),
                 message='Found {} head elements, expected 1'.format(len(heads))
-            ))
+            )
             valid = False
         else:
             head_el = heads[0]
@@ -370,10 +344,8 @@ class headCheck(xmlCheck):
                 tt_ns=tt_ns)
 
         if valid:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='{}/{}'.format(input.tag, head_el_tag),
                 message='Head checked')
-            )
 
         return valid

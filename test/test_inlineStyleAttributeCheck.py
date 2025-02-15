@@ -1,7 +1,9 @@
 import unittest
 import src.xmlChecks.inlineStyleAttributeCheck as inlineStyleAttributeCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD
 
 
 class testInlineStyleAttributesCheck(unittest.TestCase):
@@ -27,7 +29,7 @@ class testInlineStyleAttributesCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         inline_style_attributes_check = \
             inlineStyleAttributeCheck.inlineStyleAttributesCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = inline_style_attributes_check.run(
             input=input_elementtree,
@@ -71,7 +73,7 @@ class testInlineStyleAttributesCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         inline_style_attributes_check = \
             inlineStyleAttributeCheck.inlineStyleAttributesCheck()
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = inline_style_attributes_check.run(
             input=input_elementtree,

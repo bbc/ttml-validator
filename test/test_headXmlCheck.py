@@ -1,7 +1,9 @@
 import unittest
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import xml.etree.ElementTree as ElementTree
-from src.validationLogging.validationResult import ValidationResult, ERROR, GOOD, WARN, INFO
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationResult import ValidationResult, \
+    ERROR, GOOD, WARN
 
 
 class testHeadXmlCheck(unittest.TestCase):
@@ -34,7 +36,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -105,7 +107,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {
             'root_ns': 'http://www.w3.org/ns/ttaf'
         }
@@ -165,7 +167,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -193,7 +195,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -232,7 +234,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -299,7 +301,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=True
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -365,7 +367,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {
             'root_ns': 'http://www.w3.org/ns/ttaf'
         }
@@ -439,7 +441,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -503,7 +505,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -567,7 +569,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -632,7 +634,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -699,7 +701,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -782,7 +784,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -861,7 +863,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -925,7 +927,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -989,7 +991,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -1054,7 +1056,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -1121,7 +1123,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,
@@ -1204,7 +1206,7 @@ class testHeadXmlCheck(unittest.TestCase):
         headCheck = headXmlCheck.headCheck(
             copyright_required=False
         )
-        vr = []
+        vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
             input=input_elementtree,

@@ -1,4 +1,5 @@
 from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD
+from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import xmlCheck
@@ -13,7 +14,7 @@ class inlineStyleAttributesCheck(xmlCheck):
             self,
             input: Element,
             context: dict,
-            validation_results: list[ValidationResult]) -> bool:
+            validation_results: ValidationLogger) -> bool:
         valid = True
         tt_ns = \
             context.get('root_ns', 'http://www.w3.org/ns/ttml')
@@ -27,25 +28,19 @@ class inlineStyleAttributesCheck(xmlCheck):
                 for attr in el.keys():
                     if attr in style_attribute_keys:
                         valid = False
-                        validation_results.append(
-                            ValidationResult(
-                                status=ERROR,
-                                location='{} xml:id={}'.format(
-                                    el.tag,
-                                    el.get(xmlIdAttr, '[absent]')),
-                                message='Inline style attribute {} '
-                                        'not permitted on content element'
-                                        .format(attr)
-                            )
+                        validation_results.error(
+                            location='{} xml:id={}'.format(
+                                el.tag,
+                                el.get(xmlIdAttr, '[absent]')),
+                            message='Inline style attribute {} '
+                                    'not permitted on content element'
+                                    .format(attr)
                         )
 
         if valid:
-            validation_results.append(
-                ValidationResult(
-                    status=GOOD,
+            validation_results.good(
                     location='content elements',
                     message='Inline style attributes checked'
-                )
             )
 
         return valid

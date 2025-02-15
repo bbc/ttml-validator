@@ -1,4 +1,4 @@
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD
+from ..validationLogging.validationLogger import ValidationLogger
 import codecs
 
 
@@ -7,7 +7,7 @@ class PreParseCheck:
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
+            validation_results: ValidationLogger) -> tuple[bool, bytes]:
         raise NotImplementedError()
 
 
@@ -16,21 +16,19 @@ class NullByteCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
+            validation_results: ValidationLogger) -> tuple[bool, bytes]:
         null_byte = b'\x00'
         if null_byte in input:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='1st at byte {}'.format(input.index(null_byte)),
                 message='Null byte(s) found in input'
-            ))
+            )
             return (False, input.replace(null_byte, b''))
         else:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='Unparsed file',
                 message='No null bytes found'
-            ))
+            )
         return (True, input)
 
 
@@ -39,7 +37,7 @@ class BadEncodingCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
+            validation_results: ValidationLogger) -> tuple[bool, bytes]:
 
         # sirens for bad encoding - there's a chance of getting
         # false positives or false negatives. False positives
@@ -56,19 +54,17 @@ class BadEncodingCheck(PreParseCheck):
             needs_reencoding |= utf8_as_latin1_siren in input
 
         if needs_reencoding:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='Unparsed file',
                 message='Bad latin-1 encoding found, re-encoding as UTF-8'
-            ))
+            )
             output = str(input, encoding='utf-8').encode('latin-1')
             return (False, output)
 
-        validation_results.append(ValidationResult(
-            status=GOOD,
+        validation_results.good(
             location='Unparsed file',
             message='No bad encoding sirens found'
-        ))
+        )
 
         return (True, input)
 
@@ -95,7 +91,7 @@ class ByteOrderMarkCheck(PreParseCheck):
     def run(
             self,
             input: bytes,
-            validation_results: list[ValidationResult]) -> tuple[bool, bytes]:
+            validation_results: ValidationLogger) -> tuple[bool, bytes]:
 
         has_bom = b''
         for bom in self._boms_to_encodings.keys():
@@ -110,46 +106,42 @@ class ByteOrderMarkCheck(PreParseCheck):
                 break
 
         if has_bom == codecs.BOM_UTF8:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='First {} bytes'.format(len(has_bom)),
                 message='File has a prohibited Byte Order Mark (BOM): {} '
                         '- stripping UTF-8 BOM and continuing.'
                         .format(str(has_bom))
-            ))
+            )
             output = input[len(has_bom):]
             return (False, output)
         elif has_bom:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='First {} bytes'.format(len(has_bom)),
                 message='File has a prohibited Byte Order Mark (BOM): {}'
                         ' - attempting to re-encode using codec {}'
                         .format(
                             str(has_bom),
                             self._boms_to_encodings[has_bom])
-            ))
+            )
             output = codecs.encode(
                 codecs.decode(
                     input[len(has_bom):], self._boms_to_encodings[has_bom]),
                 'utf-8')
             return (False, output)
         elif has_weird_bom:
-            validation_results.append(ValidationResult(
-                status=ERROR,
+            validation_results.error(
                 location='First {} bytes'.format(len(has_weird_bom)),
                 message='File has a corrupt Byte Order Mark (BOM): {}'
                         ' - removing and hoping for the best.'
                         .format(
                             str(has_weird_bom),
-            )))
+                ))
             output = input[len(has_weird_bom):]
             return (False, output)
         else:
-            validation_results.append(ValidationResult(
-                status=GOOD,
+            validation_results.good(
                 location='Unparsed file',
                 message='No Byte Order Mark (BOM) found'
-            ))
+            )
 
         return (True, input)
