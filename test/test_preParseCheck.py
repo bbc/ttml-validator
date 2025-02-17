@@ -3,6 +3,7 @@ import src.preParseChecks.preParseCheck as preParseCheck
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD
+from src.validationLogging.validationCodes import ValidationCode
 
 
 class testPreParseCheck(unittest.TestCase):
@@ -34,7 +35,8 @@ class testPreParseCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='Unparsed file',
-                message='No null bytes found')
+                message='No null bytes found',
+                code=ValidationCode.preParse_nullBytes)
         ])
 
         vr = ValidationLogger()
@@ -48,7 +50,8 @@ class testPreParseCheck(unittest.TestCase):
         expected_vr = ValidationResult(
             status=ERROR,
             location='1st at byte 3',
-            message='Null byte(s) found in input'
+            message='Null byte(s) found in input',
+            code=ValidationCode.preParse_nullBytes
         )
         self.assertListEqual(vr, [expected_vr])
 
@@ -72,7 +75,8 @@ class testPreParseCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='Unparsed file',
-                message='No bad encoding sirens found'
+                message='No bad encoding sirens found',
+                code=ValidationCode.preParse_encoding
             )
         ])
 
@@ -88,7 +92,8 @@ class testPreParseCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='Unparsed file',
-                message='Bad latin-1 encoding found, re-encoding as UTF-8')
+                message='Bad latin-1 encoding found, re-encoding as UTF-8',
+                code=ValidationCode.preParse_encoding)
         ])
 
     def testBOMCheck(self):
@@ -117,7 +122,8 @@ class testPreParseCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='Unparsed file',
-                message='No Byte Order Mark (BOM) found'
+                message='No Byte Order Mark (BOM) found',
+                code=ValidationCode.preParse_byteOrderMark
             )
         ])
 
@@ -136,7 +142,8 @@ class testPreParseCheck(unittest.TestCase):
                 location='First 3 bytes',
                 message='File has a prohibited Byte Order Mark (BOM): '
                         'b\'\\xef\\xbb\\xbf\''
-                        ' - stripping UTF-8 BOM and continuing.')
+                        ' - stripping UTF-8 BOM and continuing.',
+                code=ValidationCode.preParse_byteOrderMark)
         ])
 
         # UTF-16 BOM
@@ -154,7 +161,8 @@ class testPreParseCheck(unittest.TestCase):
                 location='First 2 bytes',
                 message='File has a prohibited Byte Order Mark (BOM): '
                         'b\'\\xff\\xfe\''
-                        ' - attempting to re-encode using codec utf_16_le')
+                        ' - attempting to re-encode using codec utf_16_le',
+                code=ValidationCode.preParse_byteOrderMark)
         ])
 
         # Weird BOM
@@ -172,5 +180,6 @@ class testPreParseCheck(unittest.TestCase):
                 location='First 6 bytes',
                 message='File has a corrupt Byte Order Mark (BOM): '
                         'b\'\\xc3\\xaf\\xc2\\xbb\\xc2\\xbf\' '
-                        '- removing and hoping for the best.')
+                        '- removing and hoping for the best.',
+                code=ValidationCode.preParse_byteOrderMark_corrupt)
         ])

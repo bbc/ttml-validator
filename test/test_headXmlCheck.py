@@ -1,6 +1,7 @@
 import unittest
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import xml.etree.ElementTree as ElementTree
+from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD, WARN
@@ -49,37 +50,43 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}head',
-                message='Head checked'
+                message='Head checked',
+                code=ValidationCode.ttml_element_head
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -122,37 +129,43 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}head/'
                          '{http://www.w3.org/ns/ttaf#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}head/'
                          '{http://www.w3.org/ns/ttaf}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttaf}styling/'
                          '{http://www.w3.org/ns/ttaf}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}head/'
                          '{http://www.w3.org/ns/ttaf}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttaf}layout/'
                          '{http://www.w3.org/ns/ttaf}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}tt/'
                          '{http://www.w3.org/ns/ttaf}head',
-                message='Head checked'
+                message='Head checked',
+                code=ValidationCode.ttml_element_head
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -179,7 +192,8 @@ class testHeadXmlCheck(unittest.TestCase):
             status=ERROR,
             location='{http://www.w3.org/ns/ttml}tt/'
                      '{http://www.w3.org/ns/ttml}head',
-            message='Found 0 head elements, expected 1'
+            message='Found 0 head elements, expected 1',
+            code=ValidationCode.ebuttd_head_element_constraint
         )
         self.assertListEqual(vr, [expected_validation_result])
 
@@ -207,7 +221,8 @@ class testHeadXmlCheck(unittest.TestCase):
             status=ERROR,
             location='{http://www.w3.org/ns/ttml}tt/'
                      '{http://www.w3.org/ns/ttml}head',
-            message='Found 2 head elements, expected 1'
+            message='Found 2 head elements, expected 1',
+            code=ValidationCode.ttml_element_head
         )
         self.assertListEqual(vr, [expected_validation_result])
 
@@ -247,37 +262,43 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='copyright element absent'
+                message='copyright element absent',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}head',
-                message='Head checked'
+                message='Head checked',
+                code=ValidationCode.ttml_element_head
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -314,31 +335,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Required copyright element absent'
+                message='Required copyright element absent',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -382,37 +408,43 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=WARN,
                 location='{http://www.w3.org/ns/ttaf}head/'
                          '{http://www.w3.org/ns/ttaf#metadata}copyright',
-                message='2 copyright elements found, expected 1'
+                message='2 copyright elements found, expected 1',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}head/'
                          '{http://www.w3.org/ns/ttaf}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttaf}styling/'
                          '{http://www.w3.org/ns/ttaf}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}head/'
                          '{http://www.w3.org/ns/ttaf}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttaf}layout/'
                          '{http://www.w3.org/ns/ttaf}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttaf}tt/'
                          '{http://www.w3.org/ns/ttaf}head',
-                message='Head checked'
+                message='Head checked',
+                code=ValidationCode.ttml_element_head
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -454,31 +486,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='Required styling element absent'
+                message='Required styling element absent',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='Skipping style element checks'
+                message='Skipping style element checks',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -518,31 +555,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='2 styling elements found, expected 1'
+                message='2 styling elements found, expected 1',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='Skipping style element checks'
+                message='Skipping style element checks',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -582,31 +624,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style',
-                message='At least one style element required, none found'
+                message='At least one style element required, none found',
+                code=ValidationCode.ebuttd_style_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -647,31 +694,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}style@'
                          '{http://www.w3.org/XML/1998/namespace}id',
-                message='style element found with no xml:id'
+                message='style element found with no xml:id',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -714,43 +766,50 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}style '
                          's1',
-                message='Style element has no recognised style attributes'
+                message='Style element has no recognised style attributes',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}style@'
                          '{http://www.w3.org/XML/1998/namespace}id',
-                message='style element found with no xml:id'
+                message='style element found with no xml:id',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}style '
                          '(no xml:id)',
-                message='Style element has no recognised style attributes'
+                message='Style element has no recognised style attributes',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -797,44 +856,51 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}style@'
                          '{http://www.w3.org/ns/ttml#styling}color',
-                message='Attribute value [white] is invalid'
+                message='Attribute value [white] is invalid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}style@'
                          '{urn:ebu:tt:style}linePadding',
-                message='Attribute value [1%] is invalid'
+                message='Attribute value [1%] is invalid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}style@'
                          '{http://www.w3.org/ns/ttml/profile/imsc1#styling}'
                          'fillLineGap',
-                message='Attribute value [curious] is invalid'
+                message='Attribute value [curious] is invalid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -876,31 +942,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='Required layout element absent'
+                message='Required layout element absent',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='Skipping region element checks'
+                message='Skipping region element checks',
+                code=ValidationCode.ttml_element_region
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -940,31 +1011,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='2 layout elements found, expected 1'
+                message='2 layout elements found, expected 1',
+                code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='Skipping region element checks'
+                message='Skipping region element checks',
+                code=ValidationCode.ttml_element_region
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -1004,31 +1080,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}layout/'
                          '{http://www.w3.org/ns/ttml}region',
-                message='At least one region element required, none found'
+                message='At least one region element required, none found',
+                code=ValidationCode.ebuttd_region_element_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -1069,31 +1150,36 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}region@'
                          '{http://www.w3.org/XML/1998/namespace}id',
-                message='region element found with no xml:id'
+                message='region element found with no xml:id',
+                code=ValidationCode.ttml_element_region
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -1136,43 +1222,50 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}region '
                          'r1',
-                message='Region element has no recognised style attributes'
+                message='Region element has no recognised style attributes',
+                code=ValidationCode.ttml_element_region
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}region@'
                          '{http://www.w3.org/XML/1998/namespace}id',
-                message='region element found with no xml:id'
+                message='region element found with no xml:id',
+                code=ValidationCode.ttml_element_region
             ),
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}region '
                          '(no xml:id)',
-                message='Region element has no recognised style attributes'
+                message='Region element has no recognised style attributes',
+                code=ValidationCode.ttml_element_region
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -1219,44 +1312,51 @@ class testHeadXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='[{http://www.w3.org/ns/ttml}styling/'
                          '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}region@'
                          '{http://www.w3.org/ns/ttml#styling}origin',
-                message='Attribute value [the big bang] is invalid'
+                message='Attribute value [the big bang] is invalid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}region@'
                          '{http://www.w3.org/ns/ttml#styling}extent',
-                message='Attribute value [mahoosive] is invalid'
+                message='Attribute value [mahoosive] is invalid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}region@'
                          '{http://www.w3.org/ns/ttml#styling}'
                          'backgroundColor',
-                message='Attribute value [purple] is invalid'
+                message='Attribute value [purple] is invalid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

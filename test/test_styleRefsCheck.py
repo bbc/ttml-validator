@@ -3,6 +3,7 @@ import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.headXmlCheck as headXmlCheck
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
+from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD, WARN, INFO
@@ -50,7 +51,8 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='document',
-                message='Style references and attributes checked'
+                message='Style references and attributes checked',
+                code=ValidationCode.ttml_styling
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -94,12 +96,14 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=WARN,
                 location='style xml:id=s1',
-                message='Unreferenced style element'
+                message='Unreferenced style element',
+                code=ValidationCode.ttml_element_style
             ),
             ValidationResult(
                 status=GOOD,
                 location='document',
-                message='Style references and attributes checked'
+                message='Style references and attributes checked',
+                code=ValidationCode.ttml_styling
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -149,27 +153,33 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=WARN,
                 location='style xml:id=not_an_id',
-                message='Referenced id does not point to a style element'
+                message='Referenced id does not point to a style element',
+                code=ValidationCode.ttml_styling_reference
             ),
             ValidationResult(
                 status=WARN,
                 location='style xml:id=d1',
-                message='Referenced id does not point to a style element'
+                message='Referenced id does not point to a style element',
+                code=ValidationCode.ttml_styling_reference
             ),
             ValidationResult(
                 status=GOOD,
                 location='p element xml:id omitted',
-                message='Computed fontSize 6.666667rh (within BBC-allowed range)'
+                message='Computed fontSize 6.666667rh '
+                        '(within BBC-allowed range)',
+                code=ValidationCode.bbc_text_fontSize_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='p element xml:id omitted',
-                message='Computed linePadding 0.5c within BBC-allowed range'
+                message='Computed linePadding 0.5c within BBC-allowed range',
+                code=ValidationCode.bbc_text_linePadding_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='document',
-                message='Style references and attributes checked'
+                message='Style references and attributes checked',
+                code=ValidationCode.ttml_styling
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -223,7 +233,8 @@ class testStyleRefsCheck(unittest.TestCase):
                 location='span element',
                 message='Specified style attribute '
                         '{http://www.w3.org/ns/ttml#styling}lineHeight '
-                        'is not applicable to element type span'
+                        'is not applicable to element type span',
+                code=ValidationCode.ttml_styling_attribute_applicability
             ),
         ]
         vr_errors = [r for r in vr if r.status == ERROR]
@@ -283,27 +294,32 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='style element',
-                message='Cyclic style ref to s2 found'
+                message='Cyclic style ref to s2 found',
+                code=ValidationCode.ttml_styling_referential_chained
             ),
             ValidationResult(
                 status=ERROR,
                 location='style element',
-                message='Cyclic style ref to s1 found'
+                message='Cyclic style ref to s1 found',
+                code=ValidationCode.ttml_styling_referential_chained
             ),
             ValidationResult(
                 status=ERROR,
                 location='style element',
-                message='Cyclic style ref to s4 found'
+                message='Cyclic style ref to s4 found',
+                code=ValidationCode.ttml_styling_referential_chained
             ),
             ValidationResult(
                 status=ERROR,
                 location='style element',
-                message='Cyclic style ref to s5 found'
+                message='Cyclic style ref to s5 found',
+                code=ValidationCode.ttml_styling_referential_chained
             ),
             ValidationResult(
                 status=ERROR,
                 location='style element',
-                message='Cyclic style ref to s3 found'
+                message='Cyclic style ref to s3 found',
+                code=ValidationCode.ttml_styling_referential_chained
             ),
         ]
         vr_errors = [r for r in vr if r.status == ERROR]
@@ -359,28 +375,36 @@ class testStyleRefsCheck(unittest.TestCase):
         expected_validation_error_results = [
             ValidationResult(
                 status=ERROR,
-                location='body element {http://www.w3.org/ns/ttml#styling}backgroundColor attribute',
+                location='body element '
+                         '{http://www.w3.org/ns/ttml#styling}backgroundColor '
+                         'attribute',
                 message='backgroundColor attribute '
                         '[bogus value] '
-                        'is not valid'
+                        'is not valid',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml#styling}backgroundColor '
                          'styling attribute with value "[bogus value]"',
-                message='Value has invalid format'
+                message='Value has invalid format',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
             ValidationResult(
                 status=ERROR,
-                location='p element {http://www.w3.org/ns/ttml#styling}backgroundColor attribute',
+                location='p element {http://www.w3.org/ns/ttml#styling}'
+                         'backgroundColor attribute',
                 message='backgroundColor #000000 '
-                        'is not transparent (BBC requirement)'
+                        'is not transparent (BBC requirement)',
+                code=ValidationCode.bbc_block_backgroundColor_constraint
             ),
             ValidationResult(
                 status=ERROR,
-                location='div element {http://www.w3.org/ns/ttml#styling}backgroundColor attribute',
+                location='div element {http://www.w3.org/ns/ttml#styling}'
+                         'backgroundColor attribute',
                 message='backgroundColor #ff0000 '
-                        'is not transparent (BBC requirement)'
+                        'is not transparent (BBC requirement)',
+                code=ValidationCode.bbc_block_backgroundColor_constraint
             ),
         ]
         vr_errors = [r for r in vr if r.status == ERROR]
@@ -496,14 +520,16 @@ class testStyleRefsCheck(unittest.TestCase):
                 location='p element xml:id d1',
                 message="Computed fontFamily "
                         "['jelly', 'ice cream', 'default'] "
-                        "differs from BBC requirement"
+                        "differs from BBC requirement",
+                code=ValidationCode.bbc_text_fontFamily_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed fontFamily "
                         "['jelly', 'ice cream', 'default'] "
-                        "differs from BBC requirement"
+                        "differs from BBC requirement",
+                code=ValidationCode.bbc_text_fontFamily_constraint
             ),
         ]
         vr_errors = [r for r in vr if r.status == ERROR]
@@ -625,21 +651,24 @@ class testStyleRefsCheck(unittest.TestCase):
                 location='span element xml:id omitted',
                 message="Computed fontSize "
                         "1.000000rh "
-                        "outside BBC-allowed range"
+                        "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_fontSize_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d2',
                 message="Computed fontSize "
                         "13.333334rh "
-                        "outside BBC-allowed range"
+                        "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_fontSize_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id sp3',
                 message="Computed fontSize "
                         "26.666668rh "
-                        "outside BBC-allowed range"
+                        "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_fontSize_constraint
             ),
         ]
         vr_errors = [r for r in vr if r.status == ERROR]
@@ -712,7 +741,8 @@ class testStyleRefsCheck(unittest.TestCase):
                 status=INFO,
                 location='p element xml:id d2',
                 message="Computed multiRowAlign set to "
-                        "center, matches textAlign"
+                        "center, matches textAlign",
+                code=ValidationCode.ebuttd_multiRowAlign
             ),
             ValidationResult(
                 status=WARN,
@@ -720,7 +750,8 @@ class testStyleRefsCheck(unittest.TestCase):
                 message="Computed multiRowAlign set to "
                         "center, differs from textAlign "
                         "right (Not expected in BBC "
-                        "requirements)"
+                        "requirements)",
+                code=ValidationCode.bbc_text_multiRowAlign_constraint
             ),
         ]
         vr_mra = [r for r in vr if 'multiRowAlign' in r.message]
@@ -791,25 +822,29 @@ class testStyleRefsCheck(unittest.TestCase):
                 status=ERROR,
                 location='p element xml:id d1',
                 message="Computed linePadding 0c "
-                        "outside BBC-allowed range"
+                        "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_linePadding_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d2',
                 message="Computed linePadding 0.1c "
-                        "outside BBC-allowed range"
+                        "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_linePadding_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d3',
                 message="Computed linePadding 10c "
-                        "outside BBC-allowed range"
+                        "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_linePadding_constraint
             ),
             ValidationResult(
                 status=GOOD,
                 location='p element xml:id d4',
                 message="Computed linePadding 0.5c "
-                        "within BBC-allowed range"
+                        "within BBC-allowed range",
+                code=ValidationCode.bbc_text_linePadding_constraint
             ),
         ]
         vr_lp = [r for r in vr if 'linePadding' in r.message]
@@ -879,13 +914,15 @@ class testStyleRefsCheck(unittest.TestCase):
                 status=ERROR,
                 location='p element xml:id d1',
                 message="Computed fillLineGap false "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_fillLineGap_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d2',
                 message="Computed fillLineGap false "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_fillLineGap_constraint
             ),
         ]
         vr_lp = [r for r in vr if 'fillLineGap' in r.message]
@@ -1031,37 +1068,43 @@ class testStyleRefsCheck(unittest.TestCase):
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed backgroundColor #00000000 "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_backgroundColor_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed color #0000ff "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_color_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed backgroundColor #00000080 "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_backgroundColor_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed color #99111180 "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_color_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed backgroundColor #ffffff00 "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_backgroundColor_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed backgroundColor #ffff00ff "
-                        "not BBC-allowed value"
+                        "not BBC-allowed value",
+                code=ValidationCode.bbc_text_backgroundColor_constraint
             ),
         ]
         vr_lp = [r for r in vr
@@ -1133,7 +1176,9 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=WARN,
                 location='span element xml:id omitted',
-                message='Computed fontStyle italic not in general use for BBC')
+                message='Computed fontStyle italic not in general use for BBC',
+                code=ValidationCode.bbc_text_fontStyle_constraint
+                )
             ]
         vr_lp = [r for r in vr if 'fontStyle' in r.message]
         self.assertListEqual(

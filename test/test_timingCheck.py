@@ -1,6 +1,7 @@
 import unittest
 import src.xmlChecks.timingXmlCheck as timingXmlCheck
 import xml.etree.ElementTree as ElementTree
+from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD, WARN, INFO
@@ -42,7 +43,8 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 0s, end of doc is undefined'
+                message='First text appears at 0s, end of doc is undefined',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -76,7 +78,8 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 3.4s'
+                message='First text appears at 1.234s, end of doc is 3.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -110,7 +113,8 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 3.4s'
+                message='First text appears at 1.234s, end of doc is 3.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -144,22 +148,26 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
-                message='begin=1.234s is not a valid offset time'
+                message='begin=1.234s is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
-                message='end=2s is not a valid offset time'
+                message='end=2s is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p2',
-                message='begin=50f is not a valid offset time'
+                message='begin=50f is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 3.4s'
+                message='First text appears at 1.234s, end of doc is 3.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -192,23 +200,30 @@ class testTimingXmlCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}span element xml:id omitted',
-                message='begin=1.234s is not a valid offset time'
+                location='{http://www.w3.org/ns/ttml}span element '
+                         'xml:id omitted',
+                message='begin=1.234s is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}span element xml:id omitted',
-                message='end=2s is not a valid offset time'
+                location='{http://www.w3.org/ns/ttml}span element '
+                         'xml:id omitted',
+                message='end=2s is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}span element xml:id omitted',
-                message='begin=50f is not a valid offset time'
+                location='{http://www.w3.org/ns/ttml}span element '
+                         'xml:id omitted',
+                message='begin=50f is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 3.4s'
+                message='First text appears at 1.234s, end of doc is 3.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -243,18 +258,21 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='Gap from 2.0s to 2.1s',
-                message='Non-zero gap between subtitles is shorter than 0.8s'
+                message='Non-zero gap between subtitles is shorter than 0.8s',
+                code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
                 status=WARN,
                 location='Gap from 3.4s to 4.2s',
                 message='Short gap between subtitles should be '
-                        'at least 1.5s'
+                        'at least 1.5s',
+                code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 5.4s'
+                message='First text appears at 1.234s, end of doc is 5.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -289,18 +307,21 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='Gap from 2.0s to 2.2s',
-                message='Non-zero gap between subtitles is shorter than 0.8s'
+                message='Non-zero gap between subtitles is shorter than 0.8s',
+                code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
                 status=WARN,
                 location='Gap from 3.4s to 4.3s',
                 message='Short gap between subtitles should be '
-                        'at least 1.5s'
+                        'at least 1.5s',
+                code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 10.7s'
+                message='First text appears at 1.234s, end of doc is 10.7s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -334,12 +355,14 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='p elements beginning before 00:23:00.000',
-                message='1 subtitle(s) found, minimum 2 required'
+                message='1 subtitle(s) found, minimum 2 required',
+                code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 1383.4s'
+                message='First text appears at 1.234s, end of doc is 1383.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -373,12 +396,14 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='p elements beginning before 00:23:00.000',
-                message='1 subtitle(s) found, minimum 2 required'
+                message='1 subtitle(s) found, minimum 2 required',
+                code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 1.234s, end of doc is 1383.4s'
+                message='First text appears at 1.234s, end of doc is 1383.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -416,18 +441,21 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=INFO,
                 location='Document',
                 message='Skipping check for enough early subtitles because '
-                        'segment duration is shorter than search period.'
+                        'segment duration is shorter than search period.',
+                code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
                 status=GOOD,
                 location='Timed content',
                 message='Document content overlaps the segment '
-                        'interval [384s..387.84s)'
+                        'interval [384s..387.84s)',
+                code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 380.0s, end of doc is 390.4s'
+                message='First text appears at 380.0s, end of doc is 390.4s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -465,18 +493,21 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=INFO,
                 location='Document',
                 message='Skipping check for enough early subtitles because '
-                        'segment duration is shorter than search period.'
+                        'segment duration is shorter than search period.',
+                code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
                 status=GOOD,
                 location='Timed content',
                 message='Document content overlaps the segment '
-                        'interval [384s..387.84s)'
+                        'interval [384s..387.84s)',
+                code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 384.5s, end of doc is 387.0s'
+                message='First text appears at 384.5s, end of doc is 387.0s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -506,7 +537,8 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}tt element',
-                message='No body element found, skipping timing tests'
+                message='No body element found, skipping timing tests',
+                code=ValidationCode.ttml_element_body
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -545,18 +577,21 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=INFO,
                 location='Document',
                 message='Skipping check for enough early subtitles because '
-                        'segment duration is shorter than search period.'
+                        'segment duration is shorter than search period.',
+                code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
                 status=ERROR,
                 location='Timed content',
                 message='Document content is timed outside the segment '
-                        'interval [384s..387.84s)'
+                        'interval [384s..387.84s)',
+                code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 380.5s, end of doc is 384.0s'
+                message='First text appears at 380.5s, end of doc is 384.0s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -594,18 +629,21 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=INFO,
                 location='Document',
                 message='Skipping check for enough early subtitles because '
-                        'segment duration is shorter than search period.'
+                        'segment duration is shorter than search period.',
+                code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
                 status=ERROR,
                 location='Timed content',
                 message='Document content is timed outside the segment '
-                        'interval [384s..387.84s)'
+                        'interval [384s..387.84s)',
+                code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 387.841s, end of doc is 390.0s'
+                message='First text appears at 387.841s, end of doc is 390.0s',
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

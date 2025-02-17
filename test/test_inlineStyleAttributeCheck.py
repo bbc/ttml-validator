@@ -1,6 +1,7 @@
 import unittest
 import src.xmlChecks.inlineStyleAttributeCheck as inlineStyleAttributeCheck
 import xml.etree.ElementTree as ElementTree
+from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD
@@ -41,7 +42,8 @@ class testInlineStyleAttributesCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='content elements',
-                message='Inline style attributes checked'
+                message='Inline style attributes checked',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -87,21 +89,24 @@ class testInlineStyleAttributesCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}body xml:id=[absent]',
                 message='Inline style attribute '
                         '{http://www.w3.org/ns/ttml#styling}color '
-                        'not permitted on content element'
+                        'not permitted on content element',
+                code=ValidationCode.ebuttd_inline_styling_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div xml:id=[absent]',
                 message='Inline style attribute '
                         '{http://www.w3.org/ns/ttml#styling}backgroundColor '
-                        'not permitted on content element'
+                        'not permitted on content element',
+                code=ValidationCode.ebuttd_inline_styling_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p xml:id=p1',
                 message='Inline style attribute '
                         '{http://www.w3.org/ns/ttml#styling}lineHeight '
-                        'not permitted on content element'
+                        'not permitted on content element',
+                code=ValidationCode.ebuttd_inline_styling_constraint
             ),
             ValidationResult(
                 status=ERROR,
@@ -109,14 +114,16 @@ class testInlineStyleAttributesCheck(unittest.TestCase):
                 message='Inline style attribute '
                         '{http://www.w3.org/ns/ttml/profile/imsc1#styling}'
                         'fillLineGap '
-                        'not permitted on content element'
+                        'not permitted on content element',
+                code=ValidationCode.ebuttd_inline_styling_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span xml:id=[absent]',
                 message='Inline style attribute '
                         '{http://www.w3.org/ns/ttml#styling}fontSize '
-                        'not permitted on content element'
+                        'not permitted on content element',
+                code=ValidationCode.ebuttd_inline_styling_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

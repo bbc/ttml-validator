@@ -1,6 +1,7 @@
 import unittest
 import src.xmlChecks.ttXmlCheck as ttXmlCheck
 import xml.etree.ElementTree as ElementTree
+from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD, WARN, INFO
@@ -35,7 +36,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='Parsed document',
                 message='2 elements have unqualified id attributes, '
                         'of which 1 have no xml:id attribute. '
-                        'Check if they should have xml:id attributes!'
+                        'Check if they should have xml:id attributes!',
+                code=ValidationCode.xml_id_unqualified
             ),
             ]
         self.assertListEqual(vr, expected_validation_results)
@@ -70,7 +72,8 @@ class testTtXmlCheck(unittest.TestCase):
         expected_validation_result = ValidationResult(
             status=GOOD,
             location='Parsed document',
-            message='xml:id values are unique'
+            message='xml:id values are unique',
+            code=ValidationCode.xml_id_unique
         )
         self.assertListEqual(vr, [expected_validation_result])
 
@@ -106,13 +109,15 @@ class testTtXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div, '
                          '{http://www.w3.org/ns/ttml}div',
-                message='Duplicate xml:id found with value d1'
+                message='Duplicate xml:id found with value d1',
+                code=ValidationCode.xml_id_unique
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p, '
                          '{http://www.w3.org/ns/ttml}p',
-                message='Duplicate xml:id found with value p1'
+                message='Duplicate xml:id found with value p1',
+                code=ValidationCode.xml_id_unique
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -137,8 +142,16 @@ class testTtXmlCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=GOOD,
-                location='Root element',
-                message='Document root has correct tag and namespace'
+                location='{http://www.w3.org/ns/ttml}tt',
+                message='Root element has expected namespace '
+                        '"http://www.w3.org/ns/ttml"',
+                code=ValidationCode.xml_tt_namespace
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt',
+                message='Root element has expected tag <tt>',
+                code=ValidationCode.xml_root_element
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -162,8 +175,16 @@ class testTtXmlCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=GOOD,
-                location='Root element',
-                message='Document root has correct tag and namespace'
+                location='{http://www.w3.org/ns/ttml}tt',
+                message='Root element has expected namespace '
+                        '"http://www.w3.org/ns/ttml"',
+                code=ValidationCode.xml_tt_namespace
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt',
+                message='Root element has expected tag <tt>',
+                code=ValidationCode.xml_root_element
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -188,8 +209,15 @@ class testTtXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttaf}tt',
-                message='Element has unexpected namespace '
-                        '"http://www.w3.org/ns/ttaf"'
+                message='Root element has unexpected namespace '
+                        '"http://www.w3.org/ns/ttaf"',
+                code=ValidationCode.xml_tt_namespace
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttaf}tt',
+                message='Root element has expected tag <tt>',
+                code=ValidationCode.xml_root_element
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -214,13 +242,15 @@ class testTtXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttaf}wott',
-                message='Element has unexpected namespace '
-                        '"http://www.w3.org/ns/ttaf"'
+                message='Root element has unexpected namespace '
+                        '"http://www.w3.org/ns/ttaf"',
+                code=ValidationCode.xml_tt_namespace
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttaf}wott',
-                message='Element has unexpected tag <wott>'
+                message='Root element has unexpected tag <wott>',
+                code=ValidationCode.xml_root_element
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -249,7 +279,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'timeBase attribute',
-                message='timeBase checked'
+                message='timeBase checked',
+                code=ValidationCode.ttml_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -278,7 +309,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'timeBase attribute',
-                message='Required timeBase attribute absent'
+                message='Required timeBase attribute absent',
+                code=ValidationCode.ttml_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -308,7 +340,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttaf}tt '
                          '{http://www.w3.org/ns/ttaf#parameter}'
                          'timeBase attribute',
-                message='Required timeBase attribute absent'
+                message='Required timeBase attribute absent',
+                code=ValidationCode.ttml_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -337,7 +370,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'timeBase attribute',
-                message="timeBase smpte not in the allowed set ['media']"
+                message="timeBase smpte not in the allowed set ['media']",
+                code=ValidationCode.ttml_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -367,7 +401,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
                          'activeArea attribute',
-                message='activeArea checked'
+                message='activeArea checked',
+                code=ValidationCode.imsc_parameter_activeArea
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -395,7 +430,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
                          'activeArea attribute',
-                message='Required activeArea attribute absent'
+                message='Required activeArea attribute absent',
+                code=ValidationCode.imsc_parameter_activeArea
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -416,14 +452,16 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
                          'activeArea attribute',
-                message='activeArea attribute absent'
+                message='activeArea attribute absent',
+                code=ValidationCode.imsc_parameter_activeArea
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
                          'activeArea attribute',
-                message='activeArea checked'
+                message='activeArea checked',
+                code=ValidationCode.imsc_parameter_activeArea
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -453,7 +491,8 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
                          'activeArea attribute',
                 message='activeArea 10% 10% 80% 80% abc does not '
-                        'match syntax requirements'
+                        'match syntax requirements',
+                code=ValidationCode.imsc_parameter_activeArea
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -483,7 +522,8 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
                          'activeArea attribute',
                 message='activeArea 10% 10% 110% 80% has '
-                        'at least one component >100%'
+                        'at least one component >100%',
+                code=ValidationCode.imsc_parameter_activeArea
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -513,7 +553,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
-                message='cellResolution checked'
+                message='cellResolution checked',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -545,7 +586,8 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttaf}tt '
                          '{http://www.w3.org/ns/ttaf#parameter}'
                          'cellResolution attribute',
-                message='cellResolution checked'
+                message='cellResolution checked',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -573,14 +615,16 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
-                message='Required cellResolution attribute absent'
+                message='Required cellResolution attribute absent',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
             ValidationResult(
                 status=INFO,
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
-                message='using default cellResolution value 32 15'
+                message='using default cellResolution value 32 15',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -601,21 +645,24 @@ class testTtXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
-                message='cellResolution attribute absent'
+                message='cellResolution attribute absent',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
             ValidationResult(
                 status=INFO,
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
-                message='using default cellResolution value 32 15'
+                message='using default cellResolution value 32 15',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt '
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
-                message='cellResolution checked'
+                message='cellResolution checked',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -645,7 +692,8 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
                 message='cellResolution 40c 24c does not '
-                        'match syntax requirements'
+                        'match syntax requirements',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -675,7 +723,8 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'cellResolution attribute',
                 message='cellResolution 0 24 has '
-                        'at least one component == 0'
+                        'at least one component == 0',
+                code=ValidationCode.ttml_parameter_cellResolution
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

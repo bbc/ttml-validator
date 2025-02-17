@@ -1,3 +1,4 @@
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationResult import ValidationResult, \
     ERROR, WARN
 from ..validationLogging.validationLogger import ValidationLogger
@@ -34,12 +35,14 @@ class duplicateXmlIdCheck(xmlCheck):
                 valid = False
                 validation_results.error(
                     location=', '.join(e.tag for e in elist),
-                    message='Duplicate xml:id found with value ' + xmlId
+                    message='Duplicate xml:id found with value ' + xmlId,
+                    code=ValidationCode.xml_id_unique
                 )
         if valid:
             validation_results.good(
                 location='Parsed document',
-                message='xml:id values are unique'
+                message='xml:id values are unique',
+                code=ValidationCode.xml_id_unique
             )
 
         context['xmlId_to_element_map'] = xmlIdToElementMap
@@ -74,7 +77,8 @@ class unqualifiedIdAttributeCheck(xmlCheck):
                         .format(
                             num_elements_with_unq_id,
                             num_elements_with_unq_id_and_no_xml_id
-                        )
+                        ),
+                code=ValidationCode.xml_id_unqualified
             )
 
         # Never fail on this
@@ -97,18 +101,27 @@ class ttTagAndNamespaceCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location=input.tag,
-                message='Element has unexpected namespace "{}"'.format(ns)
+                message='Root element has unexpected namespace "{}"'.format(ns),
+                code=ValidationCode.xml_tt_namespace
+            )
+        else:
+            validation_results.good(
+                location=input.tag,
+                message='Root element has expected namespace "{}"'.format(ns),
+                code=ValidationCode.xml_tt_namespace
             )
         if unq_name != ttml_root_el_name:
             valid = False
             validation_results.error(
                 location=input.tag,
-                message='Element has unexpected tag <{}>'.format(unq_name)
+                message='Root element has unexpected tag <{}>'.format(unq_name),
+                code=ValidationCode.xml_root_element
             )
-        if valid:
+        else:
             validation_results.good(
-                location='Root element',
-                message='Document root has correct tag and namespace'
+                location=input.tag,
+                message='Root element has expected tag <{}>'.format(unq_name),
+                code=ValidationCode.xml_root_element
             )
 
         context['root_ns'] = ns
@@ -142,7 +155,8 @@ class timeBaseCheck(xmlCheck):
             validation_results.error(
                 location='{} {} attribute'.format(
                     input.tag, timeBase_attr_key),
-                message='Required timeBase attribute absent'
+                message='Required timeBase attribute absent',
+                code=ValidationCode.ttml_parameter_timeBase
             )
 
         timeBase_attr_val = \
@@ -153,14 +167,16 @@ class timeBaseCheck(xmlCheck):
                 location='{} {} attribute'.format(
                     input.tag, timeBase_attr_key),
                 message='timeBase {} not in the allowed set {}'.format(
-                    timeBase_attr_val, self._timeBase_whitelist)
+                    timeBase_attr_val, self._timeBase_whitelist),
+                code=ValidationCode.ttml_parameter_timeBase
             )
 
         if valid:
             validation_results.good(
                 location='{} {} attribute'.format(
                     input.tag, timeBase_attr_key),
-                message='timeBase checked'
+                message='timeBase checked',
+                code=ValidationCode.ttml_parameter_timeBase
             )
 
         return valid
@@ -196,7 +212,8 @@ class activeAreaCheck(xmlCheck):
                         input.tag, ittp_attr_key),
                     message='{}activeArea attribute absent'.format(
                         'Required ' if self._activeArea_required else ''
-                    )
+                    ),
+                    code=ValidationCode.imsc_parameter_activeArea
                 )
             )
         else:
@@ -213,7 +230,8 @@ class activeAreaCheck(xmlCheck):
                             input.tag, ittp_attr_key),
                         message='activeArea {} has '
                                 'at least one component >100%'.format(
-                            ittp_attr_val)
+                            ittp_attr_val),
+                        code=ValidationCode.imsc_parameter_activeArea
                     )
 
             else:
@@ -223,14 +241,16 @@ class activeAreaCheck(xmlCheck):
                         input.tag, ittp_attr_key),
                     message='activeArea {} does not '
                             'match syntax requirements'.format(
-                        ittp_attr_val)
+                        ittp_attr_val),
+                    code=ValidationCode.imsc_parameter_activeArea
                 )
 
         if valid:
             validation_results.good(
                 location='{} {} attribute'.format(
                     input.tag, ittp_attr_key),
-                message='activeArea checked'
+                message='activeArea checked',
+                code=ValidationCode.imsc_parameter_activeArea
             )
 
         return valid
@@ -266,8 +286,8 @@ class cellResolutionCheck(xmlCheck):
                     location='{} {} attribute'.format(
                         input.tag, cellResolution_attr_key),
                     message='{}cellResolution attribute absent'.format(
-                        'Required ' if self._cellResolution_required else ''
-                    )
+                        'Required ' if self._cellResolution_required else ''),
+                    code=ValidationCode.ttml_parameter_cellResolution
                 )
             )
             cellResolution_attr_val = self.default_cellResolution
@@ -275,8 +295,8 @@ class cellResolutionCheck(xmlCheck):
                 location='{} {} attribute'.format(
                     input.tag, cellResolution_attr_key),
                 message='using default cellResolution value {}'.format(
-                    cellResolution_attr_val
-                )
+                    cellResolution_attr_val),
+                code=ValidationCode.ttml_parameter_cellResolution
             )
         else:
             cellResolution_attr_val = input.get(cellResolution_attr_key)
@@ -292,7 +312,8 @@ class cellResolutionCheck(xmlCheck):
                             input.tag, cellResolution_attr_key),
                         message='cellResolution {} has '
                                 'at least one component == 0'.format(
-                            cellResolution_attr_val)
+                            cellResolution_attr_val),
+                        code=ValidationCode.ttml_parameter_cellResolution
                     )
 
             else:
@@ -302,14 +323,16 @@ class cellResolutionCheck(xmlCheck):
                         input.tag, cellResolution_attr_key),
                     message='cellResolution {} does not '
                             'match syntax requirements'.format(
-                        cellResolution_attr_val)
+                        cellResolution_attr_val),
+                    code=ValidationCode.ttml_parameter_cellResolution
                 )
 
         if valid:
             validation_results.good(
                 location='{} {} attribute'.format(
                     input.tag, cellResolution_attr_key),
-                message='cellResolution checked'
+                message='cellResolution checked',
+                code=ValidationCode.ttml_parameter_cellResolution
             )
             context['cellResolution'] = cellResolution_attr_val
         else:

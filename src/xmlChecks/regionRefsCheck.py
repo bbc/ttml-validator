@@ -1,3 +1,4 @@
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationResult import ValidationResult, \
     ERROR, WARN
 from ..validationLogging.validationLogger import ValidationLogger
@@ -14,6 +15,16 @@ required_region_style_attrib_keys = [
     'extent',
     'displayAlign',
     'overflow',
+]
+
+bbc_required_region_style_attrib_keys = [
+    'displayAlign',
+    'overflow'
+]
+
+ebuttd_required_region_style_attrib_keys = [
+    'origin',
+    'extent',
 ]
 
 
@@ -95,12 +106,20 @@ class regionRefsXmlCheck(xmlCheck):
             if attr_key not in sss:
                 if error_significance == ERROR:
                     valid = False
+                code = ValidationCode.ebuttd_region_attributes_constraint \
+                    if get_unqualified_name(attr_key) in \
+                    ebuttd_required_region_style_attrib_keys \
+                    else ValidationCode.bbc_region_attributes_constraint \
+                    if get_unqualified_name(attr_key) in \
+                    bbc_required_region_style_attrib_keys \
+                    else None
                 validation_results.append(ValidationResult(
                     status=error_significance,
                     location=location,
                     message='Required style attribute {} '
                             'missing from region element'
-                            .format(attr_key)
+                            .format(attr_key),
+                    code=code
                 ))
 
         for sss_key in sss:
@@ -110,7 +129,8 @@ class regionRefsXmlCheck(xmlCheck):
                     message='Non-required style attribute {} '
                             'present on region element - '
                             'presentation may differ from expectation'
-                            .format(sss_key)
+                            .format(sss_key),
+                    code=ValidationCode.ttml_attribute_styling_attribute
                 )
 
         return valid
@@ -139,7 +159,8 @@ class regionRefsXmlCheck(xmlCheck):
                 location=location,
                 message='backgroundColor value {} is non-transparent '
                         'and does not meet BBC requirements'
-                        .format(c_bgc)
+                        .format(c_bgc),
+                code=ValidationCode.bbc_region_backgroundColor_constraint
             ))
 
         # origin and extent must not make a region that goes outside the
@@ -153,7 +174,8 @@ class regionRefsXmlCheck(xmlCheck):
             validation_results.append(ValidationResult(
                 status=error_significance,
                 location=location,
-                message='Not got computed values for both origin and extent'
+                message='Not got computed values for both origin and extent',
+                code=ValidationCode.ttml_attribute_styling_attribute
             ))
         else:
             left_edge = float(c_origin_match.group('x'))
@@ -171,7 +193,8 @@ class regionRefsXmlCheck(xmlCheck):
                     location=location,
                     message='Region right edge {}% '
                             'goes beyond 100%'
-                            .format(right_edge)
+                            .format(right_edge),
+                    code=ValidationCode.ebuttd_region_position_constraint
                 ))
             if round(bottom_edge, 3) > 100.0:
                 valid = error_validity
@@ -180,7 +203,8 @@ class regionRefsXmlCheck(xmlCheck):
                     location=location,
                     message='Region bottom edge {}% '
                             'goes beyond 100%'
-                            .format(bottom_edge)
+                            .format(bottom_edge),
+                    code=ValidationCode.ebuttd_region_position_constraint
                 ))
 
             # Also check for BBC-defined limits
@@ -193,7 +217,8 @@ class regionRefsXmlCheck(xmlCheck):
                     status=error_significance,
                     location=location,
                     message='Region extends out of BBC-defined '
-                            'permitted area (90% height and width)'
+                            'permitted area (90% height and width)',
+                    code=ValidationCode.bbc_region_position_constraint
                 ))
 
         # displayAlign - BBC requirement to be in specified set,
@@ -216,7 +241,8 @@ class regionRefsXmlCheck(xmlCheck):
                 location=location,
                 message='Region overflow {} '
                         'not visible (BBC requirement)'
-                        .format(c_overflow)
+                        .format(c_overflow),
+                code=ValidationCode.bbc_region_overflow_constraint
             ))
 
         return valid
@@ -235,12 +261,13 @@ class regionRefsXmlCheck(xmlCheck):
         body_el_tag = make_qname(tt_ns, 'body')
         bodies = [el for el in input if el.tag == body_el_tag]
         if len(bodies) != 1:
-            validation_results.error(
+            validation_results.info(
                 location='{}/{}'.format(input.tag, body_el_tag),
                 message='Found {} body elements, expected 1; '
                         'skipping region reference checks'
                         .format(
-                            len(bodies))
+                            len(bodies)),
+                code=ValidationCode.ttml_element_body
             )
             valid = False
         else:
@@ -269,7 +296,8 @@ class regionRefsXmlCheck(xmlCheck):
                         validation_results.warn(
                             location='region element xml:id {}'
                                      .format(region_id),
-                            message='Unreferenced region element'
+                            message='Unreferenced region element',
+                            code=ValidationCode.ttml_element_region
                         )
                     if region_id in dropped_refs:
                         validation_results.warn(
@@ -278,7 +306,8 @@ class regionRefsXmlCheck(xmlCheck):
                             message='{} elements pruned because their '
                                     'ancestor references a different '
                                     'region element'
-                                    .format(len(dropped_refs[region_id]))
+                                    .format(len(dropped_refs[region_id])),
+                            code=ValidationCode.ttml_layout_region_association
                         )
                     if region_id not in valid_refs:
                         style_error_significance = WARN
@@ -334,7 +363,8 @@ class regionRefsXmlCheck(xmlCheck):
                                      .format(len(valid_refs[region_id])),
                             message='Referenced region {} does not point '
                                     'to a region element'
-                                    .format(region_id)
+                                    .format(region_id),
+                            code=ValidationCode.ttml_layout_region_association
                         )
                 for region_id in dropped_refs.keys():
                     if region_id not in context['id_to_region_map']:
@@ -344,7 +374,8 @@ class regionRefsXmlCheck(xmlCheck):
                                      .format(len(dropped_refs[region_id])),
                             message='Dropped referenced region {} does not '
                                     'point to a region element'
-                                    .format(region_id)
+                                    .format(region_id),
+                            code=ValidationCode.ttml_layout_region_association
                         )
 
             # Report ERROR for any p elements not associated with a region
@@ -352,12 +383,14 @@ class regionRefsXmlCheck(xmlCheck):
                 valid = False
                 validation_results.error(
                     location='{} p element(s)'.format(len(no_region_ps)),
-                    message='Elements not associated with a region'
+                    message='Elements not associated with a region',
+                    code=ValidationCode.ttml_layout_region_association
                 )
 
         if valid:
             validation_results.good(
-                    location='document',
-                    message='Region references and attributes checked'
+                location='document',
+                message='Region references and attributes checked',
+                code=ValidationCode.ttml_layout_region_association
             )
         return valid

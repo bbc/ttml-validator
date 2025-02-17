@@ -3,6 +3,7 @@ import sys
 import logging
 import re
 import xml.etree.ElementTree as ElementTree
+from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationLogger import ValidationLogger
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
@@ -99,7 +100,8 @@ def validate_ttml(args) -> int:
             overall_valid = False
             validation_results.error(
                 location='While running ' + current_check_name,
-                message='Exception raised: '+str(e)
+                message='Exception raised: ' + str(e),
+                code=ValidationCode.validator_internal_exception
             )
 
     try:
@@ -107,8 +109,9 @@ def validate_ttml(args) -> int:
     except Exception as e:
         overall_valid = False
         validation_results.error(
-                location='Unknown',
-                message='Could not decode into UTF-8: '+str(e)
+            location='Unknown',
+            message='Could not decode into UTF-8: ' + str(e),
+            code=ValidationCode.preParse_encoding
         )
 
     context = {}
@@ -119,7 +122,8 @@ def validate_ttml(args) -> int:
         overall_valid = False
         validation_results.error(
             location='Document',
-            message='Could not parse XML: '+str(e)
+            message='Could not parse XML: ' + str(e),
+            code=ValidationCode.xml_parse
         )
     if root is not None:
         for xml_check in xmlChecks:
@@ -135,9 +139,12 @@ def validate_ttml(args) -> int:
                 overall_valid = False
                 validation_results.error(
                     location='While running ' + current_check_name,
-                    message='Exception raised: '+str(e)
+                    message='Exception raised: ' + str(e),
+                    code=ValidationCode.validator_internal_exception
                 )
 
+    # TODO: Get ValidationLogger to summarise pass/fail/warn for
+    # each of: XML, TTML, EBU-TT-D and BBC requirements
     if overall_valid:
         validation_results.good(
             location='Document',

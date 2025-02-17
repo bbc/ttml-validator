@@ -1,3 +1,4 @@
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationResult import ValidationResult, \
     ERROR, WARN
 from ..validationLogging.validationLogger import ValidationLogger
@@ -31,20 +32,21 @@ class headCheck(xmlCheck):
                 status=ERROR if self._copyright_required else WARN,
                 location='{}/{}'.format(head_el.tag, copyright_el_tag),
                 message='{}copyright element absent'.format(
-                        'Required ' if self._copyright_required else ''
-                    )
+                        'Required ' if self._copyright_required else ''),
+                code=ValidationCode.ttml_metadata_copyright
             ))
         elif len(copyright_els) > 1:
             validation_results.warn(
                 location='{}/{}'.format(head_el.tag, copyright_el_tag),
                 message='{} copyright elements found, expected 1'.format(
-                    len(copyright_els)
-                )
+                    len(copyright_els)),
+                code=ValidationCode.ttml_metadata_copyright
             )
         else:  # 1 copyright element
             validation_results.good(
                 location='{}/{}'.format(head_el.tag, copyright_el_tag),
-                message='Copyright element found'
+                message='Copyright element found',
+                code=ValidationCode.ttml_metadata_copyright
             )
         return valid
 
@@ -66,7 +68,8 @@ class headCheck(xmlCheck):
                             style_el.tag,
                             a_key),
                         message='Attribute value [{}] is invalid'.format(
-                            a_val)
+                            a_val),
+                        code=ValidationCode.ttml_attribute_styling_attribute
                     )
 
         return valid
@@ -83,7 +86,8 @@ class headCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}@{}'.format(style_el.tag, xmlIdAttr),
-                message='style element found with no xml:id'
+                message='style element found with no xml:id',
+                code=ValidationCode.ttml_element_style
             )
         else:
             # Store in context for later use
@@ -101,7 +105,8 @@ class headCheck(xmlCheck):
                 location='{} {}'.format(
                     style_el.tag,
                     style_el.get(xmlIdAttr, '(no xml:id)')),
-                message='Style element has no recognised style attributes'
+                message='Style element has no recognised style attributes',
+                code=ValidationCode.ttml_element_style
             )
         valid &= self._validateStyleAttr(style_el=style_el,
                                          context=context,
@@ -122,7 +127,8 @@ class headCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}@{}'.format(region_el.tag, xmlIdAttr),
-                message='region element found with no xml:id'
+                message='region element found with no xml:id',
+                code=ValidationCode.ttml_element_region
             )
         else:
             # Store in context for later use
@@ -140,7 +146,8 @@ class headCheck(xmlCheck):
                 location='{} {}'.format(
                     region_el.tag,
                     region_el.get(xmlIdAttr, '(no xml:id)')),
-                message='Region element has no recognised style attributes'
+                message='Region element has no recognised style attributes',
+                code=ValidationCode.ttml_element_region
             )
         valid &= self._validateStyleAttr(style_el=region_el,
                                          context=context,
@@ -163,7 +170,8 @@ class headCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}/{}'.format(styling_el.tag, style_el_tag),
-                message='At least one style element required, none found'
+                message='At least one style element required, none found',
+                code=ValidationCode.ebuttd_style_element_constraint
             )
             context['id_to_style_map'] = {}  # expected downstream
         else:
@@ -180,7 +188,8 @@ class headCheck(xmlCheck):
         if valid:
             validation_results.good(
                 location='[{}/{}]'.format(styling_el.tag, style_el_tag),
-                message='Style elements checked'
+                message='Style elements checked',
+                code=ValidationCode.ttml_element_styling
             )
 
         return valid
@@ -199,7 +208,8 @@ class headCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}/{}'.format(layout_el.tag, region_el_tag),
-                message='At least one region element required, none found'
+                message='At least one region element required, none found',
+                code=ValidationCode.ebuttd_region_element_constraint
             )
             context['id_to_region_map'] = {}  # expected downstream
         else:
@@ -214,7 +224,8 @@ class headCheck(xmlCheck):
         if valid:
             validation_results.good(
                 location='[{}/{}]'.format(layout_el.tag, region_el_tag),
-                message='Region elements checked'
+                message='Region elements checked',
+                code=ValidationCode.ttml_element_layout
             )
 
         return valid
@@ -233,25 +244,29 @@ class headCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
-                message='Required styling element absent'
+                message='Required styling element absent',
+                code=ValidationCode.ebuttd_styling_element_constraint
             )
         elif len(styling_els) > 1:
             valid = False
             validation_results.error(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
                 message='{} styling elements found, expected 1'.format(
-                    len(styling_els))
+                    len(styling_els)),
+                code=ValidationCode.ttml_element_styling
             )
         else:  # 1 styling element
             validation_results.good(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
-                message='styling element found'
+                message='styling element found',
+                code=ValidationCode.ebuttd_styling_element_constraint
             )
 
         if not valid:
             validation_results.warn(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
-                message='Skipping style element checks'
+                message='Skipping style element checks',
+                code=ValidationCode.ttml_element_style
             )
         else:
             valid = self._checkStyles(
@@ -276,26 +291,29 @@ class headCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
-                message='Required layout element absent'
+                message='Required layout element absent',
+                code=ValidationCode.ebuttd_layout_element_constraint
             )
         elif len(layout_els) > 1:
             valid = False
             validation_results.error(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
                 message='{} layout elements found, expected 1'.format(
-                    len(layout_els)
-                )
+                    len(layout_els)),
+                code=ValidationCode.ttml_element_layout
             )
         else:  # 1 layout element
             validation_results.good(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
-                message='layout element found'
+                message='layout element found',
+                code=ValidationCode.ebuttd_layout_element_constraint
             )
 
         if not valid:
             validation_results.warn(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
-                message='Skipping region element checks'
+                message='Skipping region element checks',
+                code=ValidationCode.ttml_element_region
             )
         else:
             valid = self._checkRegions(
@@ -319,12 +337,20 @@ class headCheck(xmlCheck):
         valid = True
 
         heads = [el for el in input if el.tag == head_el_tag]
-        if len(heads) != 1:
+        if len(heads) < 1:
+            valid = False
             validation_results.error(
                 location='{}/{}'.format(input.tag, head_el_tag),
-                message='Found {} head elements, expected 1'.format(len(heads))
+                message='Found {} head elements, expected 1'.format(len(heads)),
+                code=ValidationCode.ebuttd_head_element_constraint
             )
+        elif len(heads) > 1:
             valid = False
+            validation_results.error(
+                location='{}/{}'.format(input.tag, head_el_tag),
+                message='Found {} head elements, expected 1'.format(len(heads)),
+                code=ValidationCode.ttml_element_head
+            )
         else:
             head_el = heads[0]
             valid &= self._checkForCopyright(
@@ -346,6 +372,7 @@ class headCheck(xmlCheck):
         if valid:
             validation_results.good(
                 location='{}/{}'.format(input.tag, head_el_tag),
-                message='Head checked')
+                message='Head checked',
+                code=ValidationCode.ttml_element_head)
 
         return valid

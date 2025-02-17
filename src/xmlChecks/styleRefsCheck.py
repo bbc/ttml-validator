@@ -1,5 +1,4 @@
-from ..validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name
@@ -74,7 +73,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location='style element',
                     message='Cyclic style ref to {} found'.format(
-                        style_ref)
+                        style_ref),
+                    code=ValidationCode.ttml_styling_referential_chained
                 )
                 valid = False
 
@@ -124,7 +124,8 @@ class styleRefsXmlCheck(xmlCheck):
                     location='{} element'.format(tag),
                     message='Specified style attribute {} is not '
                             'applicable to element type {}'
-                            .format(attr_key, tag)
+                            .format(attr_key, tag),
+                    code=ValidationCode.ttml_styling_attribute_applicability
                     )
 
         return valid
@@ -150,26 +151,29 @@ class styleRefsXmlCheck(xmlCheck):
                 if parsed_bg is None:
                     valid = False
                     validation_results.error(
-                            location='{} element {} attribute'
-                                     .format(el_tag, style_attr_key),
-                            message='backgroundColor attribute {} '
-                                    'is not valid'
-                                    .format(backgroundColor_val)
-                        )
+                        location='{} element {} attribute'
+                                 .format(el_tag, style_attr_key),
+                        message='backgroundColor attribute {} '
+                                'is not valid'
+                                .format(backgroundColor_val),
+                        code=ValidationCode.ttml_attribute_styling_attribute
+                    )
                 else:
                     a = int(parsed_bg.group('a'), 16) \
                         if parsed_bg.group('a') else 255
                     if a != 0:
                         valid = False
                         validation_results.error(
-                                location='{} element {} attribute'
-                                         .format(
-                                            el_tag,
-                                            style_attr_key),
-                                message='backgroundColor {} is not '
-                                        'transparent (BBC requirement)'
-                                        .format(backgroundColor_val)
-                            )
+                            location='{} element {} attribute'
+                                     .format(
+                                        el_tag,
+                                        style_attr_key),
+                            message='backgroundColor {} is not '
+                                    'transparent (BBC requirement)'
+                                    .format(backgroundColor_val),
+                            code=ValidationCode
+                                    .bbc_block_backgroundColor_constraint
+                        )
 
         return valid
 
@@ -246,7 +250,8 @@ class styleRefsXmlCheck(xmlCheck):
                     location=validation_location,
                     message='Computed fontFamily {} differs'
                             ' from BBC requirement'
-                            .format(c_font_family)
+                            .format(c_font_family),
+                    code=ValidationCode.bbc_text_fontFamily_constraint
                 )
 
             # Compute fontSize for every p and span,
@@ -262,13 +267,15 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location=validation_location,
                     message='Computed fontSize {} outside BBC-allowed range'
-                            .format(c_font_size)
+                            .format(c_font_size),
+                    code=ValidationCode.bbc_text_fontSize_constraint
                 )
             else:
                 validation_results.good(
                     location=validation_location,
                     message='Computed fontSize {} (within BBC-allowed range)'
-                            .format(c_font_size)
+                            .format(c_font_size),
+                    code=ValidationCode.bbc_text_fontSize_constraint
                 )
 
         # Compute lineHeight for every p, ERROR if <100% or >130%,
@@ -281,7 +288,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.warn(
                     location=validation_location,
                     message='lineHeight normal used - '
-                            'SHOULD use explicit percentage'
+                            'SHOULD use explicit percentage',
+                    code=ValidationCode.bbc_text_lineHeight_constraint
                 )
             else:
                 if c_line_height[-2:] != 'rh':
@@ -296,7 +304,8 @@ class styleRefsXmlCheck(xmlCheck):
                         location=validation_location,
                         message='Computed lineHeight {} outside '
                                 'BBC-allowed range'
-                                .format(c_line_height)
+                                .format(c_line_height),
+                        code=ValidationCode.bbc_text_lineHeight_constraint
                     )
 
             # For every p, check if ebutts:multiRowAlign is present (INFO) and
@@ -310,7 +319,8 @@ class styleRefsXmlCheck(xmlCheck):
                     location=validation_location,
                     message='Computed multiRowAlign set to {}, '
                             'matches textAlign'
-                            .format(c_mra)
+                            .format(c_mra),
+                    code=ValidationCode.ebuttd_multiRowAlign
                 )
             elif c_mra != 'auto':
                 validation_results.warn(
@@ -318,7 +328,8 @@ class styleRefsXmlCheck(xmlCheck):
                     message='Computed multiRowAlign set to {}, '
                             'differs from textAlign {} '
                             '(Not expected in BBC requirements)'
-                            .format(c_mra, c_ta)
+                            .format(c_mra, c_ta),
+                    code=ValidationCode.bbc_text_multiRowAlign_constraint
                 )
 
             # For every p, check ebutts:linePadding - ERROR if absent,
@@ -335,13 +346,15 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location=validation_location,
                     message='Computed linePadding {} outside BBC-allowed range'
-                            .format(c_lp)
+                            .format(c_lp),
+                    code=ValidationCode.bbc_text_linePadding_constraint
                 )
             else:
                 validation_results.good(
                     location=validation_location,
                     message='Computed linePadding {} within BBC-allowed range'
-                            .format(c_lp)
+                            .format(c_lp),
+                    code=ValidationCode.bbc_text_linePadding_constraint
                 )
 
             # For every p, check itts:fillLineGap - ERROR if not true
@@ -352,7 +365,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location=validation_location,
                     message='Computed fillLineGap {} not BBC-allowed value'
-                            .format(c_flg)
+                            .format(c_flg),
+                    code=ValidationCode.bbc_text_fillLineGap_constraint
                 )
 
         if el_tag == 'span':
@@ -365,7 +379,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location=validation_location,
                     message='Computed color {} not BBC-allowed value'
-                            .format(c_c)
+                            .format(c_c),
+                    code=ValidationCode.bbc_text_color_constraint
                 )
 
             # For every span, check tts:backgroundColor - ERROR if not a
@@ -378,7 +393,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location=validation_location,
                     message='Computed backgroundColor {} not BBC-allowed value'
-                            .format(c_bc)
+                            .format(c_bc),
+                    code=ValidationCode.bbc_text_backgroundColor_constraint
                 )
 
             # For every span, check tts:fontStyle - WARN if "italic"
@@ -388,7 +404,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.warn(
                     location=validation_location,
                     message='Computed fontStyle {} not in general use for BBC'
-                            .format(c_fs)
+                            .format(c_fs),
+                    code=ValidationCode.bbc_text_fontStyle_constraint
                 )
 
         # Recursively call for each child element, passing in el_sss and el_css
@@ -423,14 +440,16 @@ class styleRefsXmlCheck(xmlCheck):
                 if style_id not in style_to_referencing_els_map:
                     validation_results.warn(
                         location='style xml:id={}'.format(style_id),
-                        message='Unreferenced style element'
+                        message='Unreferenced style element',
+                        code=ValidationCode.ttml_element_style
                     )
             for style_id in style_to_referencing_els_map.keys():
                 if style_id not in context['id_to_style_map']:
                     validation_results.warn(
                         location='style xml:id={}'.format(style_id),
                         message='Referenced id does not point '
-                                'to a style element'
+                                'to a style element',
+                        code=ValidationCode.ttml_styling_reference
                     )
 
             # Compute list of style attributes and values for each
@@ -451,7 +470,8 @@ class styleRefsXmlCheck(xmlCheck):
                 validation_results.error(
                     location='{}/{}'.format(input.tag, body_el_tag),
                     message='Found {} body elements, expected 1'.format(
-                        len(bodies))
+                        len(bodies)),
+                    code=ValidationCode.ttml_element_body
                 )
                 valid = False
             else:
@@ -466,7 +486,8 @@ class styleRefsXmlCheck(xmlCheck):
 
         if valid:
             validation_results.good(
-                    location='document',
-                    message='Style references and attributes checked'
+                location='document',
+                message='Style references and attributes checked',
+                code=ValidationCode.ttml_styling
             )
         return valid

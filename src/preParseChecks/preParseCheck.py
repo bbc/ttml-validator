@@ -1,4 +1,5 @@
 from ..validationLogging.validationLogger import ValidationLogger
+from ..validationLogging.validationCodes import ValidationCode
 import codecs
 
 
@@ -21,13 +22,15 @@ class NullByteCheck(PreParseCheck):
         if null_byte in input:
             validation_results.error(
                 location='1st at byte {}'.format(input.index(null_byte)),
-                message='Null byte(s) found in input'
+                message='Null byte(s) found in input',
+                code=ValidationCode.preParse_nullBytes
             )
             return (False, input.replace(null_byte, b''))
         else:
             validation_results.good(
                 location='Unparsed file',
-                message='No null bytes found'
+                message='No null bytes found',
+                code=ValidationCode.preParse_nullBytes
             )
         return (True, input)
 
@@ -56,14 +59,16 @@ class BadEncodingCheck(PreParseCheck):
         if needs_reencoding:
             validation_results.error(
                 location='Unparsed file',
-                message='Bad latin-1 encoding found, re-encoding as UTF-8'
+                message='Bad latin-1 encoding found, re-encoding as UTF-8',
+                code=ValidationCode.preParse_encoding
             )
             output = str(input, encoding='utf-8').encode('latin-1')
             return (False, output)
 
         validation_results.good(
             location='Unparsed file',
-            message='No bad encoding sirens found'
+            message='No bad encoding sirens found',
+            code=ValidationCode.preParse_encoding
         )
 
         return (True, input)
@@ -110,7 +115,8 @@ class ByteOrderMarkCheck(PreParseCheck):
                 location='First {} bytes'.format(len(has_bom)),
                 message='File has a prohibited Byte Order Mark (BOM): {} '
                         '- stripping UTF-8 BOM and continuing.'
-                        .format(str(has_bom))
+                        .format(str(has_bom)),
+                code=ValidationCode.preParse_byteOrderMark
             )
             output = input[len(has_bom):]
             return (False, output)
@@ -121,7 +127,8 @@ class ByteOrderMarkCheck(PreParseCheck):
                         ' - attempting to re-encode using codec {}'
                         .format(
                             str(has_bom),
-                            self._boms_to_encodings[has_bom])
+                            self._boms_to_encodings[has_bom]),
+                code=ValidationCode.preParse_byteOrderMark
             )
             output = codecs.encode(
                 codecs.decode(
@@ -134,14 +141,16 @@ class ByteOrderMarkCheck(PreParseCheck):
                 message='File has a corrupt Byte Order Mark (BOM): {}'
                         ' - removing and hoping for the best.'
                         .format(
-                            str(has_weird_bom),
-                ))
+                            str(has_weird_bom)),
+                code=ValidationCode.preParse_byteOrderMark_corrupt
+                )
             output = input[len(has_weird_bom):]
             return (False, output)
         else:
             validation_results.good(
                 location='Unparsed file',
-                message='No Byte Order Mark (BOM) found'
+                message='No Byte Order Mark (BOM) found',
+                code=ValidationCode.preParse_byteOrderMark
             )
 
         return (True, input)

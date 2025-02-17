@@ -3,6 +3,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from xml.etree.ElementTree import Element
 from .xmlUtils import make_qname, get_unqualified_name, get_namespace
+from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationResult import ValidationResult, ERROR
 from .validationLogging.validationLogger import ValidationLogger
 # import logging
@@ -498,10 +499,11 @@ def computeStyles(
         except Exception as e:
             valid = False
             validation_results.append(ValidationResult(
-                error_significance,
-                '{} styling attribute with value "{}"'.format(
+                status=error_significance,
+                location='{} styling attribute with value "{}"'.format(
                     style_key, el_sss.get(style_key)),
-                str(e)
+                message=str(e),
+                code=ValidationCode.ttml_attribute_styling_attribute
             ))
 
     return valid

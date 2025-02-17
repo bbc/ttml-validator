@@ -1,9 +1,10 @@
 import unittest
 import src.xmlChecks.bodyXmlCheck as bodyXmlCheck
 import xml.etree.ElementTree as ElementTree
+from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD, WARN
+    ERROR, GOOD, WARN, INFO
 
 
 class testBodyXmlCheck(unittest.TestCase):
@@ -39,7 +40,8 @@ class testBodyXmlCheck(unittest.TestCase):
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}body',
-                message='Body checked'
+                message='Body checked',
+                code=ValidationCode.ttml_element_body
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -63,13 +65,21 @@ class testBodyXmlCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        self.assertFalse(valid)
+        self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
-                status=ERROR,
+                status=INFO,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}body',
-                message='Found 0 body elements, expected 1'
+                message='No body elements present: empty document',
+                code=ValidationCode.ttml_element_body
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt/'
+                         '{http://www.w3.org/ns/ttml}body',
+                message='Body checked',
+                code=ValidationCode.ttml_element_body
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -101,7 +111,8 @@ class testBodyXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}body',
-                message='Found 2 body elements, expected 1'
+                message='Found 2 body elements, expected 1',
+                code=ValidationCode.ttml_element_body
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -132,7 +143,8 @@ class testBodyXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}body/'
                          '{http://www.w3.org/ns/ttml}div',
-                message='Found 0 div elements, require >0'
+                message='Found 0 div elements, require >0',
+                code=ValidationCode.ebuttd_empty_body_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -170,25 +182,29 @@ class testBodyXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div/'
                          '{http://www.w3.org/ns/ttml}div',
-                message='Found 2 div children of a div, require 0'
+                message='Found 2 div children of a div, require 0',
+                code=ValidationCode.ebuttd_nested_div_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div/'
                          '{http://www.w3.org/ns/ttml}div',
-                message='Found 1 div children of a div, require 0'
+                message='Found 1 div children of a div, require 0',
+                code=ValidationCode.ebuttd_nested_div_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div/'
                          '{http://www.w3.org/ns/ttml}p xml:id omitted',
-                message='Found 0 p children of a div, require >0'
+                message='Found 0 p children of a div, require >0',
+                code=ValidationCode.ebuttd_empty_div_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div/'
                          '{http://www.w3.org/ns/ttml}p xml:id omitted',
-                message='Found 0 p children of a div, require >0'
+                message='Found 0 p children of a div, require >0',
+                code=ValidationCode.ebuttd_empty_div_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -222,7 +238,8 @@ class testBodyXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div/'
                          '{http://www.w3.org/ns/ttml}p xml:id omitted',
-                message='p element missing required xml:id'
+                message='p element missing required xml:id',
+                code=ValidationCode.ebuttd_p_xml_id_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -254,7 +271,8 @@ class testBodyXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
-                message='Text content found in prohibited location.'
+                message='Text content found in prohibited location.',
+                code=ValidationCode.bbc_text_span_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -294,13 +312,15 @@ with good line break</span></p>
                 status=WARN,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
                 message='Text content contains line breaks '
-                        'but no <br> elements.'
+                        'but no <br> elements.',
+                code=ValidationCode.ttml_element_br
             ),
             ValidationResult(
                 status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}body',
-                message='Body checked'
+                message='Body checked',
+                code=ValidationCode.ttml_element_body
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -334,7 +354,8 @@ with good line break</span></p>
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span/'
                          '{http://www.w3.org/ns/ttml}span xml:id omitted',
-                message='Found 1 span element children of span, require 0'
+                message='Found 1 span element children of span, require 0',
+                code=ValidationCode.ebuttd_nested_span_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -369,14 +390,16 @@ with good line break</span></p>
                 location='{http://www.w3.org/ns/ttml}body element '
                          'xml:id omitted',
                 message='Prohibited timing attributes '
-                        '[\'begin\', \'dur\'] present'
+                        '[\'begin\', \'dur\'] present',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div element '
                          'xml:id div_end',
                 message='Prohibited timing attributes '
-                        '[\'end\'] present'
+                        '[\'end\'] present',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -412,31 +435,36 @@ with good line break</span></p>
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p@xml:id p1/'
                          '{http://www.w3.org/ns/ttml}span element',
-                message='Nested elements with timing attributes prohibited'
+                message='Nested elements with timing attributes prohibited',
+                code=ValidationCode.ebuttd_nested_timing_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span/'
                          '{http://www.w3.org/ns/ttml}span xml:id omitted',
-                message='Found 1 span element children of span, require 0'
+                message='Found 1 span element children of span, require 0',
+                code=ValidationCode.ebuttd_nested_span_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span@xml:id omitted/'
                          '{http://www.w3.org/ns/ttml}span element',
-                message='Nested elements with timing attributes prohibited'
+                message='Nested elements with timing attributes prohibited',
+                code=ValidationCode.ebuttd_nested_timing_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span/'
                          '{http://www.w3.org/ns/ttml}span xml:id omitted',
-                message='Found 1 span element children of span, require 0'
+                message='Found 1 span element children of span, require 0',
+                code=ValidationCode.ebuttd_nested_span_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span@xml:id omitted/'
                          '{http://www.w3.org/ns/ttml}span element',
-                message='Nested elements with timing attributes prohibited'
+                message='Nested elements with timing attributes prohibited',
+                code=ValidationCode.ebuttd_nested_timing_constraint
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

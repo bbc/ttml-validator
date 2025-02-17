@@ -1,6 +1,5 @@
 from math import floor
-from ..validationLogging.validationResult import \
-    ValidationResult, ERROR, GOOD, WARN, INFO
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
@@ -63,7 +62,8 @@ class timingCheck(xmlCheck):
                             el.get(xmlIdAttr, 'omitted')),
                         message='{}={} is not a valid offset time'.format(
                             timing_attr,
-                            el.get(timing_attr))
+                            el.get(timing_attr)),
+                        code=ValidationCode.ebuttd_timing_attribute_constraint
                     )
 
         this_begin = te.seconds(el.get('begin')) \
@@ -179,7 +179,8 @@ class timingCheck(xmlCheck):
                 message='{} subtitle(s) found, minimum {} required'
                         .format(
                             count_early_begins,
-                            self._min_count_early_begins)
+                            self._min_count_early_begins),
+                code=ValidationCode.bbc_timing_minimum_subtitles
             )
 
         return valid
@@ -211,7 +212,8 @@ class timingCheck(xmlCheck):
                     ),
                     message='Non-zero gap between subtitles is '
                             'shorter than {}s'
-                            .format(self._min_short_gap)
+                            .format(self._min_short_gap),
+                    code=ValidationCode.bbc_timing_gaps
                 )
             elif gap_to_next >= self._min_short_gap \
                     and gap_to_next < self._desired_min_gap:
@@ -222,7 +224,8 @@ class timingCheck(xmlCheck):
                     ),
                     message='Short gap between subtitles should be '
                             'at least {}s'
-                            .format(self._desired_min_gap)
+                            .format(self._desired_min_gap),
+                    code=ValidationCode.bbc_timing_gaps
                 )
 
         return valid
@@ -244,13 +247,15 @@ class timingCheck(xmlCheck):
                 validation_results.error(
                     location='Timed content',
                     message='Document content is timed outside the segment '
-                            'interval [{}s..{}s)'.format(epoch, max_end)
+                            'interval [{}s..{}s)'.format(epoch, max_end),
+                    code=ValidationCode.bbc_timing_segment_overlap
                 )
             else:
                 validation_results.good(
                     location='Timed content',
                     message='Document content overlaps the segment '
-                            'interval [{}s..{}s)'.format(epoch, max_end)
+                            'interval [{}s..{}s)'.format(epoch, max_end),
+                    code=ValidationCode.bbc_timing_segment_overlap
                 )
 
         return valid
@@ -278,7 +283,8 @@ class timingCheck(xmlCheck):
         if body_el is None:
             validation_results.warn(
                 location='{} element'.format(input.tag),
-                message='No body element found, skipping timing tests'
+                message='No body element found, skipping timing tests',
+                code=ValidationCode.ttml_element_body
             )
             return valid
 
@@ -310,7 +316,8 @@ class timingCheck(xmlCheck):
                     location='Document',
                     message='Skipping check for enough early subtitles '
                             'because segment duration is shorter than '
-                            'search period.'
+                            'search period.',
+                    code=ValidationCode.bbc_timing_minimum_subtitles
                 )
                 valid &= self._checkSubsOverlapSegment(
                     doc_begin=doc_begin,
@@ -323,7 +330,8 @@ class timingCheck(xmlCheck):
                 message='First text appears at {}s, end of doc is {}'.format(
                     doc_begin,
                     'undefined' if doc_end is None else '{}s'.format(doc_end)
-                )
+                ),
+                code=ValidationCode.ttml_document_timing
             )
         except Exception as e:
             valid = False
@@ -331,7 +339,8 @@ class timingCheck(xmlCheck):
                 location='body element or descendants',
                 message='Exception encountered while trying to compute times:'
                         ' {}, trace: {}'
-                        .format(str(e), ''.join(traceback.format_exception(e)))
+                        .format(str(e), ''.join(traceback.format_exception(e))),
+                code=ValidationCode.ttml_document_timing
             )
 
         return valid

@@ -1,4 +1,5 @@
 from ..validationLogging.validationLogger import ValidationLogger
+from ..validationLogging.validationCodes import ValidationCode
 from xml.etree.ElementTree import Element
 from ..ebuttdSchema import EBUTTDSchema
 from xmlschema import XMLSchemaValidationError
@@ -28,13 +29,15 @@ class xsdValidator(xmlCheck):
             valid = False
             validation_results.error(
                 location=e.elem.tag,
-                message='Fails XSD validation: {}'.format(e.reason)
+                message='Fails XSD validation: {}'.format(e.reason),
+                code=ValidationCode.xml_xsd
             )
             context['is_ebuttd'] = False
         else:
             validation_results.good(
                 location='Parsed document',
-                message='XSD Validation passes'
+                message='XSD Validation passes',
+                code=ValidationCode.xml_xsd
             )
             context['is_ebuttd'] = True
         return valid

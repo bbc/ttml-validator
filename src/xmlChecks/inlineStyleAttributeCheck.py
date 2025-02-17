@@ -1,4 +1,4 @@
-from ..validationLogging.validationResult import ValidationResult, ERROR, GOOD
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
@@ -34,13 +34,16 @@ class inlineStyleAttributesCheck(xmlCheck):
                                 el.get(xmlIdAttr, '[absent]')),
                             message='Inline style attribute {} '
                                     'not permitted on content element'
-                                    .format(attr)
+                                    .format(attr),
+                            code=ValidationCode
+                                    .ebuttd_inline_styling_constraint
                         )
 
         if valid:
             validation_results.good(
-                    location='content elements',
-                    message='Inline style attributes checked'
+                location='content elements',
+                message='Inline style attributes checked',
+                code=ValidationCode.ttml_attribute_styling_attribute
             )
 
         return valid

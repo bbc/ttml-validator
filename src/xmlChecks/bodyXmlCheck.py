@@ -1,3 +1,4 @@
+from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
@@ -37,7 +38,8 @@ class bodyCheck(xmlCheck):
                 location='{} element xml:id {}'
                          .format(el.tag, el.get(xmlIdAttr, 'omitted')),
                 message='Prohibited timing attributes {} present'
-                        .format(timing_attributes)
+                        .format(timing_attributes),
+                code=ValidationCode.ebuttd_timing_attribute_constraint
             )
 
         return valid
@@ -64,7 +66,8 @@ class bodyCheck(xmlCheck):
                     parent_el.get(xmlIdAttr, 'omitted'),
                 ),
                 message='Found 0 span elements; '
-                        'text content needs to be in a styled span'
+                        'text content needs to be in a styled span',
+                code=ValidationCode.bbc_text_span_constraint
             )
         if len(spans) > 0 and parent_el.tag == span_el_tag:
             valid = False
@@ -75,7 +78,8 @@ class bodyCheck(xmlCheck):
                     parent_el.get(xmlIdAttr, 'omitted'),
                 ),
                 message='Found {} span element children of span, require 0'
-                        .format(len(spans))
+                        .format(len(spans)),
+                code=ValidationCode.ebuttd_nested_span_constraint
             )
 
         for span in spans:
@@ -88,7 +92,8 @@ class bodyCheck(xmlCheck):
                         parent_el.tag,
                         parent_el.get(xmlIdAttr, 'omitted'),
                         span.tag),
-                    message='Nested elements with timing attributes prohibited'
+                    message='Nested elements with timing attributes prohibited',
+                    code=ValidationCode.ebuttd_nested_timing_constraint
                 )
 
             valid &= self._checkSpanChildren(
@@ -120,7 +125,8 @@ class bodyCheck(xmlCheck):
                 location='{} element xml:id {}'.format(
                     el.tag,
                     el.get(xmlIdAttr, 'omitted')),
-                message='Text content found in prohibited location.'
+                message='Text content found in prohibited location.',
+                code=ValidationCode.bbc_text_span_constraint
             )
 
         return valid
@@ -145,7 +151,8 @@ class bodyCheck(xmlCheck):
                     el.tag,
                     el.get(xmlIdAttr, 'omitted')),
                 message='Text content contains line breaks '
-                        'but no <br> elements.'
+                        'but no <br> elements.',
+                code=ValidationCode.ttml_element_br
             )
 
         return valid
@@ -169,7 +176,8 @@ class bodyCheck(xmlCheck):
                     p_el_tag,
                     parent_el.get(xmlIdAttr, 'omitted'),
                 ),
-                message='Found 0 p children of a div, require >0'
+                message='Found 0 p children of a div, require >0',
+                code=ValidationCode.ebuttd_empty_div_constraint
             )
 
         for p in ps:
@@ -181,7 +189,8 @@ class bodyCheck(xmlCheck):
                         p_el_tag,
                         p.get(xmlIdAttr, 'omitted'),
                     ),
-                    message='p element missing required xml:id'
+                    message='p element missing required xml:id',
+                    code=ValidationCode.ebuttd_p_xml_id_constraint
                 )
             valid &= self._checkNoTextChildren(
                 el=p,
@@ -220,14 +229,16 @@ class bodyCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location='{}/{}'.format(parent_el.tag, div_el_tag),
-                message='Found 0 div elements, require >0'
+                message='Found 0 div elements, require >0',
+                code=ValidationCode.ebuttd_empty_body_constraint
             )
         elif len(divs) > 0 and get_unqualified_name(parent_el.tag) == 'div':
             valid = False
             validation_results.error(
                 location='{}/{}'.format(parent_el.tag, div_el_tag),
                 message='Found {} div children of a div, require 0'
-                        .format(len(divs))
+                        .format(len(divs)),
+                code=ValidationCode.ebuttd_nested_div_constraint
             )
 
         # Check each div child
@@ -263,11 +274,18 @@ class bodyCheck(xmlCheck):
         valid = True
 
         bodys = [el for el in input if el.tag == body_el_tag]
-        if len(bodys) != 1:
+        if len(bodys) == 0:
+            validation_results.info(
+                location='{}/{}'.format(input.tag, body_el_tag),
+                message='No body elements present: empty document',
+                code=ValidationCode.ttml_element_body
+            )
+        elif len(bodys) > 1:
             valid = False
             validation_results.error(
                 location='{}/{}'.format(input.tag, body_el_tag),
-                message='Found {} body elements, expected 1'.format(len(bodys))
+                message='Found {} body elements, expected 1'.format(len(bodys)),
+                code=ValidationCode.ttml_element_body
             )
         else:
             body_el = bodys[0]
@@ -284,7 +302,8 @@ class bodyCheck(xmlCheck):
         if valid:
             validation_results.good(
                 location='{}/{}'.format(input.tag, body_el_tag),
-                message='Body checked'
+                message='Body checked',
+                code=ValidationCode.ttml_element_body
             )
 
         return valid
