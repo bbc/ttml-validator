@@ -554,7 +554,7 @@ class testStyleRefsCheck(unittest.TestCase):
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
         tts:fontSize="75%" tts:color="#ffffff"/>
         <style xml:id="span_background" tts:backgroundColor="#000000"/>
-        <style xml:id="s2" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+        <style xml:id="s2" tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body>
@@ -587,6 +587,7 @@ class testStyleRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
         self.assertTrue(valid)
 
     def test_fontSize_bad(self):
@@ -668,6 +669,98 @@ class testStyleRefsCheck(unittest.TestCase):
                 message="Computed fontSize "
                         "26.666668rh "
                         "outside BBC-allowed range",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+        ]
+        vr_errors = [r for r in vr if r.status == ERROR]
+        self.assertListEqual(
+            vr_errors,
+            expected_validation_error_results)
+
+    def test_lineHeight_bad(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="fontStyle"
+            tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+            tts:fontSize="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+        <style xml:id="lineHeight1"
+            tts:lineHeight="120%"/>
+        <style xml:id="lineHeight2"
+            tts:lineHeight="121%"/>
+        <style xml:id="span_background"
+            tts:backgroundColor="#000000ff"/>
+    </styling>
+</head>
+<body style="fontStyle">
+<div><p xml:id="d1" style="lineHeight1"><span style="span_background">text</span></p></div>
+<div><p xml:id="d2" style="lineHeight2"><span style="span_background" xml:id="sp3">text</span></p></div>
+<div><p xml:id="d3" style="lineHeight1" tts:fontSize="9%"><span style="span_background" xml:id="sp4">text</span></p></div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = ValidationLogger()
+        context = {}
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr.clear()
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_error_results = [
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d2',
+                message='Computed lineHeight 9.680000rh outside ' 
+                        'BBC-allowed range',
+                code=ValidationCode.bbc_text_lineHeight_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d3',
+                message='Computed fontSize 0.720000rh outside ' 
+                        'BBC-allowed range',
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d3',
+                message='Computed lineHeight 0.864000rh outside ' 
+                        'BBC-allowed range',
+                code=ValidationCode.bbc_text_lineHeight_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id sp4',
+                message='Computed fontSize 0.720000rh outside ' 
+                        'BBC-allowed range',
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
         ]
