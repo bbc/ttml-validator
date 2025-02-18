@@ -280,7 +280,7 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'timeBase attribute',
                 message='timeBase checked',
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -310,7 +310,7 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'timeBase attribute',
                 message='Required timeBase attribute absent',
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -341,7 +341,7 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttaf#parameter}'
                          'timeBase attribute',
                 message='Required timeBase attribute absent',
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -371,7 +371,7 @@ class testTtXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml#parameter}'
                          'timeBase attribute',
                 message="timeBase smpte not in the allowed set ['media']",
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

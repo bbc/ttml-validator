@@ -156,7 +156,7 @@ class timeBaseCheck(xmlCheck):
                 location='{} {} attribute'.format(
                     input.tag, timeBase_attr_key),
                 message='Required timeBase attribute absent',
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             )
 
         timeBase_attr_val = \
@@ -168,7 +168,7 @@ class timeBaseCheck(xmlCheck):
                     input.tag, timeBase_attr_key),
                 message='timeBase {} not in the allowed set {}'.format(
                     timeBase_attr_val, self._timeBase_whitelist),
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             )
 
         if valid:
@@ -176,7 +176,7 @@ class timeBaseCheck(xmlCheck):
                 location='{} {} attribute'.format(
                     input.tag, timeBase_attr_key),
                 message='timeBase checked',
-                code=ValidationCode.ttml_parameter_timeBase
+                code=ValidationCode.ebuttd_parameter_timeBase
             )
 
         return valid
