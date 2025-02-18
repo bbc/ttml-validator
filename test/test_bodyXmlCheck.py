@@ -244,7 +244,7 @@ class testBodyXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_p_no_text_children(self):
+    def test_p_with_text_children(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -272,6 +272,41 @@ class testBodyXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
                 message='Text content found in prohibited location.',
+                code=ValidationCode.bbc_text_span_constraint
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_p_no_span_children(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<body><div>
+<p xml:id="p1"></p>
+</div></body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        bodyCheck = bodyXmlCheck.bodyCheck()
+        vr = ValidationLogger()
+        context = {}
+        valid = bodyCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}p'
+                         '/{http://www.w3.org/ns/ttml}span xml:id p1',
+                message='Found 0 span elements; '
+                        'text content needs to be in a styled span',
                 code=ValidationCode.bbc_text_span_constraint
             ),
         ]

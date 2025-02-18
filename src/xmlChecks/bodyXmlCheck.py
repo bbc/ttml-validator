@@ -59,7 +59,7 @@ class bodyCheck(xmlCheck):
         spans = [el for el in parent_el if el.tag == span_el_tag]
         if len(spans) == 0 and parent_el.tag == p_el_tag:
             valid = False
-            validation_results.warn(
+            validation_results.error(
                 location='{}/{} xml:id {}'.format(
                     parent_el.tag,
                     span_el_tag,
