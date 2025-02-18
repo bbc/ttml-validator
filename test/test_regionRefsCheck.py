@@ -133,6 +133,78 @@ class testRegionRefsCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
+    def test_region_content_pruned(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <layout>
+        <region xml:id="r1"
+            tts:origin="10% 10%"
+            tts:extent="80% 30%"
+            tts:displayAlign="after"
+            tts:overflow="visible"/>
+        <region xml:id="r2"
+            tts:origin="10% 60%"
+            tts:extent="80% 30%"
+            tts:displayAlign="after"
+            tts:overflow="visible"/>
+    </layout>
+</head>
+<body>
+<div region="r1"><p>ok content</p><p region="r2">pruned</p></div>
+<div region="r1"><p xml:id="p2">ok content</p><p region="p2">pruned</p></div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        regionsCheck = regionRefsCheck.regionRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        vr = ValidationLogger()
+        context = {}
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr.clear()
+        valid = regionsCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='region element xml:id r2',
+                message='1 elements pruned because their '
+                        'ancestor references a different ' 
+                        'region element',
+                code=ValidationCode.ttml_layout_region_association
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='1 element(s)',
+                message='Dropped referenced region p2 does not ' 
+                        'point to a region element',
+                code=ValidationCode.ttml_layout_region_association
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
     def test_region_refs_ref_not_region(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
