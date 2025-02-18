@@ -8,12 +8,14 @@ ValidationCode = Enum(
     preParse_encoding
     preParse_byteOrderMark
     preParse_byteOrderMark_corrupt
+    xml_document_validity
     xml_parse
     xml_xsd
     xml_id_unique
     xml_id_unqualified
     xml_root_element
     xml_tt_namespace
+    ebuttd_document_validity
     ebuttd_p_xml_id_constraint
     ebuttd_empty_body_constraint
     ebuttd_empty_div_constraint
@@ -33,8 +35,9 @@ ValidationCode = Enum(
     imsc_parameter_activeArea
     ttml_attribute_styling_attribute
     ttml_parameter_cellResolution
-    ttml_parameter_timeBase
+    ebuttd_parameter_timeBase
     ttml_document_timing
+    ttml_document_validity
     ttml_element_body
     ttml_element_br
     ttml_element_head
@@ -48,6 +51,7 @@ ValidationCode = Enum(
     ttml_styling_reference
     ttml_styling_referential_chained
     ttml_styling_attribute_applicability
+    bbc_document_validity
     bbc_block_backgroundColor_constraint
     bbc_region_attributes_constraint
     bbc_region_backgroundColor_constraint

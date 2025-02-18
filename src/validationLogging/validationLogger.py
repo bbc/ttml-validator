@@ -111,7 +111,7 @@ class ValidationLogger(list[ValidationResult]):
         for result in self:
             csv_writer.writerow([
                 status_string_map.get(result.status),
-                result.code.name,
+                result.code.name if result.code else '',
                 result.location,
                 result.message
             ])

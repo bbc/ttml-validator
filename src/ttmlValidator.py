@@ -5,6 +5,9 @@ import re
 import xml.etree.ElementTree as ElementTree
 from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationLogger import ValidationLogger
+from .validationLogging.validationSummariser import \
+    XmlPassChecker, TtmlPassChecker, EbuttdPassChecker, \
+    BbcPassChecker
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
 from .xmlChecks.xmlCheck import xsdValidator
@@ -145,19 +148,84 @@ def validate_ttml(args) -> int:
 
     # TODO: Get ValidationLogger to summarise pass/fail/warn for
     # each of: XML, TTML, EBU-TT-D and BBC requirements
-    if overall_valid:
+    xmlFails, xmlWarns = \
+        XmlPassChecker.failuresAndWarnings(validation_results)
+    if xmlFails == 0:
         validation_results.good(
             location='Document',
-            message='Document appears to be valid EBU-TT-D meeting '
-                    'BBC requirements '
-                    'and should play okay in the BBC\'s player.'
+            message='Document appears to be valid XML with {} '
+                    'XML-related warnings'.format(xmlWarns),
+            code=ValidationCode.xml_document_validity
         )
     else:
         validation_results.error(
             location='Document',
-            message='Document is not valid EBU-TT-D meeting BBC '
-                    'requirements and is likely not to play properly'
-                    ' if at all in the BBC\'s player.\n'
+            message='Document is not valid XML with {} '
+                    'XML-related failures and '
+                    '{} warnings'.format(xmlFails, xmlWarns),
+            code=ValidationCode.xml_document_validity
+        )
+    ttmlFails, ttmlWarns = \
+        TtmlPassChecker.failuresAndWarnings(validation_results)
+    if ttmlFails == 0:
+        validation_results.good(
+            location='Document',
+            message='Document appears to be valid TTML with {} '
+                    'TTML-related warnings'.format(xmlWarns),
+            code=ValidationCode.ttml_document_validity
+        )
+    else:
+        validation_results.error(
+            location='Document',
+            message='Document is not valid TTML with {} '
+                    'TTML-related failures and '
+                    '{} warnings'.format(ttmlFails, ttmlWarns),
+            code=ValidationCode.ttml_document_validity
+        )
+    ebuttdFails, ebuttdWarns = \
+        EbuttdPassChecker.failuresAndWarnings(validation_results)
+    if ebuttdFails == 0:
+        validation_results.good(
+            location='Document',
+            message='Document appears to be valid EBU-TT-D with {} '
+                    'EBU-TT-D-related warnings'.format(ebuttdWarns),
+            code=ValidationCode.ebuttd_document_validity
+        )
+    else:
+        validation_results.error(
+            location='Document',
+            message='Document is not valid EBU-TT-D with {} '
+                    'EBU-TT-D-related failures and '
+                    '{} warnings'.format(ebuttdFails, ebuttdWarns),
+            code=ValidationCode.ebuttd_document_validity
+        )
+    bbcFails, bbcWarns = \
+        BbcPassChecker.failuresAndWarnings(validation_results)
+    if bbcFails == 0:
+        validation_results.good(
+            location='Document',
+            message='Document appears to meet BBC requirements '
+                    'and should play okay in the BBC\'s player. '
+                    'There were {} BBC-related warnings'.format(bbcWarns),
+            code=ValidationCode.bbc_document_validity
+        )
+    else:
+        validation_results.error(
+            location='Document',
+            message='Document does not meet BBC '
+                    'requirements and is likely not to play properly '
+                    'if at all in the BBC\'s player. '
+                    'There were {} BBC-related errors and '
+                    '{} warnings'.format(bbcFails, bbcWarns),
+            code=ValidationCode.bbc_document_validity
+        )
+
+    totalFails = xmlFails + ttmlFails + ebuttdFails + bbcFails
+    if overall_valid != (totalFails == 0):
+        validation_results.error(
+            location='Document validity summaries',
+            message='Overall validity {} mismatch'.format(overall_valid),
+            code=ValidationCode.validator_internal_exception
         )
 
     if args.collate_more_than and args.collate_more_than > 0:
@@ -170,7 +238,7 @@ def validate_ttml(args) -> int:
 
     log_results_summary(overall_valid)
 
-    return 0 if overall_valid else len(validation_results)
+    return 0 if overall_valid else totalFails
 
 
 def main():
