@@ -110,13 +110,6 @@ open htmlcov/index.html
 
 * add the ability to check EBU-TT files too,
 and/or other flavours of TTML
-* tag each validation failure so that we can extract specific
-types of failure as being more or less relevant or severe,
-for example syntactic, semantic, aesthetic, spec-conformance,
-BBC requirement, etc. A spec-conformant file should play
-in some way, but might just not look right. But one that is
-both spec-conformant, and passes the aesthetic tests and
-the BBC requirements should play and look right
 * be more specific about how we handle subtitles intended
 for portrait (vertical), square or landscape videos,
 including adjusting safe areas and font size acceptable
@@ -129,5 +122,7 @@ e.g. "1c" does mean something even if it isn't allowed in EBU-TT-D
 treat those as though they'd been correctly specified as xml:id
 and then see how well the document works
 * check conformance to the IMSC HRM
+* check for subtitles that are on screen for too short a time
+* check dur attribute
 * see how feasible it is to construct a valid document
 from an invalid input based on the validation failures
