@@ -29,12 +29,11 @@ def log_results_summary(valid: bool):
     if valid:
         logging.info(
             'Document appears to be valid EBU-TT-D meeting BBC requirements '
-            'and should play okay in the BBC\'s player.\n')
+            'and should play okay in the BBC\'s player.')
     else:
         logging.error(
             'Document is not valid EBU-TT-D meeting BBC '
-            'requirements and is likely not to play properly if at all '
-            'in the BBC\'s player.\n')
+            'requirements.')
 
 
 def get_epoch(args) -> float:
@@ -199,6 +198,7 @@ def validate_ttml(args) -> int:
                     '{} warnings'.format(ebuttdFails, ebuttdWarns),
             code=ValidationCode.ebuttd_document_validity
         )
+    mightPlay = (ebuttdFails + ttmlFails + xmlFails == 0)
     bbcFails, bbcWarns = \
         BbcPassChecker.failuresAndWarnings(validation_results)
     if bbcFails == 0:
@@ -207,6 +207,16 @@ def validate_ttml(args) -> int:
             message='Document appears to meet BBC requirements '
                     'and should play okay in the BBC\'s player. '
                     'There were {} BBC-related warnings'.format(bbcWarns),
+            code=ValidationCode.bbc_document_validity
+        )
+    elif mightPlay:
+        validation_results.error(
+            location='Document',
+            message='Document does not meet BBC '
+                    'requirements but may play with unexpected '
+                    'appearance in the BBC\'s player. '
+                    'There were {} BBC-related errors and '
+                    '{} warnings'.format(bbcFails, bbcWarns),
             code=ValidationCode.bbc_document_validity
         )
     else:
