@@ -181,7 +181,7 @@ class testTimingXmlCheck(unittest.TestCase):
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <body><div>
-<p xml:id="p1"><span begin="1.234s" end="2s">content here</span></p>
+<p xml:id="p1"><span begin="1.234s" end="2s" dur="00:00:02:00">content here</span></p>
 <p xml:id="p2"><span begin="50f" end="00:00:03.4">content here</span></p>
 </div></body>
 </tt>
@@ -210,6 +210,22 @@ class testTimingXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}span element '
                          'xml:id omitted',
                 message='end=2s is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}span element '
+                         'xml:id omitted',
+                message='dur=00:00:02:00 is not a valid offset time',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}span element '
+                         'xml:id omitted',
+                message='dur attribute present, '
+                        'not permitted in EBU-TT-D - '
+                        'ignoring in time computations.',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(

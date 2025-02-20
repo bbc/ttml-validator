@@ -123,6 +123,5 @@ treat those as though they'd been correctly specified as xml:id
 and then see how well the document works
 * check conformance to the IMSC HRM
 * check for subtitles that are on screen for too short a time
-* check dur attribute
 * see how feasible it is to construct a valid document
 from an invalid input based on the validation failures

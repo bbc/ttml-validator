@@ -80,7 +80,18 @@ class timingCheck(xmlCheck):
             end_defined = True
             if parent_end is not None and this_end is not None:
                 this_end = min(parent_end, this_end)
-        # TODO: Handle dur attribute if present
+        # Note: dur attribute prohibited in EBU-TT-D
+        if 'dur' in el.keys():
+            valid = False
+            validation_results.error(
+                location='{} element xml:id {}'.format(
+                    el.tag,
+                    el.get(xmlIdAttr, 'omitted')),
+                message='dur attribute present, '
+                        'not permitted in EBU-TT-D - '
+                        'ignoring in time computations.',
+                code=ValidationCode.ebuttd_timing_attribute_constraint
+            )
 
         child_begins = []
         child_ends = []
