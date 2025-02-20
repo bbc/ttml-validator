@@ -34,13 +34,16 @@ validatemany /path/to/many/*.xml
 ```
 
 Assuming you have produced CSV outputs you can summarise the results across all the files using:
+
 ```sh
 poetry run collate-validation-results -validation_csv_path "/path/to/many/validation/*.csv" -results_out /path/to/many/validation_summary.csv
 ```
 
-which will put a validation summary CSV file in the same directory as your subtitle files. 
+which will put a validation summary CSV file in the same directory as your subtitle files.
+Note the quotes around the wildcard string so that the shell doesn't expand it.
 
-Note this avoids polluting your directory of validation CSV files with a non-validation CSV file, which would cause this script to fail.
+Note this output location avoids polluting your directory of validation CSV files with a non-validation CSV file,
+which would cause this script to fail. The `-results_out` parameter can be omitted, in which case it writes to stdout.
 
 ### -csv
 
