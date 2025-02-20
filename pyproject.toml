@@ -15,7 +15,7 @@ xmlschema = "^3.4.3"
 
 [tool.poetry.group.dev.dependencies]
 pydocstyle = "^6.3.0"
-flake8 = "^7.1.1"
+flake8 = "^7.1.2"
 coverage = "^7.6.12"
 
 [build-system]
@@ -24,3 +24,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 validate-ttml = "src.ttmlValidator:main"
+collate-validation-results = "src.validationCollater:main"

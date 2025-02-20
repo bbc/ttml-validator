@@ -33,6 +33,15 @@ mkdir /path/to/many/validation
 validatemany /path/to/many/*.xml
 ```
 
+Assuming you have produced CSV outputs you can summarise the results across all the files using:
+```sh
+poetry run collate-validation-results -validation_csv_path "/path/to/many/validation/*.csv" -results_out /path/to/many/validation_summary.csv
+```
+
+which will put a validation summary CSV file in the same directory as your subtitle files. 
+
+Note this avoids polluting your directory of validation CSV files with a non-validation CSV file, which would cause this script to fail.
+
 ### -csv
 
 Outputs validation results as a CSV file.
@@ -125,3 +134,5 @@ and then see how well the document works
 * check for subtitles that are on screen for too short a time
 * see how feasible it is to construct a valid document
 from an invalid input based on the validation failures
+* add an option for validating segments on a continuing basis either
+by processing an MPD or by being passed a template and a starting number
