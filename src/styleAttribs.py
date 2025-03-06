@@ -45,11 +45,16 @@ class StyleAttribute:
     defaultValue: str
     computeValue: Callable[[specified_type, parent_type, params_type], str] = \
         field(hash=False, compare=False)
+    fallbackComputeValue: Callable[
+        [specified_type, parent_type, params_type], str] = \
+        field(hash=False, compare=False)
 
     def __post_init__(self):
         # Bind the computeValue method to self so it can access
         # object fields like syntaxRegex
         self.computeValue = types.MethodType(self.computeValue, self)
+        self.fallbackComputeValue = \
+            types.MethodType(self.fallbackComputeValue, self)
 
     def validateValue(self, value: str):
         syntax_match = self.syntaxRegex.match(value)
@@ -141,13 +146,79 @@ def _computeFontSize(
         else:
             # if it's not a %, it's not conformant EBU-TT-D
             raise ValueError('{} is not a valid fontSize'.format(specified))
-    else:
+    else:  # not specified, inherit from parent
         rv = basis
 
     # store in the params so lineHeight can be computed
     params['fontSize'] = rv
 
     return rv
+
+
+def _fallbackComputeFontSize(
+        self,  # Requires this to be used in the context of a StyleAttribute
+        specified: str,
+        parent: str,
+        params: dict[str, str]
+) -> str:
+    # deal with potential non-conformant font size values:
+    # 1.3   <-- presumably treat as 130%
+    # 16px  <-- if there's a tt@tts:extent in pixels, use that
+    # 1c    <-- compute relative to the cell height
+    # 1c 2c <-- use vertical component only, then as 2c
+    # 8.0rh <-- use the number directly
+    # 5.0rw <-- really? we probably don't have an aspect ratio...
+    # 1.2em <-- treat as 120%
+
+    # TODO: this isn't right!
+    return self.defaultValue
+
+
+def _parseColor(specified: str):
+    return specified
+
+
+def _computeInheritedColor(
+        self,  # Requires this to be used in the context of a StyleAttribute
+        specified: str,
+        parent: str,
+        params: dict[str, str]
+) -> str:
+    # deal with potential conformant color values:
+    # #rrggbb   (case insensitive hex)
+    # #rrggbbaa (case insensitive hex)
+    rv = self.defaultValue if not specified else _parseColor(specified)
+    if parent and not specified:
+        rv = parent
+
+    # try to parse the value
+
+    # TODO: this isn't right!
+    return rv
+
+
+def _computeUninheritedColor(
+        self,
+        specified: str,
+        parent: str,
+        params: dict[str, str]
+) -> str:
+    return _parseColor(specified) if specified else self.defaultValue
+
+
+def _fallbackComputeColor(
+        self,  # Requires this to be used in the context of a StyleAttribute
+        specified: str,
+        parent: str,
+        params: dict[str, str]
+) -> str:
+    # deal with potential non-conformant color values:
+    # rgb(r, g, b)
+    # rgba(r, g, b, a)
+    # transparent (or other named color)
+
+    # TODO: this isn't right!
+    return self.defaultValue
 
 
 def _computeLineHeight(
@@ -169,6 +240,29 @@ def _computeLineHeight(
     return rv
 
 
+def _fallbackToDefault(
+        self,
+        specified: str,
+        parent: str,
+        params: dict[str, str]
+) -> str:
+    return self.defaultValue
+
+
+def _fallbackComputeUninheritedTwoLengthValue(
+        self,
+        specified: str,
+        parent: str,
+        params: dict[str, str]
+) -> str:
+    print('_fallbackComputeUninheritedTwoLengthValue() for '
+          '{} with specified value {}\n'.format(self.tag, specified))
+
+    # TODO: compute values using other TTML-defined syntaxes, if possible.
+
+    return None
+
+
 styleAttribs = \
     [
         StyleAttribute(
@@ -178,7 +272,8 @@ styleAttribs = \
             appliesTo=['p', 'span'],
             syntaxRegex=re.compile(r'^(ltr)|(rtl)$'),
             defaultValue='ltr',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -188,7 +283,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r"""^(([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*)([\s]+([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*))*|(\"([^\"\\]|\\.)*\")|('([^'\\]|\\.)*'))([\s]*,[\s]*(([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*)([\s]+([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*))*|(\"([^\"\\]|\\.)*\")|('([^'\\]|\\.)*')))*$"""),
             defaultValue='default',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -197,7 +293,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(?P<percent>[\d]+(\.[\d]+)?%)$'),
             defaultValue='100%',
-            computeValue=_computeFontSize
+            computeValue=_computeFontSize,
+            fallbackComputeValue=_fallbackComputeFontSize
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -206,7 +303,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^(normal)|([\d]+(\.[\d]+)?%)$'),
             defaultValue='normal',
-            computeValue=_computeLineHeight
+            computeValue=_computeLineHeight,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -216,7 +314,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(left)|(center)|(right)|(start)|(end)|(justify)$'),
             defaultValue='start',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -225,7 +324,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=ebutt_distribution_color_type_regex,
             defaultValue='#ffffffff',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeInheritedColor,
+            fallbackComputeValue=_fallbackComputeColor
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -234,7 +334,8 @@ styleAttribs = \
             appliesTo=['region', 'body', 'div', 'p', 'span'],
             syntaxRegex=ebutt_distribution_color_type_regex,
             defaultValue='#00000000',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedColor,
+            fallbackComputeValue=_fallbackComputeColor
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -243,7 +344,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(normal)|(italic)$'),
             defaultValue='normal',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -252,7 +354,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(normal)|(bold)$'),
             defaultValue='normal',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -261,7 +364,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(none)|(underline)$'),
             defaultValue='none',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -270,7 +374,8 @@ styleAttribs = \
             appliesTo=['p', 'span'],
             syntaxRegex=re.compile(r'^(normal)|(embed)|(bidiOverride)$'),
             defaultValue='normal',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -279,7 +384,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(wrap)|(noWrap)$'),
             defaultValue='wrap',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=ebutts_ns,
@@ -288,7 +394,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^(auto)|(start)|(center)|(end)$'),
             defaultValue='auto',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=ebutts_ns,
@@ -297,7 +404,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^([\d]+(\.[\d]+)?)c$'),
             defaultValue='0c',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault  # Not expecting weirdness
         ),
         StyleAttribute(
             ns=itts_ns,
@@ -306,7 +414,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^(false)|(true)$'),
             defaultValue='false',
-            computeValue=_computeSimpleInheritedAttribute
+            computeValue=_computeSimpleInheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -315,7 +424,8 @@ styleAttribs = \
             appliesTo=['region'],
             syntaxRegex=two_percent_vals_regex,
             defaultValue='0% 0%',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackComputeUninheritedTwoLengthValue
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -324,7 +434,8 @@ styleAttribs = \
             appliesTo=['region'],
             syntaxRegex=two_percent_vals_regex,
             defaultValue='100% 100%',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackComputeUninheritedTwoLengthValue
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -334,7 +445,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(before)|(center)|(after)$'),
             defaultValue='before',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -344,7 +456,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^([\d]+(\.[\d]+)?%)([\s]+([\d]+(\.[\d]+)?%)){0,3}$'),
             defaultValue='0%',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault  # TODO improve this
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -354,7 +467,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(lrtb)|(rltb)|(tbrl)|(tblr)|(lr)|(rl)|(tb)$'),
             defaultValue='lrtb',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -364,7 +478,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(always)|(whenActive)$'),
             defaultValue='always',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -374,7 +489,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(visible)|(hidden)$'),
             defaultValue='hidden',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         ),
         StyleAttribute(
             ns='',
@@ -386,7 +502,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^([a-zA-Z_][\S]*([\t\f ]+([a-zA-Z_][\S]*))*)?$'),
             defaultValue='',
-            computeValue=_computeUninheritedAttribute
+            computeValue=_computeUninheritedAttribute,
+            fallbackComputeValue=_fallbackToDefault
         )
     ]
 
@@ -505,5 +622,12 @@ def computeStyles(
                 message=str(e),
                 code=ValidationCode.ttml_attribute_styling_attribute
             ))
+            fallback_css = style_attr.fallbackComputeValue(
+                specified=specified,
+                parent=parent_css.get(style_attr.tag),
+                params=params
+            )
+            if fallback_css:
+                el_css[style_attr.tag] = fallback_css
 
     return valid

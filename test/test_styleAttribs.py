@@ -4,7 +4,8 @@ from src.styleAttribs import getAllStyleAttributeKeys, \
     getStyleAttributeKeys, getStyleAttributeDict, \
     StyleAttribute, attributeIsApplicableToElement, \
     getAllStyleAttributeDict, _getCellHeight, \
-    _getPercentRelativeSize, _computeUninheritedAttribute
+    _getPercentRelativeSize, _computeUninheritedAttribute, \
+    _fallbackToDefault
 
 
 class testStyleAttribs(unittest.TestCase):
@@ -115,7 +116,8 @@ class testStyleAttribs(unittest.TestCase):
                  syntaxRegex=re.compile(
                      r'^([a-zA-Z_][\S]*([\t\f ]+([a-zA-Z_][\S]*))*)?$'),
                  defaultValue='',
-                 computeValue=_computeUninheritedAttribute
+                 computeValue=_computeUninheritedAttribute,
+                 fallbackComputeValue=_fallbackToDefault
             )
             }
         self.assertDictEqual(actual, expected)
