@@ -2,7 +2,7 @@ import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from xml.etree.ElementTree import Element
-from .xmlUtils import make_qname, get_unqualified_name, get_namespace
+from .xmlUtils import make_qname, get_unqualified_name, get_namespace, xmlIdAttr
 from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationResult import ValidationResult, ERROR
 from .validationLogging.validationLogger import ValidationLogger
@@ -574,17 +574,21 @@ def getMergedStyleSet(
     style_attr_val = el.get('style', '')
     ref_style_ids = style_attr_val.split()
     style_set = {}
+    no_store_set = set([
+        'style',
+        xmlIdAttr,
+        ])
     # Merge referential and chained referential styles
     for ref_style_id in ref_style_ids:
         attrib_dict = id_to_styleattribs_map.get(ref_style_id, {})
         for key, value in attrib_dict.items():
-            if key != 'style':
+            if key not in no_store_set:
                 style_set[key] = value
     # Merge inline styles (even though there shouldn't be any)
     tt_ns = get_namespace(el.tag)
     style_attr_keys = getAllStyleAttributeKeys(tt_ns=tt_ns)
     for key in style_attr_keys:
-        if key != 'style' and key in el.keys():
+        if key not in no_store_set and key in el.keys():
             style_set[key] = el.get(key)
 
     return style_set

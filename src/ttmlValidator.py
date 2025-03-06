@@ -116,7 +116,11 @@ def validate_ttml(args) -> int:
             code=ValidationCode.preParse_encoding
         )
 
-    context = {}
+    context = {
+        "args": {
+            "vertical": True if args.vertical else False,
+        }
+    }
     root = None
     try:
         root = ElementTree.fromstring(in_xml_str)
@@ -145,8 +149,6 @@ def validate_ttml(args) -> int:
                     code=ValidationCode.validator_internal_exception
                 )
 
-    # TODO: Get ValidationLogger to summarise pass/fail/warn for
-    # each of: XML, TTML, EBU-TT-D and BBC requirements
     xmlFails, xmlWarns = \
         XmlPassChecker.failuresAndWarnings(validation_results)
     if xmlFails == 0:
@@ -297,6 +299,14 @@ def main():
         help='If the content timings in the document are '
              'relative to the segment begin time (true) '
              'rather than the media timeline (false) (default false).'
+    )
+    parser.add_argument(
+        '-vertical',
+        default=False,
+        required=False,
+        action='store_true',
+        help='Set if the subtitle file is intended for presentation '
+             'against a vertical/portrait (9:16 aspect ratio) video.'
     )
     parser.add_argument(
         '-collate_more_than',

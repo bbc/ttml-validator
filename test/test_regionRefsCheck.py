@@ -16,6 +16,7 @@ class testRegionRefsCheck(unittest.TestCase):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
+    xmlns:ebutts="urn:ebu:tt:style"
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
@@ -23,6 +24,7 @@ class testRegionRefsCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid"</ttm:copyright>
     <styling>
+        <style xml:id="s_region" ebutts:linePadding="0.5c"/>
         <style xml:id="s1" tts:color="#ffffffff"/>
     </styling>
     <layout>
@@ -30,7 +32,9 @@ class testRegionRefsCheck(unittest.TestCase):
             tts:origin="10% 10%"
             tts:extent="80% 80%"
             tts:displayAlign="after"
-            tts:overflow="visible"/>
+            tts:overflow="visible"
+            tts:writingMode="lrtb"
+            style="s_region"/>
     </layout>
 </head>
 <body style="s1" region="r1">
@@ -63,6 +67,15 @@ class testRegionRefsCheck(unittest.TestCase):
         )
         self.assertTrue(valid)
         expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='region element xml:id r1',
+                message='Non-permitted style attribute '
+                        '{urn:ebu:tt:style}linePadding present on '
+                        'region element - presentation may differ from '
+                        'expectation',
+                code=ValidationCode.ttml_attribute_styling_attribute
+            ),
             ValidationResult(
                 status=GOOD,
                 location='document',
@@ -191,14 +204,14 @@ class testRegionRefsCheck(unittest.TestCase):
                 status=WARN,
                 location='region element xml:id r2',
                 message='1 elements pruned because their '
-                        'ancestor references a different ' 
+                        'ancestor references a different '
                         'region element',
                 code=ValidationCode.ttml_layout_region_association
             ),
             ValidationResult(
                 status=ERROR,
                 location='1 element(s)',
-                message='Dropped referenced region p2 does not ' 
+                message='Dropped referenced region p2 does not '
                         'point to a region element',
                 code=ValidationCode.ttml_layout_region_association
             ),
@@ -422,7 +435,8 @@ class testRegionRefsCheck(unittest.TestCase):
                 status=ERROR,
                 location='region element xml:id r1',
                 message='Region extends out of BBC-defined '
-                        'permitted area (90% height and width)',
+                        'permitted area (9.5%-91.5% horizontally '
+                        'and 5%-95% vertically)',
                 code=ValidationCode.bbc_region_position_constraint
             ),
             ValidationResult(
@@ -457,7 +471,8 @@ class testRegionRefsCheck(unittest.TestCase):
                 status=WARN,
                 location='region element xml:id r2',
                 message='Region extends out of BBC-defined '
-                        'permitted area (90% height and width)',
+                        'permitted area (9.5%-91.5% horizontally '
+                        'and 5%-95% vertically)',
                 code=ValidationCode.bbc_region_position_constraint
             ),
             ValidationResult(
@@ -565,15 +580,6 @@ class testRegionRefsCheck(unittest.TestCase):
         self.assertFalse(valid)
         expected_validation_results = [
             ValidationResult(
-                status=WARN,
-                location='region element xml:id r1',
-                message='Non-required style attribute '
-                        '{http://www.w3.org/ns/ttml#styling}backgroundColor '
-                        'present on region element - presentation may '
-                        'differ from expectation',
-                code=ValidationCode.ttml_attribute_styling_attribute
-            ),
-            ValidationResult(
                 status=ERROR,
                 location='region element xml:id r1',
                 message='backgroundColor value #000000 is non-transparent '
@@ -581,29 +587,11 @@ class testRegionRefsCheck(unittest.TestCase):
                 code=ValidationCode.bbc_region_backgroundColor_constraint
             ),
             ValidationResult(
-                status=WARN,
-                location='region element xml:id r2',
-                message='Non-required style attribute '
-                        '{http://www.w3.org/ns/ttml#styling}backgroundColor '
-                        'present on region element - presentation may '
-                        'differ from expectation',
-                code=ValidationCode.ttml_attribute_styling_attribute
-            ),
-            ValidationResult(
                 status=ERROR,
                 location='region element xml:id r2',
                 message='backgroundColor value #FFFFFFFF is non-transparent '
                         'and does not meet BBC requirements',
                 code=ValidationCode.bbc_region_backgroundColor_constraint
-            ),
-            ValidationResult(
-                status=WARN,
-                location='region element xml:id r3',
-                message='Non-required style attribute '
-                        '{http://www.w3.org/ns/ttml#styling}backgroundColor '
-                        'present on region element - presentation may '
-                        'differ from expectation',
-                code=ValidationCode.ttml_attribute_styling_attribute
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

@@ -177,6 +177,16 @@ class styleRefsXmlCheck(xmlCheck):
 
         return valid
 
+    def _getFontSizeMinMax(self, context: dict) -> tuple[float, float]:
+        min_fs = 6
+        max_fs = 7.5
+
+        if context.get('args', {}).get('vertical', False):
+            min_fs = 3
+            max_fs = 4.5
+
+        return (min_fs, max_fs)
+
     def _check_styles(
                     self,
                     el: Element,
@@ -237,6 +247,10 @@ class styleRefsXmlCheck(xmlCheck):
             params=params
         )
 
+        min_fs, max_fs = self._getFontSizeMinMax(context=context)
+        min_lh = 1.2 * min_fs
+        max_lh = 1.2 * max_fs
+
         if el_tag in ['p', 'span']:
             # Check for referenced style lists that have wrong computed
             # tts:fontFamily value (BBC requirement) - if there is, ERROR
@@ -262,19 +276,21 @@ class styleRefsXmlCheck(xmlCheck):
                 raise RuntimeError(
                     'Non-canonical computed fontSize {}'.format(c_font_size))
             c_font_size_val = float(c_font_size[:-2])
-            if c_font_size_val < 2 or c_font_size_val > 8:
+            if c_font_size_val < min_fs or c_font_size_val > max_fs:
                 valid = False
                 validation_results.error(
                     location=validation_location,
-                    message='Computed fontSize {} outside BBC-allowed range'
-                            .format(c_font_size),
+                    message='Computed fontSize {:.3f}rh outside '
+                            'BBC-allowed range {}rh-{}rh'
+                            .format(c_font_size_val, min_fs, max_fs),
                     code=ValidationCode.bbc_text_fontSize_constraint
                 )
             else:
                 validation_results.good(
                     location=validation_location,
-                    message='Computed fontSize {} (within BBC-allowed range)'
-                            .format(c_font_size),
+                    message='Computed fontSize {:.3f}rh '
+                            '(within BBC-allowed range)'
+                            .format(c_font_size_val),
                     code=ValidationCode.bbc_text_fontSize_constraint
                 )
 
@@ -297,14 +313,14 @@ class styleRefsXmlCheck(xmlCheck):
                         'Non-canonical computed lineHeight {}'.format(
                             c_line_height))
                 c_line_height_val = float(c_line_height[:-2])
-                if c_line_height_val < (2 * 1.2) \
-                   or c_line_height_val > (8 * 1.2):
+                if c_line_height_val < min_lh \
+                   or c_line_height_val > max_lh:
                     valid = False
                     validation_results.error(
                         location=validation_location,
-                        message='Computed lineHeight {} outside '
-                                'BBC-allowed range'
-                                .format(c_line_height),
+                        message='Computed lineHeight {:.3f}rh outside '
+                                'BBC-allowed range {:.3f}rh-{:.3f}rh'
+                                .format(c_line_height_val, min_lh, max_lh),
                         code=ValidationCode.bbc_text_lineHeight_constraint
                     )
 

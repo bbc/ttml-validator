@@ -165,7 +165,7 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='p element xml:id omitted',
-                message='Computed fontSize 6.666667rh '
+                message='Computed fontSize 6.667rh '
                         '(within BBC-allowed range)',
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
@@ -261,7 +261,7 @@ class testStyleRefsCheck(unittest.TestCase):
             itts:fillLineGap="true"/>
         <style xml:id="s1" tts:color="#ffffff" tts:backgroundColor="#000000"
             style="s2"/>
-        <style xml:id="s2" tts:fontSize="120%" style="s1"/>
+        <style xml:id="s2" tts:fontSize="105%" style="s1"/>
         <style xml:id="s3" style="s4"/>
         <style xml:id="s4" style="s5"/>
         <style xml:id="s5" style="s3"/>
@@ -537,7 +537,7 @@ class testStyleRefsCheck(unittest.TestCase):
             vr_errors,
             expected_validation_error_results)
 
-    def test_fontSize_ok(self):
+    def test_fontSize_ok_landscape(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -552,13 +552,13 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="style_bbc_ok"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        tts:fontSize="75%" tts:color="#ffffff"/>
+        tts:fontSize="95%" tts:color="#ffffff"/>
         <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="s2" tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
     </styling>
 </head>
 <body>
-<div><p xml:id="d1" style="style_bbc_ok s2"><span style="style_bbc_ok span_background">text</span><span tts:fontSize="150%" style="span_background">big</span></p></div>
+<div><p xml:id="d1" style="style_bbc_ok s2"><span style="style_bbc_ok span_background">text</span><span tts:fontSize="115%" style="span_background">big</span></p></div>
 </body>
 </tt>
 """
@@ -590,7 +590,64 @@ class testStyleRefsCheck(unittest.TestCase):
         print('\n'+('\n'.join([v.asString() for v in vr])))
         self.assertTrue(valid)
 
-    def test_fontSize_bad(self):
+    def test_fontSize_ok_vertical(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="style_bbc_ok"
+        tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+        tts:fontSize="56%" tts:color="#ffffff"/>
+        <style xml:id="span_background" tts:backgroundColor="#000000"/>
+        <style xml:id="s2" tts:lineHeight="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+    </styling>
+</head>
+<body>
+<div><p xml:id="d1" style="style_bbc_ok s2"><span style="span_background">text</span><span tts:fontSize="115%" style="span_background">big</span></p></div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = ValidationLogger()
+        context = {
+            "args": {
+                "vertical": True
+            }
+        }
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = ValidationLogger()
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertTrue(valid)
+
+    def test_fontSize_bad_landscape(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -649,26 +706,157 @@ class testStyleRefsCheck(unittest.TestCase):
         expected_validation_error_results = [
             ValidationResult(
                 status=ERROR,
+                location='p element xml:id d1',
+                message="Computed fontSize "
+                        "5.000rh "
+                        "outside BBC-allowed range 6rh-7.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
                 location='span element xml:id omitted',
                 message="Computed fontSize "
-                        "1.000000rh "
-                        "outside BBC-allowed range",
+                        "3.750rh "
+                        "outside BBC-allowed range 6rh-7.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed fontSize "
+                        "1.000rh "
+                        "outside BBC-allowed range 6rh-7.5rh",
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d2',
                 message="Computed fontSize "
-                        "13.333334rh "
-                        "outside BBC-allowed range",
+                        "13.333rh "
+                        "outside BBC-allowed range 6rh-7.5rh",
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id sp3',
                 message="Computed fontSize "
-                        "26.666668rh "
-                        "outside BBC-allowed range",
+                        "26.667rh "
+                        "outside BBC-allowed range 6rh-7.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id sp4',
+                message="Computed fontSize "
+                        "2.667rh "
+                        "outside BBC-allowed range 6rh-7.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+        ]
+        vr_errors = [r for r in vr if r.status == ERROR]
+        self.assertListEqual(
+            vr_errors,
+            expected_validation_error_results)
+
+    def test_fontSize_bad_vertical(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ebutts="urn:ebu:tt:style"
+    xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+    <ttm:copyright>valid"</ttm:copyright>
+    <styling>
+        <style xml:id="fontStyle"
+            tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
+            ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+        <style xml:id="fontSize1"
+            tts:fontSize="75%"/>
+        <style xml:id="fontSize2"
+            tts:fontSize="200%"/>
+        <style xml:id="span_background"
+            tts:backgroundColor="#000000ff"/>
+    </styling>
+</head>
+<body style="fontStyle">
+<div><p xml:id="d1" style="fontSize1"><span style="fontSize1 span_background">text</span><span tts:fontSize="20%" tts:backgroundColor="#000000">tiny</span></p></div>
+<div><p xml:id="d2" style="fontSize2"><span style="fontSize2 span_background" xml:id="sp3">text</span><span xml:id="sp4" tts:fontSize="20%" tts:backgroundColor="#000000">tiny</span></p></div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        stylesCheck = styleRefsCheck.styleRefsXmlCheck()
+        headCheck = headXmlCheck.headCheck()
+        cellResolutionCheck = ttXmlCheck.cellResolutionCheck()
+        vr = ValidationLogger()
+        context = {
+            "args": {
+                "vertical": True
+            }
+        }
+        # cellResolutionCheck is a dependency so it populates
+        # context['cellResolution']
+        cellResolutionCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # headCheck is a dependency so it populates context['id_to_style_map']
+        headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        vr = ValidationLogger()
+        valid = stylesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_error_results = [
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d1',
+                message="Computed fontSize "
+                        "5.000rh "
+                        "outside BBC-allowed range 3rh-4.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id omitted',
+                message="Computed fontSize "
+                        "1.000rh "
+                        "outside BBC-allowed range 3rh-4.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='p element xml:id d2',
+                message="Computed fontSize "
+                        "13.333rh "
+                        "outside BBC-allowed range 3rh-4.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id sp3',
+                message="Computed fontSize "
+                        "26.667rh "
+                        "outside BBC-allowed range 3rh-4.5rh",
+                code=ValidationCode.bbc_text_fontSize_constraint
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='span element xml:id sp4',
+                message="Computed fontSize "
+                        "2.667rh "
+                        "outside BBC-allowed range 3rh-4.5rh",
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
         ]
@@ -692,7 +880,7 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="fontStyle"
             tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-            tts:fontSize="120%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
+            tts:fontSize="112.5%" ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="lineHeight1"
             tts:lineHeight="120%"/>
         <style xml:id="lineHeight2"
@@ -738,29 +926,29 @@ class testStyleRefsCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d2',
-                message='Computed lineHeight 9.680000rh outside ' 
-                        'BBC-allowed range',
+                message='Computed lineHeight 9.075rh outside '
+                        'BBC-allowed range 7.200rh-9.000rh',
                 code=ValidationCode.bbc_text_lineHeight_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d3',
-                message='Computed fontSize 0.720000rh outside ' 
-                        'BBC-allowed range',
+                message='Computed fontSize 0.675rh outside '
+                        'BBC-allowed range 6rh-7.5rh',
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='p element xml:id d3',
-                message='Computed lineHeight 0.864000rh outside ' 
-                        'BBC-allowed range',
+                message='Computed lineHeight 0.810rh outside '
+                        'BBC-allowed range 7.200rh-9.000rh',
                 code=ValidationCode.bbc_text_lineHeight_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='span element xml:id sp4',
-                message='Computed fontSize 0.720000rh outside ' 
-                        'BBC-allowed range',
+                message='Computed fontSize 0.675rh outside '
+                        'BBC-allowed range 6rh-7.5rh',
                 code=ValidationCode.bbc_text_fontSize_constraint
             ),
         ]
@@ -784,7 +972,7 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="style_bbc_ok"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        tts:fontSize="75%" tts:lineHeight="120%"
+        tts:fontSize="95%" tts:lineHeight="120%"
         ebutts:linePadding="0.5c" itts:fillLineGap="true"/>
         <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="mra_center" ebutts:multiRowAlign="center"/>
@@ -1038,7 +1226,7 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        tts:fontSize="75%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
+        tts:fontSize="100%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
         itts:fillLineGap="true"/>
         <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="white" tts:color="#ffffff"/>
@@ -1221,7 +1409,7 @@ class testStyleRefsCheck(unittest.TestCase):
     <styling>
         <style xml:id="s1"
         tts:fontFamily="ReithSans, Arial, Roboto, proportionalSansSerif, default"
-        tts:fontSize="75%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
+        tts:fontSize="95%" tts:lineHeight="120%" ebutts:linePadding="0.5c"
         itts:fillLineGap="true"/>
         <style xml:id="span_background" tts:backgroundColor="#000000"/>
         <style xml:id="fs_normal" tts:fontStyle="normal"/>

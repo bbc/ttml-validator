@@ -22,6 +22,26 @@ bbc_required_region_style_attrib_keys = [
     'overflow'
 ]
 
+# Tech3380 is not very clear about which if
+# any style attributes are actually ok on regions
+ebuttd_optional_region_style_attrib_keys = [
+    'backgroundColor',
+    'color',
+    'direction',
+    'fontFamily',
+    'fontSize',
+    # TODO: base computed fontSize on the region fontSize
+    'fontStyle',
+    'fontWeight',
+    'lineHeight',
+    'padding',
+    'showBackground',
+    'textDecoration',
+    'textAlign',
+    'unicodeBidi',
+    'writingMode',
+]
+
 ebuttd_required_region_style_attrib_keys = [
     'origin',
     'extent',
@@ -102,6 +122,9 @@ class regionRefsXmlCheck(xmlCheck):
         ns_qualified_required_region_style_attribs = \
             [make_qname(tt_ns + '#styling', k)
              for k in required_region_style_attrib_keys]
+        ns_qualified_optional_region_style_attribs = \
+            [make_qname(tt_ns + '#styling', k)
+             for k in ebuttd_optional_region_style_attrib_keys]
         for attr_key in ns_qualified_required_region_style_attribs:
             if attr_key not in sss:
                 if error_significance == ERROR:
@@ -122,11 +145,15 @@ class regionRefsXmlCheck(xmlCheck):
                     code=code
                 ))
 
+        permitted_ns_qualified_region_style_attribs = \
+            ns_qualified_optional_region_style_attribs + \
+            ns_qualified_required_region_style_attribs
+        print(sss)
         for sss_key in sss:
-            if sss_key not in ns_qualified_required_region_style_attribs:
+            if sss_key not in permitted_ns_qualified_region_style_attribs:
                 validation_results.warn(
                     location=location,
-                    message='Non-required style attribute {} '
+                    message='Non-permitted style attribute {} '
                             'present on region element - '
                             'presentation may differ from expectation'
                             .format(sss_key),
@@ -135,11 +162,27 @@ class regionRefsXmlCheck(xmlCheck):
 
         return valid
 
+    def _getRegionBbcEdgeLimits(
+            self,
+            context: dict
+    ) -> tuple[float, float, float, float]:
+        # leftMin, rightMax, topMin, bottomMax
+
+        # TODO: allow for square, 4:3, explicit 16:9 as well
+        vertical = context.get('args', {}).get('vertical', False)
+        if not vertical:
+            # For 16:9 this would be 12.5 <--> 87.5 horizontally,
+            # but the guidelines allow for 9.5 <--> 91.5 for square and 4:3
+            return (9.5, 91.5, 5, 95)
+        else:
+            return (5, 95, 10, 90)
+
     def checkComputedStyles(
             self,
             css: dict[str, str],
             validation_results: ValidationLogger,
             location: str,
+            context: dict,
             error_significance: int = ERROR,
             ) -> bool:
         valid = True
@@ -208,16 +251,20 @@ class regionRefsXmlCheck(xmlCheck):
                 ))
 
             # Also check for BBC-defined limits
-            if round(left_edge) < 5.0 \
-               or round(right_edge) > 95.0 \
-               or round(top_edge) < 5.0 \
-               or round(bottom_edge) > 95.0:
+            leftMin, rightMax, topMin, bottomMax = \
+                self._getRegionBbcEdgeLimits(context=context)
+            if round(left_edge) < leftMin \
+               or round(right_edge) > rightMax \
+               or round(top_edge) < topMin \
+               or round(bottom_edge) > bottomMax:
                 valid = error_validity
                 validation_results.append(ValidationResult(
                     status=error_significance,
                     location=location,
                     message='Region extends out of BBC-defined '
-                            'permitted area (90% height and width)',
+                            'permitted area ({}%-{}% horizontally '
+                            'and {}%-{}% vertically)'.format(
+                                leftMin, rightMax, topMin, bottomMax),
                     code=ValidationCode.bbc_region_position_constraint
                 ))
 
@@ -351,6 +398,7 @@ class regionRefsXmlCheck(xmlCheck):
                             css=region_css,
                             validation_results=validation_results,
                             location=location,
+                            context=context,
                             error_significance=style_error_significance)
 
                 # Check for region references that

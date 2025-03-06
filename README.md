@@ -123,9 +123,10 @@ open htmlcov/index.html
 * add the ability to check EBU-TT files too,
 and/or other flavours of TTML
 * be more specific about how we handle subtitles intended
-for portrait (vertical), square or landscape videos,
+for square or 4:3 videos,
 including adjusting safe areas and font size acceptable
 ranges.
+* check for overlapping active regions
 * check the metadata
 * identify if a file is actually a valid EBU-TT document
 * compute font size even if the wrong units are used,
@@ -139,3 +140,5 @@ and then see how well the document works
 from an invalid input based on the validation failures
 * add an option for validating segments on a continuing basis either
 by processing an MPD or by being passed a template and a starting number
+* check for attributes supposed to be in no namespace placed in a namespace e.g. with a `tt:` prefix
+* Start synthesising an alternate valid version of the document

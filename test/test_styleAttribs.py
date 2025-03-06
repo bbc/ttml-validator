@@ -263,14 +263,14 @@ class testStyleAttribs(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             _getPercentRelativeSize('10', 'nan')
         self.assertEqual(
-            str(ve.exception), 
+            str(ve.exception),
             'Specified value 10 is not a valid percentage value')
 
         # Invalid basis
         with self.assertRaises(ValueError) as ve:
             _getPercentRelativeSize('10%', 'nan')
         self.assertEqual(
-            str(ve.exception), 
+            str(ve.exception),
             'Basis value nan is not a valid number')
 
     def test_validateValue_ok(self):
