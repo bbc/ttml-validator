@@ -6,6 +6,7 @@ from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
 from .xmlCheck import xmlCheck
 from ..timeExpression import TimeExpressionHandler
+from ..styleAttribs import two_percent_vals_regex
 from operator import itemgetter
 import traceback
 
@@ -196,6 +197,142 @@ class timingCheck(xmlCheck):
 
         return valid
 
+    def _spatiallyOverlap(
+            self,
+            css_a: dict[str, str],
+            css_b: dict[str, str]) -> bool:
+
+        # Inner function to extract the key edges
+        # (left, right, top, bottom)
+        def get_edges(css: dict[str, str]
+                      ) -> tuple[float, float, float, float]:
+            origin_match = two_percent_vals_regex.match(
+                css.get('origin', '0% 0%'))
+            extent_match = two_percent_vals_regex.match(
+                css.get('extent', '100% 100%'))
+            if origin_match is None or extent_match is None:
+                raise Exception(
+                    'Cannot decode either origin {} or extent {} or both'
+                    .format(css.get('origin'), css.get('extent')))
+            left = float(origin_match.group('x'))
+            top = float(origin_match.group('y'))
+            right = left + float(extent_match.group('x'))
+            bottom = top + float(extent_match.group('y'))
+            return (left, right, top, bottom)
+
+        la, ra, ta, ba = get_edges(css=css_a)
+        lb, rb, tb, bb = get_edges(css=css_b)
+
+        return ra > lb and la < rb and ta < bb and ba > tb
+
+    def _getOverlappingRegions(
+            self,
+            region_id_to_css_map: dict[str, dict[str, str]],
+    ) -> dict[str, list[str]]:
+        rv = {}
+
+        for region_id_a, css_a in region_id_to_css_map.items():
+            overlap_region_ids = []
+            for region_id_b, css_b in region_id_to_css_map.items():
+                if self._spatiallyOverlap(css_a=css_a, css_b=css_b):
+                    overlap_region_ids.append(region_id_b)
+
+            if len(overlap_region_ids) > 0:
+                rv[region_id_a] = overlap_region_ids
+
+        return rv
+
+    def _regionsOverlap(
+            self,
+            r_id1: str,
+            r_id2: str,
+            region_overlaps: dict[str, list[str]]
+            ) -> bool:
+        if r_id1 == r_id2:
+            return False
+
+        if r_id1 in region_overlaps:
+            return r_id2 in region_overlaps[r_id1]
+        if r_id2 in region_overlaps:
+            return r_id1 in region_overlaps[r_id2]
+
+        return False
+
+    def _checkForOverlappingRegions(
+            self,
+            time_el_map: dict[float, list[tuple[Element, float]]],
+            el_region_id_map: dict[Element, str],
+            region_id_to_css_map: dict[str, dict[str, str]],
+            validation_results: ValidationLogger,
+            ) -> bool:
+        valid = True
+
+        # Identify any regions that might overlap
+        region_overlaps = self._getOverlappingRegions(
+            region_id_to_css_map=region_id_to_css_map)
+
+        # Find the subset of p elements that are associated
+        # with any of those regions
+        potential_overlap_elements = {
+            k: v for k, v in el_region_id_map.items() if v in region_overlaps
+            }
+
+        # For each p element, check if any other p elements are
+        # selected into an overlapping region and overlap temporally
+        # - if so, that's a validation error
+        filtered_time_el_map = {
+            begin: [
+                (el, end) for el, end in l
+                if el in potential_overlap_elements
+                and get_unqualified_name(el.tag) == 'p'
+                ]
+            for begin, l in time_el_map.items()
+        }
+
+        sorted_begins = sorted(filtered_time_el_map.keys())
+        # Go through the filtered time element map finding
+        # all groups of elements that temporally overlap and
+        # have regions that spatially overlap
+        num_begins = len(sorted_begins)
+        for begin_index in range(num_begins):
+            el_end_list = filtered_time_el_map.get(sorted_begins[begin_index])
+            for el, end in el_end_list:
+                for obi in range(begin_index + 1, num_begins):
+                    ob = sorted_begins[obi]
+                    if end > ob:
+                        el_region = el_region_id_map.get(el)
+                        oell = filtered_time_el_map.get(ob)
+                        for oel, oend in oell:
+                            # These temporally overlap
+                            # If el and oel have different regions
+                            # and their regions overlap, we have found
+                            # an invalid condition
+
+                            # their regions are in el_to_region_map
+                            oel_region = el_region_id_map.get(oel)
+                            if self._regionsOverlap(
+                                    r_id1=el_region,
+                                    r_id2=oel_region,
+                                    region_overlaps=region_overlaps):
+                                valid = False
+                                validation_results.error(
+                                    location='<{}> xml:id={} region={} and '
+                                             '<{}> xml:id={} region={}'
+                                             .format(
+                                                el.tag,
+                                                el.get(xmlIdAttr, 'omitted'),
+                                                el_region,
+                                                oel.tag,
+                                                oel.get(xmlIdAttr, 'omitted'),
+                                                oel_region
+                                             ),
+                                    message='Elements overlap spatially '
+                                            'and temporally',
+                                    code=ValidationCode.ebuttd_overlapping_region_constraint
+                                )
+
+        return valid
+
     def _checkForShortGaps(
             self,
             time_el_map: dict[float, list[tuple[Element, float]]],
@@ -333,6 +470,25 @@ class timingCheck(xmlCheck):
                 valid &= self._checkSubsOverlapSegment(
                     doc_begin=doc_begin,
                     doc_end=doc_end,
+                    validation_results=validation_results
+                )
+
+            el_to_region_id_map = context.get('elements_to_region_id_map')
+            region_id_to_css_map = context.get('region_id_to_css_map')
+
+            if el_to_region_id_map is None or region_id_to_css_map is None:
+                validation_results.warn(
+                    location='Document',
+                    message='Skipping check for overlapping regions '
+                            'because region reference checks appear not '
+                            'to have completed.',
+                    code=ValidationCode.ebuttd_overlapping_region_constraint
+                )
+            else:
+                valid &= self._checkForOverlappingRegions(
+                    time_el_map=time_el_map,
+                    el_region_id_map=el_to_region_id_map,
+                    region_id_to_css_map=region_id_to_css_map,
                     validation_results=validation_results
                 )
 

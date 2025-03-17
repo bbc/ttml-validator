@@ -25,6 +25,7 @@ ValidationCode = Enum(
     ebuttd_nested_div_constraint
     ebuttd_nested_span_constraint
     ebuttd_nested_timing_constraint
+    ebuttd_overlapping_region_constraint
     ebuttd_region_element_constraint
     ebuttd_region_attributes_constraint
     ebuttd_region_position_constraint

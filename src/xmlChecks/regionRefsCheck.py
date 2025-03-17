@@ -61,6 +61,7 @@ class regionRefsXmlCheck(xmlCheck):
             valid_refs: dict[str, list[Element]],
             dropped_refs: dict[str, list[Element]],
             no_region_ps: list[Element],
+            el_to_region_id_map: dict[Element, str],
     ) -> None:
 
         # Inner function for adding a reference to a list
@@ -89,6 +90,7 @@ class regionRefsXmlCheck(xmlCheck):
                 add_ref(el=input, region_ref=region_ref, ref_map=dropped_refs)
             elif region_ref:
                 add_ref(el=input, region_ref=region_ref, ref_map=valid_refs)
+                el_to_region_id_map[input] = region_ref
 
         if get_unqualified_name(input.tag) == 'p' \
            and not region_ref and not parent_region_ref:
@@ -105,6 +107,7 @@ class regionRefsXmlCheck(xmlCheck):
                 valid_refs=valid_refs,
                 dropped_refs=dropped_refs,
                 no_region_ps=no_region_ps,
+                el_to_region_id_map=el_to_region_id_map
             )
 
         return
@@ -148,7 +151,7 @@ class regionRefsXmlCheck(xmlCheck):
         permitted_ns_qualified_region_style_attribs = \
             ns_qualified_optional_region_style_attribs + \
             ns_qualified_required_region_style_attribs
-        print(sss)
+        # print(sss)
         for sss_key in sss:
             if sss_key not in permitted_ns_qualified_region_style_attribs:
                 validation_results.warn(
@@ -323,12 +326,16 @@ class regionRefsXmlCheck(xmlCheck):
             valid_refs = {}
             dropped_refs = {}
             no_region_ps = []
+            el_to_region_id_map = {}
             self._gather_region_refs(
                 input=body_el,
                 parent_region_ref='',
                 valid_refs=valid_refs,
                 dropped_refs=dropped_refs,
-                no_region_ps=no_region_ps)
+                no_region_ps=no_region_ps,
+                el_to_region_id_map=el_to_region_id_map)
+
+            context['elements_to_region_id_map'] = el_to_region_id_map
 
             # Report WARN for all region elements that are not referenced
             if 'id_to_region_map' not in context:
@@ -336,6 +343,8 @@ class regionRefsXmlCheck(xmlCheck):
                     'regionRefsCheck not checking for unreferenced'
                     'region elements - no context[id_to_region_map]')
             else:
+                region_id_to_css_map = \
+                    context.get('region_id_to_css_map', {})
                 for region_id in context['id_to_region_map'].keys():
                     style_error_significance = ERROR
                     if region_id not in dropped_refs \
@@ -400,6 +409,10 @@ class regionRefsXmlCheck(xmlCheck):
                             location=location,
                             context=context,
                             error_significance=style_error_significance)
+                        region_id_to_css_map[region_id] = region_css
+
+                # Store this for overlapping region computation later
+                context['region_id_to_css_map'] = region_id_to_css_map
 
                 # Check for region references that
                 # don't point to region elements

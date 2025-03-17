@@ -1,4 +1,7 @@
 import unittest
+import src.xmlChecks.headXmlCheck as headXmlCheck
+import src.xmlChecks.regionRefsCheck as regionRefsCheck
+import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.timingXmlCheck as timingXmlCheck
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
@@ -41,6 +44,14 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 0s, end of doc is undefined',
@@ -76,6 +87,14 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 1.234s, end of doc is 3.4s',
@@ -110,6 +129,14 @@ class testTimingXmlCheck(unittest.TestCase):
         print('\n'+('\n'.join([v.asString() for v in vr])))
         self.assertTrue(valid)
         expected_validation_results = [
+            ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
             ValidationResult(
                 status=INFO,
                 location='Document',
@@ -162,6 +189,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}p element xml:id p2',
                 message='begin=50f is not a valid offset time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
+            ),
+            ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
             ),
             ValidationResult(
                 status=INFO,
@@ -236,6 +271,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 1.234s, end of doc is 3.4s',
@@ -283,6 +326,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 message='Short gap between subtitles should be '
                         'at least 1.5s',
                 code=ValidationCode.bbc_timing_gaps
+            ),
+            ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
             ),
             ValidationResult(
                 status=INFO,
@@ -334,6 +385,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 1.234s, end of doc is 10.7s',
@@ -375,6 +434,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 1.234s, end of doc is 1383.4s',
@@ -414,6 +481,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 location='p elements beginning before 00:23:00.000',
                 message='1 subtitle(s) found, minimum 2 required',
                 code=ValidationCode.bbc_timing_minimum_subtitles
+            ),
+            ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
             ),
             ValidationResult(
                 status=INFO,
@@ -468,6 +543,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 380.0s, end of doc is 390.4s',
@@ -520,6 +603,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 384.5s, end of doc is 387.0s',
@@ -560,7 +651,6 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertListEqual(vr, expected_validation_results)
 
     def test_timingCheck_subs_end_before_segment(self):
-        # TODO
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -602,6 +692,14 @@ class testTimingXmlCheck(unittest.TestCase):
                 message='Document content is timed outside the segment '
                         'interval [384s..387.84s)',
                 code=ValidationCode.bbc_timing_segment_overlap
+            ),
+            ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
             ),
             ValidationResult(
                 status=INFO,
@@ -656,9 +754,102 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
+                status=WARN,
+                location='Document',
+                message='Skipping check for overlapping regions '
+                        'because region reference checks appear not '
+                        'to have completed.',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
                 message='First text appears at 387.841s, end of doc is 390.0s',
+                code=ValidationCode.ttml_document_timing
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_timingCheck_regions_overlap(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns="http://www.w3.org/ns/ttml"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    ttp:cellResolution="32 15" ttp:timeBase="media">
+<head>
+<styling>
+<style xml:id="s1"/>
+</styling>
+<layout>
+<region xml:id="r1" tts:origin="10% 10%" tts:extent="80% 80%"/>
+<region xml:id="r2" tts:origin="60% 10%" tts:extent="20% 80%"/>
+</layout>
+</head>
+<body>
+<div>
+<p begin="00:06:27.841" end="00:06:28.5" xml:id="p1" region="r1"><span>no overlap</span></p>
+<p begin="00:06:28.500" end="00:06:30" xml:id="p2" region="r2"><span>also no overlap</span></p>
+</div>
+<div>
+<p begin="00:07:27.841" end="00:07:28.5" xml:id="p3" region="r1"><span>overlap</span></p>
+<p begin="00:07:28.499" end="00:07:30" xml:id="p4" region="r2"><span>also overlap</span></p>
+</div>
+</body>
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        # In order to populate the required context info,
+        # we need to run regionRefsXmlCheck, which in turn
+        # depends on styleRefxXmlCheck, which in turn depends
+        # on headCheck!
+        headCheck = headXmlCheck.headCheck()
+        styleRefsXmlCheck = styleRefsCheck.styleRefsXmlCheck()
+        regionRefsXmlCheck = regionRefsCheck.regionRefsXmlCheck()
+        timingCheck = timingXmlCheck.timingCheck()
+        vr = ValidationLogger()
+        context = {}
+        valid = headCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        context['id_to_style_map'] = {}
+        valid &= styleRefsXmlCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        valid &= regionRefsXmlCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # Ignore previous results - we only ran the other
+        # checks to populate stuff they needed and don't care
+        # about their output in this test
+        vr.clear()
+        valid = timingCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        # print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='<{http://www.w3.org/ns/ttml}p> xml:id=p3 region=r1 '
+                         'and <{http://www.w3.org/ns/ttml}p> xml:id=p4 '
+                         'region=r2',
+                message='Elements overlap spatially and temporally',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
+                status=INFO,
+                location='Document',
+                message='First text appears at 387.841s, end of doc is 450.0s',
                 code=ValidationCode.ttml_document_timing
             ),
         ]
