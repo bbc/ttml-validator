@@ -265,6 +265,35 @@ class timingCheck(xmlCheck):
             region_id_to_css_map: dict[str, dict[str, str]],
             validation_results: ValidationLogger,
             ) -> bool:
+
+        # Inner function to reduce duplication later
+        def validateOverlap(
+                r_id1: str,
+                r_id2: str,
+                region_overlaps: dict[str, list[str]],
+                validation_results: ValidationLogger) -> bool:
+            if self._regionsOverlap(
+                r_id1=el_region,
+                r_id2=oel_region,
+                region_overlaps=region_overlaps):
+                validation_results.error(
+                    location='<{}> xml:id={} region={} and '
+                             '<{}> xml:id={} region={}'
+                             .format(
+                                el.tag,
+                                el.get(xmlIdAttr, 'omitted'),
+                                el_region,
+                                oel.tag,
+                                oel.get(xmlIdAttr, 'omitted'),
+                                oel_region
+                                ),
+                    message='Elements overlap spatially '
+                            'and temporally',
+                    code=ValidationCode.ebuttd_overlapping_region_constraint
+                )
+                return False
+            return True
+
         valid = True
 
         # Identify any regions that might overlap
@@ -294,13 +323,29 @@ class timingCheck(xmlCheck):
         # all groups of elements that temporally overlap and
         # have regions that spatially overlap
         num_begins = len(sorted_begins)
-        for begin_index in range(num_begins):
-            el_end_list = filtered_time_el_map.get(sorted_begins[begin_index])
-            for el, end in el_end_list:
-                for obi in range(begin_index + 1, num_begins):
+        for el_begin_index in range(num_begins):
+            el_end_list = \
+                filtered_time_el_map.get(sorted_begins[el_begin_index])
+            num_ends = len(el_end_list)
+            for el_end_index in range(num_ends):
+                el, end = el_end_list[el_end_index]
+                el_region = el_region_id_map.get(el)
+
+                # First check other elements with same begin,
+                # which by definition overlap temporally
+                for oei in range(el_end_index + 1, num_ends):
+                    oel, oend = el_end_list[oei]
+                    oel_region = el_region_id_map.get(oel)
+                    valid &= validateOverlap(
+                        r_id1=el_region,
+                        r_id2=oel_region,
+                        region_overlaps=region_overlaps,
+                        validation_results=validation_results)
+
+                # Then check for elements with later begins
+                for obi in range(el_begin_index + 1, num_begins):
                     ob = sorted_begins[obi]
                     if end > ob:
-                        el_region = el_region_id_map.get(el)
                         oell = filtered_time_el_map.get(ob)
                         for oel, oend in oell:
                             # These temporally overlap
@@ -310,26 +355,16 @@ class timingCheck(xmlCheck):
 
                             # their regions are in el_to_region_map
                             oel_region = el_region_id_map.get(oel)
-                            if self._regionsOverlap(
-                                    r_id1=el_region,
-                                    r_id2=oel_region,
-                                    region_overlaps=region_overlaps):
-                                valid = False
-                                validation_results.error(
-                                    location='<{}> xml:id={} region={} and '
-                                             '<{}> xml:id={} region={}'
-                                             .format(
-                                                el.tag,
-                                                el.get(xmlIdAttr, 'omitted'),
-                                                el_region,
-                                                oel.tag,
-                                                oel.get(xmlIdAttr, 'omitted'),
-                                                oel_region
-                                             ),
-                                    message='Elements overlap spatially '
-                                            'and temporally',
-                                    code=ValidationCode.ebuttd_overlapping_region_constraint
-                                )
+                            valid &= validateOverlap(
+                                r_id1=el_region,
+                                r_id2=oel_region,
+                                region_overlaps=region_overlaps,
+                                validation_results=validation_results)
+                    else:
+                        # Since it's an ordered list, we can skip
+                        # all the later begin times: they also
+                        # won't be earlier than end
+                        break
 
         return valid
 
@@ -342,7 +377,7 @@ class timingCheck(xmlCheck):
 
         begin_end_list = []
         for begin, el_list in time_el_map.items():
-            end_list = [el[1] for el in el_list 
+            end_list = [el[1] for el in el_list
                         if get_unqualified_name(el[0].tag) in ['span', 'p']]
             max_end = max(end_list) if None not in end_list else None
             begin_end_list.append((begin, max_end))
@@ -506,7 +541,9 @@ class timingCheck(xmlCheck):
                 location='body element or descendants',
                 message='Exception encountered while trying to compute times:'
                         ' {}, trace: {}'
-                        .format(str(e), ''.join(traceback.format_exception(e))),
+                        .format(
+                            str(e),
+                            ''.join(traceback.format_exception(e))),
                 code=ValidationCode.ttml_document_timing
             )
 

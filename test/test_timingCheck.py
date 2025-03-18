@@ -784,7 +784,9 @@ class testTimingXmlCheck(unittest.TestCase):
 </styling>
 <layout>
 <region xml:id="r1" tts:origin="10% 10%" tts:extent="80% 80%"/>
-<region xml:id="r2" tts:origin="60% 10%" tts:extent="20% 80%"/>
+<region xml:id="r2" tts:origin="10% 60%" tts:extent="80% 20%"/>
+<region xml:id="r3" tts:origin="10% 10%" tts:extent="80% 50%"/><!-- r3 no overlap with r2 -->
+<region xml:id="r4" tts:origin="10% 10%" tts:extent="80% 50.1%"/><!-- r4 overlaps with r2 -->
 </layout>
 </head>
 <body>
@@ -795,6 +797,14 @@ class testTimingXmlCheck(unittest.TestCase):
 <div>
 <p begin="00:07:27.841" end="00:07:28.5" xml:id="p3" region="r1"><span>overlap</span></p>
 <p begin="00:07:28.499" end="00:07:30" xml:id="p4" region="r2"><span>also overlap</span></p>
+</div>
+<div begin="00:08:00" end="00:08:15">
+<p xml:id="p5" region="r2"><span>no overlap</span></p>
+<p xml:id="p6" region="r3"><span>also no overlap</span></p>
+</div>
+<div begin="00:09:00" end="00:09:15">
+<p xml:id="p7" region="r2"><span>overlap</span></p>
+<p xml:id="p8" region="r4"><span>also overlap</span></p>
 </div>
 </body>
 </tt>
@@ -847,9 +857,17 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.ebuttd_overlapping_region_constraint
             ),
             ValidationResult(
+                status=ERROR,
+                location='<{http://www.w3.org/ns/ttml}p> xml:id=p7 region=r2 '
+                         'and <{http://www.w3.org/ns/ttml}p> xml:id=p8 '
+                         'region=r4',
+                message='Elements overlap spatially and temporally',
+                code=ValidationCode.ebuttd_overlapping_region_constraint
+            ),
+            ValidationResult(
                 status=INFO,
                 location='Document',
-                message='First text appears at 387.841s, end of doc is 450.0s',
+                message='First text appears at 387.841s, end of doc is 555.0s',
                 code=ValidationCode.ttml_document_timing
             ),
         ]
