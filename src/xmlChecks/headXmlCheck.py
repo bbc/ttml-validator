@@ -263,7 +263,7 @@ class headCheck(xmlCheck):
             )
 
         if not valid:
-            validation_results.warn(
+            validation_results.skip(
                 location='{}/{}'.format(head_el.tag, styling_el_tag),
                 message='Skipping style element checks',
                 code=ValidationCode.ttml_element_style
@@ -310,7 +310,7 @@ class headCheck(xmlCheck):
             )
 
         if not valid:
-            validation_results.warn(
+            validation_results.skip(
                 location='{}/{}'.format(head_el.tag, layout_el_tag),
                 message='Skipping region element checks',
                 code=ValidationCode.ttml_element_region

@@ -5,12 +5,14 @@ GOOD = 0
 INFO = 1
 WARN = 2
 ERROR = 3
+SKIP = 4
 
 StatusStrings = {
     GOOD: 'Success',
     INFO: 'Information',
     WARN: 'Warning',
     ERROR: 'Error',
+    SKIP: 'Skip',
 }
 
 

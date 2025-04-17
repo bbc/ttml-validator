@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD, WARN, INFO
+    ERROR, GOOD, WARN, INFO, SKIP
 
 
 class testTimingXmlCheck(unittest.TestCase):
@@ -44,7 +44,7 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -87,7 +87,7 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -130,7 +130,7 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -191,7 +191,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -271,7 +271,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -328,7 +328,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -385,7 +385,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_gaps
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -434,7 +434,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -483,7 +483,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -531,7 +531,7 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='Skipping check for enough early subtitles because '
+                message='Not checking for enough early subtitles because '
                         'segment duration is shorter than search period.',
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
@@ -543,7 +543,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -591,7 +591,7 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='Skipping check for enough early subtitles because '
+                message='Not checking for enough early subtitles because '
                         'segment duration is shorter than search period.',
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
@@ -603,7 +603,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -642,10 +642,10 @@ class testTimingXmlCheck(unittest.TestCase):
         self.assertTrue(valid)
         expected_validation_results = [
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='{http://www.w3.org/ns/ttml}tt element',
                 message='No body element found, skipping timing tests',
-                code=ValidationCode.ttml_element_body
+                code=ValidationCode.ttml_document_timing
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -682,7 +682,7 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='Skipping check for enough early subtitles because '
+                message='Not checking for enough early subtitles because '
                         'segment duration is shorter than search period.',
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
@@ -694,7 +694,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '
@@ -742,7 +742,7 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='Skipping check for enough early subtitles because '
+                message='Not checking for enough early subtitles because '
                         'segment duration is shorter than search period.',
                 code=ValidationCode.bbc_timing_minimum_subtitles
             ),
@@ -754,7 +754,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 code=ValidationCode.bbc_timing_segment_overlap
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='Document',
                 message='Skipping check for overlapping regions '
                         'because region reference checks appear not '

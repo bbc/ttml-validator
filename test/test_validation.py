@@ -48,6 +48,11 @@ class testValidationLogging(TestCase):
             message='simulated ttml document timing warning',
             code=ValidationCode.ttml_document_timing
         )
+        self.validationLogger.skip(
+            location='testloc4',
+            message='simulated ebu-tt-d styling skip',
+            code=ValidationCode.ebuttd_styling_element_constraint
+        )
         self.validationLogger.error(
             location='testloc1',
             message='simulated BBC timing gaps error',
@@ -69,6 +74,7 @@ Fail,xml_id_unique,testloc1,simulated xml id non-uniqueness\r
 Fail,xml_id_unique,testloc2,simulated xml id non-uniqueness\r
 Fail,xml_id_unique,testloc3,simulated xml id non-uniqueness\r
 Warn,ttml_document_timing,testloc1,simulated ttml document timing warning\r
+Skip,ebuttd_styling_element_constraint,testloc4,simulated ebu-tt-d styling skip\r
 Fail,bbc_timing_gaps,testloc1,simulated BBC timing gaps error\r
 """
         self.assertEqual(result, expected)
@@ -85,6 +91,7 @@ Success: xml_parse testloc1 simulated parse success
 Warning: xml_id_unqualified testloc1 simulated unqualified id warning
 Error: xml_id_unique 3 locations simulated xml id non-uniqueness
 Warning: ttml_document_timing testloc1 simulated ttml document timing warning
+Skip: ebuttd_styling_element_constraint testloc4 simulated ebu-tt-d styling skip
 Error: bbc_timing_gaps testloc1 simulated BBC timing gaps error
 """
         self.assertEqual(result, expected)
@@ -92,18 +99,20 @@ Error: bbc_timing_gaps testloc1 simulated BBC timing gaps error
     def test_validationSummariser(self):
         # tuples of checker, expected fails and expected warnings
         checks = [
-            (validationSummariser.XmlPassChecker(), 3, 1),
-            (validationSummariser.TtmlPassChecker(), 0, 1),
-            (validationSummariser.EbuttdPassChecker(), 0, 0),
-            (validationSummariser.BbcPassChecker(), 1, 0),
+            (validationSummariser.XmlPassChecker(), 3, 1, 0),
+            (validationSummariser.TtmlPassChecker(), 0, 1, 0),
+            (validationSummariser.EbuttdPassChecker(), 0, 0, 1),
+            (validationSummariser.BbcPassChecker(), 1, 0, 0),
         ]
 
         for check in checks:
             with self.subTest(
                     checker=check[0],
                     fails=check[1],
-                    warns=check[2]):
-                result_fails, result_warns = \
-                    check[0].failuresAndWarnings(self.validationLogger)
+                    warns=check[2],
+                    skips=check[3],):
+                result_fails, result_warns, result_skips = \
+                    check[0].failuresAndWarningsAndSkips(self.validationLogger)
                 self.assertEqual(check[1], result_fails)
                 self.assertEqual(check[2], result_warns)
+                self.assertEqual(check[3], result_skips)

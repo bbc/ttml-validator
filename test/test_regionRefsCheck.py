@@ -123,7 +123,11 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = ValidationLogger()
+        vr.clear()
+        # since there's no styling in the stimulus, there's
+        # no id_to_style_attribs_map, but that causes a region
+        # text skip later, so insert one manually.
+        context['id_to_style_attribs_map'] = {}
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -193,6 +197,10 @@ class testRegionRefsCheck(unittest.TestCase):
             validation_results=vr
         )
         vr.clear()
+        # since there's no styling in the stimulus, there's
+        # no id_to_style_attribs_map, but that causes a region
+        # text skip later, so insert one manually.
+        context['id_to_style_attribs_map'] = {}
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -266,7 +274,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = ValidationLogger()
+        vr.clear()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -343,7 +351,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = ValidationLogger()
+        vr.clear()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -414,7 +422,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = ValidationLogger()
+        vr.clear()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -570,7 +578,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = ValidationLogger()
+        vr.clear()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,
@@ -639,7 +647,7 @@ class testRegionRefsCheck(unittest.TestCase):
             context=context,
             validation_results=vr
         )
-        vr = ValidationLogger()
+        vr.clear()
         valid = regionsCheck.run(
             input=input_elementtree,
             context=context,

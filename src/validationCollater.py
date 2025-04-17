@@ -50,6 +50,7 @@ out_headers = [
         'info_count',
         'warn_count',
         'error_count',
+        'skip_count',
     ]
 
 in_headers = [
@@ -65,6 +66,7 @@ status_string_map = dict(zip(
         'Info',
         'Warn',
         'Fail',
+        'Skip',
     ],
     out_headers[1:]
     ))

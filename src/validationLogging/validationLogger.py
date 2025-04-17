@@ -3,7 +3,7 @@ from csv import writer as csvWriter
 from typing import Self
 from .validationCodes import ValidationCode
 from .validationResult import ValidationResult, \
-    GOOD, INFO, WARN, ERROR
+    GOOD, INFO, WARN, ERROR, SKIP
 
 
 class ValidationLogger(list[ValidationResult]):
@@ -49,6 +49,17 @@ class ValidationLogger(list[ValidationResult]):
               code: ValidationCode = ValidationCode.unclassified):
         self.append(ValidationResult(
             status=ERROR,
+            code=code,
+            location=location,
+            message=message
+        ))
+
+    def skip(self,
+              location: str,
+              message: str,
+              code: ValidationCode = ValidationCode.unclassified):
+        self.append(ValidationResult(
+            status=SKIP,
             code=code,
             location=location,
             message=message
@@ -104,6 +115,7 @@ class ValidationLogger(list[ValidationResult]):
             INFO: 'Info',
             WARN: 'Warn',
             ERROR: 'Fail',
+            SKIP: 'Skip',
         }
         stream.reconfigure(newline='')
         csv_writer = csvWriter(stream)

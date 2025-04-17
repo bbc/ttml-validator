@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD, WARN
+    ERROR, GOOD, WARN, SKIP
 
 
 class testHeadXmlCheck(unittest.TestCase):
@@ -497,7 +497,7 @@ class testHeadXmlCheck(unittest.TestCase):
                 code=ValidationCode.ebuttd_styling_element_constraint
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
                 message='Skipping style element checks',
@@ -566,7 +566,7 @@ class testHeadXmlCheck(unittest.TestCase):
                 code=ValidationCode.ttml_element_styling
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}styling',
                 message='Skipping style element checks',
@@ -967,7 +967,7 @@ class testHeadXmlCheck(unittest.TestCase):
                 code=ValidationCode.ebuttd_layout_element_constraint
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
                 message='Skipping region element checks',
@@ -1036,7 +1036,7 @@ class testHeadXmlCheck(unittest.TestCase):
                 code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
-                status=WARN,
+                status=SKIP,
                 location='{http://www.w3.org/ns/ttml}head/'
                          '{http://www.w3.org/ns/ttml}layout',
                 message='Skipping region element checks',

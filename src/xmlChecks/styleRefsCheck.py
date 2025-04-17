@@ -441,6 +441,7 @@ class styleRefsXmlCheck(xmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         valid = True
+        skip = False
 
         # Gather style references from style, region, body, div, p and span
         # elements in a map from style xml:id to referencing element
@@ -451,6 +452,13 @@ class styleRefsXmlCheck(xmlCheck):
             logging.warning(
                 'styleRefsCheck not checking for unreferenced'
                 'style elements - no context[id_to_style_map]')
+            validation_results.skip(
+                location='document',
+                message='styleRefsCheck not checking for unreferenced'
+                        'style elements - no context[id_to_style_map]',
+                code=ValidationCode.ttml_styling
+            )
+            skip = True
         else:
             for style_id in context['id_to_style_map'].keys():
                 if style_id not in style_to_referencing_els_map:
@@ -500,10 +508,11 @@ class styleRefsXmlCheck(xmlCheck):
                     tt_ns=tt_ns,
                     parent_css={})
 
-        if valid:
+        if valid and not skip:
             validation_results.good(
                 location='document',
                 message='Style references and attributes checked',
                 code=ValidationCode.ttml_styling
             )
+
         return valid

@@ -464,10 +464,10 @@ class timingCheck(xmlCheck):
         if body_el is None:
             body_el = input.find('./{*}body')
         if body_el is None:
-            validation_results.warn(
+            validation_results.skip(
                 location='{} element'.format(input.tag),
                 message='No body element found, skipping timing tests',
-                code=ValidationCode.ttml_element_body
+                code=ValidationCode.ttml_document_timing
             )
             return valid
 
@@ -497,7 +497,7 @@ class timingCheck(xmlCheck):
             else:
                 validation_results.info(
                     location='Document',
-                    message='Skipping check for enough early subtitles '
+                    message='Not checking for enough early subtitles '
                             'because segment duration is shorter than '
                             'search period.',
                     code=ValidationCode.bbc_timing_minimum_subtitles
@@ -512,7 +512,7 @@ class timingCheck(xmlCheck):
             region_id_to_css_map = context.get('region_id_to_css_map')
 
             if el_to_region_id_map is None or region_id_to_css_map is None:
-                validation_results.warn(
+                validation_results.skip(
                     location='Document',
                     message='Skipping check for overlapping regions '
                             'because region reference checks appear not '

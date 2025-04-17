@@ -303,6 +303,7 @@ class regionRefsXmlCheck(xmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         valid = True
+        skip = False
 
         # Gather region references from body, div, p and span
         # elements in a map from region xml:id to referencing element
@@ -311,15 +312,15 @@ class regionRefsXmlCheck(xmlCheck):
         body_el_tag = make_qname(tt_ns, 'body')
         bodies = [el for el in input if el.tag == body_el_tag]
         if len(bodies) != 1:
-            validation_results.info(
+            validation_results.skip(
                 location='{}/{}'.format(input.tag, body_el_tag),
                 message='Found {} body elements, expected 1; '
                         'skipping region reference checks'
                         .format(
                             len(bodies)),
-                code=ValidationCode.ttml_element_body
+                code=ValidationCode.ttml_layout_region_association
             )
-            valid = False
+            skip = True
         else:
             body_el = bodies[0]
 
@@ -342,6 +343,13 @@ class regionRefsXmlCheck(xmlCheck):
                 logging.warning(
                     'regionRefsCheck not checking for unreferenced'
                     'region elements - no context[id_to_region_map]')
+                validation_results.skip(
+                    location='document',
+                    message='regionRefsCheck not checking for unreferenced'
+                            'region elements - no context[id_to_region_map]',
+                    code=ValidationCode.ttml_element_region
+                )
+                skip = True
             else:
                 region_id_to_css_map = \
                     context.get('region_id_to_css_map', {})
@@ -376,6 +384,16 @@ class regionRefsXmlCheck(xmlCheck):
                         logging.warning(
                             'regionRefsCheck not checking region style'
                             'attributes - no context[id_to_style_attribs_map]')
+                        validation_results.skip(
+                            location='region element xml:id {}'
+                                     .format(region_id),
+                            message='regionRefsCheck not checking region style'
+                                    'attributes - no '
+                                    'context[id_to_style_attribs_map]',
+                            code=ValidationCode
+                                    .ttml_styling_attribute_applicability
+                        )
+                        skip = True
                     else:
                         id_to_styleattribs_map = \
                             context['id_to_style_attribs_map']
@@ -448,7 +466,7 @@ class regionRefsXmlCheck(xmlCheck):
                     code=ValidationCode.ttml_layout_region_association
                 )
 
-        if valid:
+        if valid and not skip:
             validation_results.good(
                 location='document',
                 message='Region references and attributes checked',

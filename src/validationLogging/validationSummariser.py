@@ -1,13 +1,13 @@
 from .validationCodes import ValidationCode
 from .validationLogger import ValidationLogger
-from .validationResult import ERROR, WARN
+from .validationResult import ERROR, WARN, SKIP
 
 
 class ValidationPassChecker():
     _check_codes = []
 
     @classmethod
-    def failuresAndWarnings(
+    def failuresAndWarningsAndSkips(
             cls,
             log: ValidationLogger) -> tuple[int, int]:
         fails = [
@@ -20,7 +20,12 @@ class ValidationPassChecker():
             if v.code in cls._check_codes
             and v.status == WARN
         ]
-        return len(fails), len(warns)
+        skips = [
+            v for v in log
+            if v.code in cls._check_codes
+            and v.status == SKIP
+        ]
+        return len(fails), len(warns), len(skips)
 
 
 class XmlPassChecker(ValidationPassChecker):
