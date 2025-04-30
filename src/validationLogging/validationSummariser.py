@@ -76,6 +76,7 @@ class EbuttdPassChecker(ValidationPassChecker):
         ValidationCode.ebuttd_nested_div_constraint,
         ValidationCode.ebuttd_nested_span_constraint,
         ValidationCode.ebuttd_nested_timing_constraint,
+        ValidationCode.ebuttd_overlapping_region_constraint,
         ValidationCode.ebuttd_region_element_constraint,
         ValidationCode.ebuttd_region_attributes_constraint,
         ValidationCode.ebuttd_region_position_constraint,
