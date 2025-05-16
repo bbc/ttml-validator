@@ -51,6 +51,12 @@ class BadEncodingCheck(PreParseCheck):
             b'\xc3\xa2\xc2\x80\xc2\x98',  # badly encoded U2018
             b'\xc3\xa2\xc2\x80\xc2\x99',  # badly encoded U2019
             b'\xc3\x83\xc2\xb8',  # badly encoded U00F8
+            b'\xc3\x83\xc2\xa0',
+            b'\xc3\x83\xc2\xb9',
+            b'\xc3\x83\xc2\xa8',
+            b'\xc3\x83\xc2\xac',
+            b'\xc3\x83\xc2\xb2',
+            b'\xc2\xb2\x72\x72',
         ]
         needs_reencoding = False
         for utf8_as_latin1_siren in utf8_as_latin1_sirens:
