@@ -101,7 +101,8 @@ class ttTagAndNamespaceCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location=input.tag,
-                message='Root element has unexpected namespace "{}"'.format(ns),
+                message='Root element has unexpected namespace "{}"'
+                .format(ns),
                 code=ValidationCode.xml_tt_namespace
             )
         else:
@@ -114,7 +115,8 @@ class ttTagAndNamespaceCheck(xmlCheck):
             valid = False
             validation_results.error(
                 location=input.tag,
-                message='Root element has unexpected tag <{}>'.format(unq_name),
+                message='Root element has unexpected tag <{}>'
+                .format(unq_name),
                 code=ValidationCode.xml_root_element
             )
         else:
