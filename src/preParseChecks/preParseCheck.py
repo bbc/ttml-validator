@@ -48,15 +48,14 @@ class BadEncodingCheck(PreParseCheck):
         # that's because different unicode code points are
         # wrongly encoded - add them to the list please!
         utf8_as_latin1_sirens = [
-            b'\xc3\xa2\xc2\x80\xc2\x98',  # badly encoded U2018
-            b'\xc3\xa2\xc2\x80\xc2\x99',  # badly encoded U2019
-            b'\xc3\x83\xc2\xb8',  # badly encoded U00F8
-            b'\xc3\x83\xc2\xa0',
-            b'\xc3\x83\xc2\xb9',
-            b'\xc3\x83\xc2\xa8',
-            b'\xc3\x83\xc2\xac',
-            b'\xc3\x83\xc2\xb2',
-            b'\xc2\xb2\x72\x72',
+            b'\xc3\xa2\xc2\x80\xc2\x98',  # badly encoded U2018 ‘
+            b'\xc3\xa2\xc2\x80\xc2\x99',  # badly encoded U2019 ’
+            b'\xc3\x83\xc2\xb8',  # badly encoded U00F8 ø
+            b'\xc3\x83\xc2\xa0',  # badly encoded U00E0 à
+            b'\xc3\x83\xc2\xb9',  # badly encoded U00F9 ù
+            b'\xc3\x83\xc2\xa8',  # badly encoded U00E8 è
+            b'\xc3\x83\xc2\xac',  # badly encoded U00EC ì
+            b'\xc3\x83\xc2\xb2',  # badly encoded U00F2 ò
         ]
         needs_reencoding = False
         for utf8_as_latin1_siren in utf8_as_latin1_sirens:
