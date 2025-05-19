@@ -202,9 +202,10 @@ class activeAreaCheck(xmlCheck):
         ittp_ns = 'http://www.w3.org/ns/ttml/profile/imsc1#parameter'
         ittp_attr_key = make_qname(ittp_ns, 'activeArea')
         valid = True
+        warn = False
 
         if ittp_attr_key not in input.attrib:
-            valid = not self._activeArea_required
+            valid = warn = not self._activeArea_required
             validation_results.append(
                 ValidationResult(
                     status=ERROR if self._activeArea_required else WARN,
@@ -245,7 +246,7 @@ class activeAreaCheck(xmlCheck):
                     code=ValidationCode.imsc_parameter_activeArea
                 )
 
-        if valid:
+        if valid and not warn:
             validation_results.good(
                 location='{} {} attribute'.format(
                     input.tag, ittp_attr_key),
