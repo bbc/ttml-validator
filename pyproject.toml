@@ -11,12 +11,12 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.11.7"
-xmlschema = "^3.4.3"
+xmlschema = "^4.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pydocstyle = "^6.3.0"
-flake8 = "^7.1.2"
-coverage = "^7.6.12"
+flake8 = "^7.2.0"
+coverage = "^7.8.2"
 
 [build-system]
 requires = ["poetry-core"]
