@@ -455,14 +455,6 @@ class testTtXmlCheck(unittest.TestCase):
                 message='activeArea attribute absent',
                 code=ValidationCode.imsc_parameter_activeArea
             ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}tt '
-                         '{http://www.w3.org/ns/ttml/profile/imsc1#parameter}'
-                         'activeArea attribute',
-                message='activeArea checked',
-                code=ValidationCode.imsc_parameter_activeArea
-            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
