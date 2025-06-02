@@ -11,7 +11,8 @@ For requirements, see [Subtitle File Validation Checks (BBC internal Confluence 
 Built with python 3.11, so you might want to make sure you have that version available.
 
 1. Install `poetry`
-2. `poetry install`
+2. If need be, `poetry env use 3.11.7` to tell poetry to create and use 3.11.7
+3. `poetry install`
 
 ```sh
 poetry run validate-ttml -ttml_in input_file.ttml -results_out results_file.txt
