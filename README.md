@@ -10,12 +10,29 @@ For requirements, see [Subtitle File Validation Checks (BBC internal Confluence 
 
 Built with python 3.11, so you might want to make sure you have that version available.
 
+### Setup
+
+You can use `poetry` or `uv` to build and run.
+
+#### Poetry:
+
 1. Install `poetry`
 2. If need be, `poetry env use 3.11.7` to tell poetry to create and use 3.11.7
 3. `poetry install`
 
+#### uv:
+
+1. Install `uv`
+2. If need be, `uv python install 3.11` to tell poetry to install 3.11
+3. Pin to that version: `uv python pin 3.11`
+4. `uv build`
+
+### Running scripts
+
+Replacing `$launchtool` with `poetry` or `uv` according to your environment:
+
 ```sh
-poetry run validate-ttml -ttml_in input_file.ttml -results_out results_file.txt
+$launchtool run validate-ttml -ttml_in input_file.ttml -results_out results_file.txt
 ```
 
 `stdin` and `stdout` can be used instead of specifying the files.
@@ -23,7 +40,7 @@ poetry run validate-ttml -ttml_in input_file.ttml -results_out results_file.txt
 A useful bash script to validate many files, assuming there's a subdirectory called `validation` is:
 
 ```sh
-function validatemany { for arg in "$@"; do [[ -f $arg ]] && ttmlfile="${arg##*/}" && ttmlpath="${arg%$ttmlfile}" && poetry run validate-ttml -ttml_in "$arg" -results_out "${ttmlpath}validation/${ttmlfile}.csv" -csv; done }
+function validatemany { for arg in "$@"; do [[ -f $arg ]] && ttmlfile="${arg##*/}" && ttmlpath="${arg%$ttmlfile}" && $launchtool run validate-ttml -ttml_in "$arg" -results_out "${ttmlpath}validation/${ttmlfile}.csv" -csv; done }
 ```
 
 Then if you have a directory containing a bunch of subtitle files to validate, whose filenames
@@ -37,7 +54,7 @@ validatemany /path/to/many/*.xml
 Assuming you have produced CSV outputs you can summarise the results across all the files using:
 
 ```sh
-poetry run collate-validation-results -validation_csv_path "/path/to/many/validation/*.csv" -results_out /path/to/many/validation_summary.csv
+$launchtool run collate-validation-results -validation_csv_path "/path/to/many/validation/*.csv" -results_out /path/to/many/validation_summary.csv
 ```
 
 which will put a validation summary CSV file in the same directory as your subtitle files.
@@ -94,23 +111,25 @@ If set to 0, will not collate any messages.
 
 After installation you can run the tests:
 
+Replacing `$launchtool` with `poetry` or `uv` according to your environment:
+
 ```sh
-poetry run python -m unittest
+$launchtool run python -m unittest
 ```
 
 To generate coverage data while testing:
 ```sh
-poetry run python -m coverage run -m unittest
+$launchtool run python -m coverage run -m unittest
 ```
 
 To view the coverage report in the shell:
 ```sh
-poetry run python -m coverage report
+$launchtool run python -m coverage report
 ```
 
 To view the coverage report in a navigable HTML page:
 ```sh
-poetry run python -m coverage html
+$launchtool run python -m coverage html
 ```
 
 then open the resulting HTML file in your browser, e.g.
