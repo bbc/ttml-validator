@@ -146,7 +146,6 @@ and/or other flavours of TTML
 for square or 4:3 videos,
 including adjusting safe areas and font size acceptable
 ranges.
-* check for overlapping active regions
 * check the metadata
 * identify if a file is actually a valid EBU-TT document
 * compute font size even if the wrong units are used,
