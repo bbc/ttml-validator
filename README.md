@@ -23,7 +23,7 @@ You can use `poetry` or `uv` to build and run.
 #### uv:
 
 1. Install `uv`
-2. If need be, `uv python install 3.13` to tell poetry to install 3.13
+2. If need be, `uv python install 3.13` to tell uv to install 3.13
 3. Pin to that version: `uv python pin 3.13`
 4. `uv build`
 
