@@ -8,6 +8,8 @@ ValidationCode = Enum(
     preParse_encoding
     preParse_byteOrderMark
     preParse_byteOrderMark_corrupt
+    xml_encoding_decl
+    xml_entity_decl
     xml_document_validity
     xml_parse
     xml_xsd

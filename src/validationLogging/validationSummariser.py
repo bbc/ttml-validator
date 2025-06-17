@@ -9,7 +9,7 @@ class ValidationPassChecker():
     @classmethod
     def failuresAndWarningsAndSkips(
             cls,
-            log: ValidationLogger) -> tuple[int, int]:
+            log: ValidationLogger) -> tuple[int, int, int]:
         fails = [
             v for v in log
             if v.code in cls._check_codes

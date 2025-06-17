@@ -4,9 +4,9 @@ version = "0.1.0"
 description = "Utility for validating TTML-like files against the BBC Subtitle Guidelines EBU-TT-D requirements."
 authors = [ {name = "Nigel Megitt <nigel.megitt@bbc.co.uk>"} ]
 readme = "README.md"
-requires-python = ">=3.11.7"
+requires-python = ">=3.13"
 dependencies = [
-    "xmlschema >= 4.0.1"
+    "xmlschema >= 4.1.0"
 ]
 
 [project.scripts]
@@ -25,7 +25,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11.7"
+python = "^3.13.4"
 xmlschema = "^4.0.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -33,6 +33,7 @@ pydocstyle = "^6.3.0"
 flake8 = "^7.2.0"
 coverage = "^7.9.0"
 
+debugpy = "^1.8.14"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -40,6 +41,7 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "coverage>=7.9.0",
+    "debugpy>=1.8.14",
 ]
 
 [tool.poetry.scripts]

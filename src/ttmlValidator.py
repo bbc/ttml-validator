@@ -10,6 +10,7 @@ from .validationLogging.validationSummariser import \
     BbcPassChecker
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
+from .preParseChecks.xmlStructureCheck import XmlStructureCheck
 from .xmlChecks.xmlCheck import xsdValidator
 from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
@@ -66,6 +67,7 @@ def validate_ttml(args) -> int:
         BadEncodingCheck(),  # check encoding before null bytes
         ByteOrderMarkCheck(),
         NullByteCheck(),
+        XmlStructureCheck()
     ]
 
     xmlChecks = [

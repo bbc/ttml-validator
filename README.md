@@ -8,7 +8,7 @@ For requirements, see [Subtitle File Validation Checks (BBC internal Confluence 
 
 ## Usage
 
-Built with python 3.11, so you might want to make sure you have that version available.
+Built with python 3.13, so you might want to make sure you have that version available.
 
 ### Setup
 
@@ -17,14 +17,14 @@ You can use `poetry` or `uv` to build and run.
 #### Poetry:
 
 1. Install `poetry`
-2. If need be, `poetry env use 3.11.7` to tell poetry to create and use 3.11.7
+2. If need be, `poetry env use 3.13.4` to tell poetry to create and use 3.13.4
 3. `poetry install`
 
 #### uv:
 
 1. Install `uv`
-2. If need be, `uv python install 3.11` to tell poetry to install 3.11
-3. Pin to that version: `uv python pin 3.11`
+2. If need be, `uv python install 3.13` to tell poetry to install 3.13
+3. Pin to that version: `uv python pin 3.13`
 4. `uv build`
 
 ### Running scripts
