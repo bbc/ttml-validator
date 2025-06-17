@@ -2,6 +2,7 @@ import argparse
 import sys
 import logging
 import re
+import io
 import xml.etree.ElementTree as ElementTree
 from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationLogger import ValidationLogger
@@ -92,7 +93,11 @@ def validate_ttml(args) -> int:
     validation_results = ValidationLogger()
     overall_valid = True
 
-    in_bytes = args.ttml_in.read()
+    # If stdin is used then we get a TextIOBase, but we want to read bytes
+    buffer = args.ttml_in \
+        if isinstance(args.ttml_in, io.BufferedIOBase) \
+        else args.ttml_in.buffer
+    in_bytes = buffer.read()
     for pre_parse_check in preParseChecks:
         current_check_name = ''
         try:
