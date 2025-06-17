@@ -247,3 +247,47 @@ class testXmlStructureCheck(unittest.TestCase):
                 code=ValidationCode.xml_entity_decl
             )
         ])
+
+    def test_badly_formed(self):
+        stimulus = b'''<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    ttp:cellResolution="40 24"
+    xml:lang="en">
+    <body>
+        <div xml:id="d1">
+            <p>Missing end tag
+        </div>
+    </body>
+</tt>
+'''
+        xmlStructureCheck = XmlStructureCheck()
+        vr = ValidationLogger()
+
+        valid, result = xmlStructureCheck.run(
+            input=stimulus,
+            validation_results=vr
+        )
+
+        self.assertEqual(stimulus, result)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='XML Document line 10 position 10',
+                message='mismatched tag',
+                code=ValidationCode.xml_document_validity),
+            ValidationResult(
+                status=GOOD,
+                location='XML prolog',
+                message='XML Prolog declares UTF-8 encoding',
+                code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type',
+                message='No XML Entity declarations found',
+                code=ValidationCode.xml_entity_decl
+            )
+        ])

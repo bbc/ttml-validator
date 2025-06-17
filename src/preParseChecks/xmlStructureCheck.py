@@ -65,7 +65,8 @@ class XmlStructureCheck(PreParseCheck):
             validation_results.error(
                 location='XML Document line {} position {}'
                          .format(xe.lineno, xe.offset),
-                message=errors.messages[xe.code]
+                message=errors.messages[xe.code],
+                code=ValidationCode.xml_document_validity
             )
 
         if encodingDecl is not None and encodingDecl.upper() != 'UTF-8':
