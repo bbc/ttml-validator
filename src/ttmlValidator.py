@@ -12,6 +12,7 @@ from .validationLogging.validationSummariser import \
 from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
 from .preParseChecks.xmlStructureCheck import XmlStructureCheck
+from .schemas.ebuttdSchema import EBUTTDSchema
 from .xmlChecks.xmlCheck import xsdValidator
 from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
@@ -72,7 +73,7 @@ def validate_ttml(args) -> int:
     ]
 
     xmlChecks = [
-        xsdValidator(),
+        xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         unqualifiedIdAttributeCheck(),
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),

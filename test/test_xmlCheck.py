@@ -1,5 +1,6 @@
 import unittest
 import src.xmlChecks.xmlCheck as xmlCheck
+from src.schemas.ebuttdSchema import EBUTTDSchema
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -23,8 +24,10 @@ class testXmlCheck(unittest.TestCase):
                 context=context,
                 validation_results=vr)
 
-    def test_xsdValidator_good_input(self):
-        xsdValidator = xmlCheck.xsdValidator()
+    def test_xsdValidator_good_input_ebuttd(self):
+        xsdValidator = xmlCheck.xsdValidator(
+            xml_schema=EBUTTDSchema,
+            schema_name='EBU-TT-D')
         good_input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt:tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -86,13 +89,16 @@ class testXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=GOOD,
                 location='Parsed document',
-                message='XSD Validation passes',
+                message='EBU-TT-D XSD Validation passes',
                 code=ValidationCode.xml_xsd
             )
         ])
 
-    def test_xsdValidator_bad_input(self):
-        xsdValidator = xmlCheck.xsdValidator()
+    def test_xsdValidator_bad_input_ebuttd(self):
+        xsdValidator = xmlCheck.xsdValidator(
+            xml_schema=EBUTTDSchema,
+            schema_name='EBU-TT-D'
+        )
         bad_input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt:tt xml:lang="en-GB" xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:tt="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ebuttm="urn:ebu:tt:metadata" xmlns:ebutts="urn:ebu:tt:style" ttp:cellResolution="32 15" ttp:timeBase="media">
   <tt:head>
@@ -145,7 +151,7 @@ class testXmlCheck(unittest.TestCase):
         expected_location = \
             '{http://www.w3.org/ns/ttml}span'
         expected_error_msg = \
-            "Fails XSD validation: " \
+            "Fails EBU-TT-D XSD validation: " \
             "'{http://www.w3.org/ns/ttml#styling}color' attribute " \
             "not allowed for element"
         self.assertListEqual(vr,
