@@ -322,6 +322,7 @@ def validate_ttml(args) -> int:
         validation_results.write_csv(args.results_out)
     else:
         validation_results.write_plaintext(args.results_out)
+    args.results_out.flush()
 
     log_results_summary(overall_valid)
 
