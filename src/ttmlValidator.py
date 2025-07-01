@@ -13,7 +13,7 @@ from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
     ByteOrderMarkCheck
 from .preParseChecks.xmlStructureCheck import XmlStructureCheck
 from .schemas.ebuttdSchema import EBUTTDSchema
-from .xmlChecks.xmlCheck import xsdValidator
+from .xmlChecks.xsdValidator import xsdValidator
 from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
     unqualifiedIdAttributeCheck
@@ -73,8 +73,8 @@ def validate_ttml(args) -> int:
     ]
 
     xmlChecks = [
-        xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         unqualifiedIdAttributeCheck(),
+        xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),

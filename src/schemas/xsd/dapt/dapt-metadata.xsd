@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+     version="2024-11-13" attributeFormDefault="qualified"
+     targetNamespace="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+     xmlns:daptd="http://www.w3.org/ns/ttml/profile/dapt#datatype"
+     xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata">
+     <xs:import namespace="http://www.w3.org/ns/ttml/profile/dapt#datatype"
+          schemaLocation="dapt-datatypes.xsd"/>
+     <xs:attribute name="descType">
+          <xs:simpleType>
+               <xs:restriction base="xs:string"/>
+          </xs:simpleType>
+     </xs:attribute>
+     <xs:attribute name="langSrc">
+          <xs:simpleType>
+               <xs:union memberTypes="daptd:emptyValueType xs:language"></xs:union>
+          </xs:simpleType>
+     </xs:attribute>
+     <xs:attribute name="onScreen">
+          <xs:simpleType>
+               <xs:restriction base="xs:token">
+                    <xs:enumeration value="ON"/>
+                    <xs:enumeration value="OFF"/>
+                    <xs:enumeration value="ON_OFF"/>
+                    <xs:enumeration value="OFF_ON"/>
+               </xs:restriction>
+          </xs:simpleType>
+     </xs:attribute>
+     <xs:attribute name="represents" type="daptd:contentDescriptorType"/>
+     <xs:attribute name="scriptRepresents" type="daptd:contentDescriptorType"/>
+     <xs:attribute name="scriptType">
+          <xs:simpleType>
+               <xs:restriction base="xs:token">
+                    <xs:enumeration value="originalTranscript"/>
+                    <xs:enumeration value="translatedTranscript"/>
+                    <xs:enumeration value="preRecording"/>
+                    <xs:enumeration value="asRecorded"/>
+               </xs:restriction>
+          </xs:simpleType>
+     </xs:attribute>
+     <xs:element name="daptOriginTimecode">
+          <xs:simpleType>
+               <xs:restriction base="xs:string">
+                    <xs:pattern value="\d[\d]+:\d\d:\d\d:\d\d"></xs:pattern>
+               </xs:restriction>
+          </xs:simpleType>
+     </xs:element>
+     <xs:group name="Metadata.class">
+          <xs:choice>
+               <xs:element ref="daptm:daptOriginTimecode"/>
+          </xs:choice>
+     </xs:group>
+</xs:schema>

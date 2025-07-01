@@ -12,6 +12,7 @@ ValidationCode = Enum(
     xml_entity_decl
     xml_document_validity
     xml_parse
+    xml_prune
     xml_xsd
     xml_id_unique
     xml_id_unqualified

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.w3.org/ns/ttml" xml:lang="en"
+    vc:minVersion="1.0" vc:maxVersion="1.1" version="2024-11-13"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+    xmlns:ebuttm="urn:ebu:tt:metadata"
+    xmlns:tt="http://www.w3.org/ns/ttml"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:tts="http://www.w3.org/ns/ttml#styling">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+        schemaLocation="xml.xsd"></xs:import>
+    <xs:import namespace="http://www.w3.org/ns/ttml#metadata"
+        schemaLocation="ttml2-metadata-items.xsd"/>
+    <xs:import namespace="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+        schemaLocation="dapt-metadata.xsd"/>
+    <xs:import namespace="urn:ebu:tt:metadata"
+        schemaLocation="ebu-tt-m-xsd/ebu-tt-metadata.xsd"/>
+    <xs:import namespace="http://www.w3.org/ns/ttml#parameter"
+        schemaLocation="ttml2-parameter-items.xsd"/>
+    <xs:import namespace="http://www.w3.org/ns/ttml#styling"
+        schemaLocation="ttml2-styling-attribs.xsd"/>
+    <xs:include schemaLocation="ttml2-core-attribs.xsd"/>
+    <xs:include schemaLocation="ttml2-timing-attribs.xsd"/>
+    <xs:include schemaLocation="ttml2-head.xsd"/>
+    <xs:include schemaLocation="ttml2-content.xsd"/>
+    <xs:include schemaLocation="ttml2-embedded.xsd"/>
+    <xs:attributeGroup name="tt.attlist">
+        <xs:attributeGroup ref="tt:Core.required.attrib.class"/>
+        <xs:attributeGroup ref="ttp:Parameter.attrib.class"/>
+        <xs:attribute ref="tts:extent"/>
+    </xs:attributeGroup>
+    <xs:complexType name="tt.eltype">
+        <xs:sequence>
+            <xs:element ref="tt:head" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="tt:body" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="tt:tt.attlist"/>
+    </xs:complexType>
+    <xs:complexType name="dapt_tt.eltype">
+        <xs:complexContent>
+            <xs:restriction base="tt:tt.eltype">
+                <xs:sequence>
+                    <xs:element ref="tt:head" minOccurs="0" maxOccurs="1"/>
+                    <xs:element ref="tt:body" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute ref="ttp:clockMode" use="prohibited"/>
+                <xs:attribute ref="ttp:contentProfiles" use="required"/>
+                <xs:attribute ref="ttp:dropMode" use="prohibited"/>
+                <xs:attribute ref="ttp:markerMode" use="prohibited"/>
+                <xs:attribute ref="ttp:profile" use="prohibited"/>
+                <xs:attribute ref="ttp:subFrameRate" use="prohibited"/>
+                <xs:attribute ref="daptm:langSrc"/>
+                <xs:attribute ref="daptm:represents"/>
+                <xs:attribute ref="daptm:scriptRepresents" use="required"/>
+                <xs:attribute ref="daptm:scriptType" use="required"/>
+            </xs:restriction>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="tt" type="tt:dapt_tt.eltype"/>
+</xs:schema>

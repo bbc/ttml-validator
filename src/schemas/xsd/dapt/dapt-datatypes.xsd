@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.w3.org/ns/ttml/profile/dapt#datatype"
+    xmlns:daptd="http://www.w3.org/ns/ttml/profile/dapt#datatype">
+    <xs:simpleType name="contentDescriptorType">
+        <xs:annotation>
+            <xs:documentation>
+                    descriptor-token ( descriptor-delimiter descriptor-token )*
+                    
+                    descriptor-token
+                        : (descriptorTokenChar)+
+                        
+                    descriptorTokenChar  # xsd:NMtoken without the "."
+                    : NameStartChar | "-" | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
+                    
+                    descriptor-delimiter
+                        : "."  # FULL STOP U+002E
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="emptyValueType">
+        <xs:restriction base="xs:normalizedString"><xs:enumeration value=""/></xs:restriction>
+    </xs:simpleType>
+</xs:schema>

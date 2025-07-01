@@ -1,6 +1,8 @@
 import unittest
 import src.xmlChecks.xmlCheck as xmlCheck
+from src.xmlChecks.xsdValidator import xsdValidator
 from src.schemas.ebuttdSchema import EBUTTDSchema
+from src.schemas.daptSchema import DAPTSchema
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -25,7 +27,7 @@ class testXmlCheck(unittest.TestCase):
                 validation_results=vr)
 
     def test_xsdValidator_good_input_ebuttd(self):
-        xsdValidator = xmlCheck.xsdValidator(
+        xsd_validator = xsdValidator(
             xml_schema=EBUTTDSchema,
             schema_name='EBU-TT-D')
         good_input_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -80,7 +82,7 @@ class testXmlCheck(unittest.TestCase):
         good_input_etree = ElementTree.fromstring(good_input_xml)
         vr = ValidationLogger()
         context = {}
-        valid = xsdValidator.run(
+        valid = xsd_validator.run(
             input=good_input_etree,
             context=context,
             validation_results=vr)
@@ -95,7 +97,7 @@ class testXmlCheck(unittest.TestCase):
         ])
 
     def test_xsdValidator_bad_input_ebuttd(self):
-        xsdValidator = xmlCheck.xsdValidator(
+        xsd_validator = xsdValidator(
             xml_schema=EBUTTDSchema,
             schema_name='EBU-TT-D'
         )
@@ -143,7 +145,7 @@ class testXmlCheck(unittest.TestCase):
         bad_input_etree = ElementTree.fromstring(bad_input_xml)
         vr = ValidationLogger()
         context = {}
-        valid = xsdValidator.run(
+        valid = xsd_validator.run(
             input=bad_input_etree,
             context=context,
             validation_results=vr)
@@ -154,6 +156,120 @@ class testXmlCheck(unittest.TestCase):
             "Fails EBU-TT-D XSD validation: " \
             "'{http://www.w3.org/ns/ttml#styling}color' attribute " \
             "not allowed for element"
+        self.assertListEqual(vr,
+                             [ValidationResult(
+                                 status=ERROR,
+                                 location=expected_location,
+                                 message=expected_error_msg,
+                                 code=ValidationCode.xml_xsd)])
+
+    def test_xsdValidator_good_input_dapt(self):
+        xsd_validator = xsdValidator(
+            xml_schema=DAPTSchema,
+            schema_name='DAPT')
+        good_input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tta="http://www.w3.org/ns/ttml#audio"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+    xmlns:ebuttm="urn:ebu:tt:metadata"
+    ttp:contentProfiles="http://www.w3.org/ns/ttml/profile/dapt1.0/content"
+    daptm:scriptRepresents="audio"
+    daptm:scriptType="originalTranscript"
+    xml:lang="en">
+    <head>
+        <metadata xmlns:otherns="urn:some:other:namespace">
+            <ttm:agent type="person" xml:id="actor_A">
+                <ttm:name type="full">Matthias Schoenaerts</ttm:name>
+            </ttm:agent>
+            <ttm:agent type="character" xml:id="character_2">
+                <ttm:name type="alias">BOOKER</ttm:name>
+                <ttm:actor agent="actor_A"/>
+            </ttm:agent>
+            <otherns:x/>
+            <otherns:y/>
+        </metadata>
+    </head>
+    <body>
+        <div xml:id="se1" begin="3s" end="10s" ttm:agent="character_2" daptm:represents="audio.dialogue" daptm:onScreen="ON">
+            <ttm:desc daptm:descType="scene">high mountain valley</ttm:desc>
+            <metadata></metadata>
+            <p daptm:langSrc="en"><span>Look at this beautiful valley.</span></p>
+        </div>
+    </body>
+</tt>
+"""
+        good_input_etree = ElementTree.fromstring(good_input_xml)
+        vr = ValidationLogger()
+        context = {}
+        valid = xsd_validator.run(
+            input=good_input_etree,
+            context=context,
+            validation_results=vr)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=GOOD,
+                location='Parsed document',
+                message='DAPT XSD Validation passes',
+                code=ValidationCode.xml_xsd
+            )
+        ])
+        self.assertTrue(valid)
+
+    def test_xsdValidator_bad_input_dapt(self):
+        xsd_validator = xsdValidator(
+            xml_schema=DAPTSchema,
+            schema_name='DAPT'
+        )
+        bad_input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tta="http://www.w3.org/ns/ttml#audio"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+    xmlns:ebuttm="urn:ebu:tt:metadata"
+    ttp:contentProfiles="http://www.w3.org/ns/ttml/profile/dapt1.0/content"
+    daptm:scriptType="originalTranscript"
+    xml:lang="en">
+    <head>
+        <metadata xmlns:otherns="urn:some:other:namespace">
+            <ttm:agent type="person" xml:id="actor_A">
+                <ttm:name type="full">Matthias Schoenaerts</ttm:name>
+            </ttm:agent>
+            <ttm:agent type="character" xml:id="character_2">
+                <ttm:name type="alias">BOOKER</ttm:name>
+                <ttm:actor agent="actor_A"/>
+            </ttm:agent>
+            <otherns:x/>
+            <otherns:y/>
+        </metadata>
+    </head>
+    <body>
+        <div xml:id="se1" begin="3s" end="10s" ttm:agent="character_2" daptm:represents="audio.dialogue" daptm:onScreen="ON">
+            <ttm:desc daptm:descType="scene">high mountain valley</ttm:desc>
+            <metadata></metadata>
+            <p daptm:langSrc="en"><span>Look at this beautiful valley.</span></p>
+        </div>
+    </body>
+</tt>
+"""
+        bad_input_etree = ElementTree.fromstring(bad_input_xml)
+        vr = ValidationLogger()
+        context = {}
+        valid = xsd_validator.run(
+            input=bad_input_etree,
+            context=context,
+            validation_results=vr)
+        self.assertFalse(valid)
+        expected_location = \
+            '{http://www.w3.org/ns/ttml}tt'
+        expected_error_msg = \
+            "Fails DAPT XSD validation: missing required " \
+            "attribute " \
+            "'{http://www.w3.org/ns/ttml/profile/dapt#metadata}scriptRepresents'"
         self.assertListEqual(vr,
                              [ValidationResult(
                                  status=ERROR,

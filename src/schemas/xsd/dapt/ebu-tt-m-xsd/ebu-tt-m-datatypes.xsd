@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019, EBU, www.ebu.ch -->
+<!-- Version of XML Schema: 0.9 -->
+<!-- Creation: 24/05/2019 -->
+<!--  The publication of this EBU-TT XML Schema for EBU-TT Metadata is intended to support the 
+	implementation of the specification in EBU-Tech 3390 version 1.0.
+Please note that the EBU-TT XML Schema is a helping document and NOT normative but informative.-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ebuttmdt="urn:ebu:tt:metadata-datatypes"
+	targetNamespace="urn:ebu:tt:metadata-datatypes">
+	<xs:simpleType name="cellResolutionType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[0]*[1-9][0-9]*\s[0]*[1-9][0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="frameRateMultiplierType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[0]*[1-9][0-9]*\s[0]*[1-9][0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="cellExtentType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([+]?\d*\.?\d+(c))\s([+]?\d*\.?\d+(c))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="percentageExtentType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([+]?\d*\.?\d+(%))\s([+]?\d*\.?\d+(%))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="pixelExtentType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([+]?\d*\.?\d+(px))\s([+]?\d*\.?\d+(px))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="extentType">
+		<xs:union
+			memberTypes="ebuttmdt:cellExtentType ebuttmdt:percentageExtentType ebuttmdt:pixelExtentType"
+		/>
+	</xs:simpleType>
+	<xs:simpleType name="fontFamilyType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="fontSizeType">
+		<xs:union
+			memberTypes="ebuttmdt:cellFontSizeType ebuttmdt:percentageFontSizeType ebuttmdt:pixelFontSizeType"
+		/>
+	</xs:simpleType>
+	<xs:simpleType name="cellFontSizeType">
+		<xs:restriction base="xs:token">
+			<xs:pattern
+				value="([+]?\d*\.?\d+(c))(\s([+]?\d*\.?\d+(c)))?"
+			/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="percentageFontSizeType">
+		<xs:restriction base="xs:token">
+			<xs:pattern
+				value="([+]?\d*\.?\d+(%))(\s([+]?\d*\.?\d+(%)))?"
+			/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="pixelFontSizeType">
+		<xs:restriction base="xs:token">
+			<xs:pattern
+				value="([+]?\d*\.?\d+(px))(\s([+]?\d*\.?\d+(px)))?"
+			/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="fontStyleType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="normal"/>
+			<xs:enumeration value="italic"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="fontWeightType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="normal"/>
+			<xs:enumeration value="bold"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="cellLineHeightType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d*\.?\d+(c)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="percentageLineHeightType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d*\.?\d+(%)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="pixelLineHeightType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d*\.?\d+(px)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="lineHeightType">
+		<xs:union memberTypes="ebuttmdt:percentageLineHeightType ebuttmdt:cellLineHeightType ebuttmdt:pixelLineHeightType">
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="normal"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="colorType">
+		<xs:union
+			memberTypes="ebuttmdt:rgbHexColorType ebuttmdt:rgbaHexColorType ebuttmdt:rgbColorType ebuttmdt:rgbaColorType ebuttmdt:namedColorType"
+		/>
+	</xs:simpleType>
+	<xs:simpleType name="cellOriginType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([+-]?\d*\.?\d+(c))\s([+-]?\d*\.?\d+(c))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="percentageOriginType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([+-]?\d*\.?\d+(%))\s([+-]?\d*\.?\d+(%))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="pixelOriginType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([+-]?\d*\.?\d+(px))\s([+-]?\d*\.?\d+(px))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="originType">
+		<xs:union
+			memberTypes="ebuttmdt:cellOriginType ebuttmdt:pixelOriginType ebuttmdt:percentageOriginType"
+		/>
+	</xs:simpleType>
+	<xs:simpleType name="paddingType">
+		<xs:restriction base="xs:token">
+			<xs:pattern
+				value="([+-]?\d*(\.\d+)?(px|c|%))(\s([+-]?\d*(\.\d+)?(px|c|%)))?(\s([+-]?\d*(\.\d+)?(px|c|%)))?(\s([+-]?\d*(\.\d+)?(px|c|%)))?"
+			/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="timingType">
+		<xs:union
+			memberTypes="ebuttmdt:smpteTimingType ebuttmdt:mediaTimingType ebuttmdt:clockTimingType"/>
+	</xs:simpleType>
+	<xs:simpleType name="durationTimingType">
+		<xs:union
+			memberTypes="ebuttmdt:clockTimingType ebuttmdt:mediaTimingType"/>
+	</xs:simpleType>
+	<xs:simpleType name="smpteTimingType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]:[0-9][0-9]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="clockTimingType">
+		<xs:union memberTypes="ebuttmdt:limitedClockTimingType ebuttmdt:timecountTimingType"/>
+	</xs:simpleType>
+	<xs:simpleType name="mediaTimingType">
+		<xs:union memberTypes="ebuttmdt:timecountTimingType ebuttmdt:fullClockTimingType"/>
+	</xs:simpleType>
+	<xs:simpleType name="startOfProgrammeTimingType">
+		<xs:union memberTypes="ebuttmdt:smpteTimingType ebuttmdt:clockTimingType"/>
+	</xs:simpleType>
+	<xs:simpleType name="timecountTimingType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]+(\.[0-9]+)?(h|ms|s|m)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="authoringDelayType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[+-]?[0-9]+(\.[0-9]+)?(h|ms|s|m)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="limitedClockTimingType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9][0-9]:[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="noTimezoneDateType">
+		<xs:restriction base="xs:date">
+			<xs:pattern value="[^:Z]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="fullClockTimingType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9][0-9]+:[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="cellLengthType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[+-]?\d*\.?\d+(c)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="percentageLengthType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[+-]?\d*\.?\d+(%)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="pixelLengthType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[+-]?\d*\.?\d+(px)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="lengthType">
+		<xs:union
+			memberTypes="ebuttmdt:cellLengthType ebuttmdt:percentageLengthType ebuttmdt:pixelLengthType"
+		/>
+	</xs:simpleType>
+	<xs:simpleType name="rgbHexColorType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="#[a-fA-F\d]{6}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="rgbaHexColorType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="#[a-fA-F\d]{8}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="rgbColorType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="rgb\(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),\s?([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),\s?([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="rgbaColorType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="rgba\(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),\s?([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),\s?([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]),\s?([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="namedColorType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="transparent"/>
+			<xs:enumeration value="black"/>
+			<xs:enumeration value="silver"/>
+			<xs:enumeration value="gray"/>
+			<xs:enumeration value="white"/>
+			<xs:enumeration value="maroon"/>
+			<xs:enumeration value="red"/>
+			<xs:enumeration value="purple"/>
+			<xs:enumeration value="fuchsia"/>
+			<xs:enumeration value="magenta"/>
+			<xs:enumeration value="green"/>
+			<xs:enumeration value="lime"/>
+			<xs:enumeration value="olive"/>
+			<xs:enumeration value="yellow"/>
+			<xs:enumeration value="navy"/>
+			<xs:enumeration value="blue"/>
+			<xs:enumeration value="teal"/>
+			<xs:enumeration value="aqua"/>
+			<xs:enumeration value="cyan"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="transitionStyleAttributeType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="block"/>
+			<xs:enumeration value="line"/>
+			<xs:enumeration value="word"/>
+			<xs:enumeration value="partOfWord"/>
+			<xs:enumeration value="groupOfWords"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="distributionMediaTimingType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9][0-9]+:[0-5][0-9]:([0-5][0-9]|[0-6][0])(\.[0-9]+)?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="creationDateType">
+		<xs:union memberTypes="xs:date xs:dateTime"/>
+	</xs:simpleType>
+	
+</xs:schema>
