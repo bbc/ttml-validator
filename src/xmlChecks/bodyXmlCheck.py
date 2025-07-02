@@ -3,7 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 
 timing_attr_keys = set([
     'begin',
@@ -12,7 +12,7 @@ timing_attr_keys = set([
 ])
 
 
-class bodyCheck(xmlCheck):
+class bodyCheck(XmlCheck):
     """
     Checks body element and content descendants
     """

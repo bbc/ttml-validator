@@ -1,4 +1,4 @@
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from xml.etree.ElementTree import Element
 from ..validationLogging.validationLogger import ValidationLogger
 from ..validationLogging.validationCodes import ValidationCode
@@ -21,7 +21,7 @@ def get_unqualified_name(tag: str) -> str:
     return tag.split('}', 1)[1]
 
 
-class Pruner(xmlCheck):
+class Pruner(XmlCheck):
 
     def __init__(
             self,

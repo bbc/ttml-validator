@@ -2,7 +2,7 @@ from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from ..styleAttribs import getAllStyleAttributeDict, \
     attributeIsApplicableToElement, \
     canonicaliseFontFamily, computeStyles, getMergedStyleSet
@@ -26,7 +26,7 @@ permitted_span_backgroundColor_values = [
 ]
 
 
-class styleRefsXmlCheck(xmlCheck):
+class styleRefsXmlCheck(XmlCheck):
     """
     Checks for unreferenced styles and inappropriate style attributes.
     """

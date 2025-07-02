@@ -6,23 +6,7 @@ import io
 import xml.etree.ElementTree as ElementTree
 from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationLogger import ValidationLogger
-from .validationLogging.validationSummariser import \
-    XmlPassChecker, TtmlPassChecker, EbuttdPassChecker, \
-    BbcPassChecker
-from .preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
-    ByteOrderMarkCheck
-from .preParseChecks.xmlStructureCheck import XmlStructureCheck
-from .schemas.ebuttdSchema import EBUTTDSchema
-from .xmlChecks.xsdValidator import xsdValidator
-from .xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
-    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
-    unqualifiedIdAttributeCheck
-from .xmlChecks.headXmlCheck import headCheck
-from .xmlChecks.styleRefsCheck import styleRefsXmlCheck
-from .xmlChecks.regionRefsCheck import regionRefsXmlCheck
-from .xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
-from .xmlChecks.bodyXmlCheck import bodyCheck
-from .xmlChecks.timingXmlCheck import timingCheck
+from .constraintSets.bbcConstraints import BbcConstraintSet
 from pathlib import Path
 
 logging.getLogger().setLevel(logging.INFO)
@@ -65,31 +49,13 @@ def validate_ttml(args) -> int:
     epoch = get_epoch(args)
     dur = args.segdur if args.segment else None
 
-    preParseChecks = [
-        BadEncodingCheck(),  # check encoding before null bytes
-        ByteOrderMarkCheck(),
-        NullByteCheck(),
-        XmlStructureCheck()
-    ]
-
-    xmlChecks = [
-        unqualifiedIdAttributeCheck(),
-        xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
-        duplicateXmlIdCheck(),
-        ttTagAndNamespaceCheck(),
-        timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
-        activeAreaCheck(activeArea_required=False),
-        cellResolutionCheck(cellResolution_required=False),
-        headCheck(copyright_required=False),
-        styleRefsXmlCheck(),
-        inlineStyleAttributesCheck(),
-        regionRefsXmlCheck(),
-        bodyCheck(),
-        timingCheck(
-            epoch=epoch,
-            segment_dur=dur,
-            segment_relative_timing=args.segment_relative_timing),
-    ]
+    constraints = BbcConstraintSet(
+        epoch=epoch,
+        segment_dur=dur,
+        segment_relative_timing=args.segment_relative_timing
+    )
+    preParseChecks = constraints.preParseChecks()
+    xmlChecks = constraints.xmlChecks()
 
     validation_results = ValidationLogger()
     overall_valid = True
@@ -123,6 +89,7 @@ def validate_ttml(args) -> int:
             message='Could not decode into UTF-8: ' + str(e),
             code=ValidationCode.preParse_encoding
         )
+        in_xml_str = ''
 
     context = {
         "args": {
@@ -157,157 +124,7 @@ def validate_ttml(args) -> int:
                     code=ValidationCode.validator_internal_exception
                 )
 
-    xmlFails, xmlWarns, xmlSkips = \
-        XmlPassChecker.failuresAndWarningsAndSkips(validation_results)
-    if xmlSkips == 0 and xmlFails == 0:
-        validation_results.good(
-            location='Document',
-            message='Document appears to be valid XML with {} '
-                    'XML-related warnings'.format(xmlWarns),
-            code=ValidationCode.xml_document_validity
-        )
-    elif xmlSkips == 0:
-        validation_results.error(
-            location='Document',
-            message='Document is not valid XML with {} '
-                    'XML-related failures and '
-                    '{} warnings'.format(xmlFails, xmlWarns),
-            code=ValidationCode.xml_document_validity
-        )
-    else:
-        validation_results.skip(
-            location='Document',
-            message='{} XML checks skipped, '
-                    'document {} with '
-                    '{} XML-related failures and '
-                    '{} warnings'.format(
-                        xmlSkips,
-                        'validity as XML unclear' if xmlFails == 0 else
-                        'is not valid XML',
-                        xmlFails,
-                        xmlWarns),
-            code=ValidationCode.xml_document_validity
-        )
-
-    ttmlFails, ttmlWarns, ttmlSkips = \
-        TtmlPassChecker.failuresAndWarningsAndSkips(validation_results)
-    if ttmlSkips == 0 and ttmlFails == 0:
-        validation_results.good(
-            location='Document',
-            message='Document appears to be valid TTML with {} '
-                    'TTML-related warnings'.format(xmlWarns),
-            code=ValidationCode.ttml_document_validity
-        )
-    elif ttmlSkips == 0:
-        validation_results.error(
-            location='Document',
-            message='Document is not valid TTML with {} '
-                    'TTML-related failures and '
-                    '{} warnings'.format(ttmlFails, ttmlWarns),
-            code=ValidationCode.ttml_document_validity
-        )
-    else:
-        validation_results.skip(
-            location='Document',
-            message='{} TTML checks skipped, '
-                    'document {} with '
-                    '{} TTML-related failures and '
-                    '{} warnings'.format(
-                        ttmlSkips,
-                        'validity as TTML unclear' if ttmlFails == 0 else
-                        'is not valid TTML',
-                        ttmlFails,
-                        ttmlWarns),
-            code=ValidationCode.ttml_document_validity
-        )
-
-    ebuttdFails, ebuttdWarns, ebuttdSkips = \
-        EbuttdPassChecker.failuresAndWarningsAndSkips(validation_results)
-    if ebuttdSkips == 0 and ebuttdFails == 0:
-        validation_results.good(
-            location='Document',
-            message='Document appears to be valid EBU-TT-D with {} '
-                    'EBU-TT-D-related warnings'.format(ebuttdWarns),
-            code=ValidationCode.ebuttd_document_validity
-        )
-    elif ebuttdSkips == 0:
-        validation_results.error(
-            location='Document',
-            message='Document is not valid EBU-TT-D with {} '
-                    'EBU-TT-D-related failures and '
-                    '{} warnings'.format(ebuttdFails, ebuttdWarns),
-            code=ValidationCode.ebuttd_document_validity
-        )
-    else:
-        validation_results.skip(
-            location='Document',
-            message='{} EBU-TT-D checks skipped, '
-                    'document {} with '
-                    '{} EBU-TT-D-related failures and '
-                    '{} warnings'.format(
-                        ebuttdSkips,
-                        'validity as EBU-TT-D unclear' if ebuttdFails == 0 else
-                        'is not valid EBU-TT-D',
-                        ebuttdFails,
-                        ebuttdWarns),
-            code=ValidationCode.ebuttd_document_validity
-        )
-
-    mightPlay = (ebuttdFails + ttmlFails + xmlFails == 0)
-    bbcFails, bbcWarns, bbcSkips = \
-        BbcPassChecker.failuresAndWarningsAndSkips(validation_results)
-    if bbcSkips == 0 and bbcFails == 0:
-        validation_results.good(
-            location='Document',
-            message='Document appears to meet BBC requirements '
-                    'and should play okay in the BBC\'s player. '
-                    'There were {} BBC-related warnings'.format(bbcWarns),
-            code=ValidationCode.bbc_document_validity
-        )
-    elif bbcSkips == 0 and mightPlay:
-        validation_results.error(
-            location='Document',
-            message='Document does not meet BBC '
-                    'requirements but may play with unexpected '
-                    'appearance in the BBC\'s player. '
-                    'There were {} BBC-related errors and '
-                    '{} warnings'.format(bbcFails, bbcWarns),
-            code=ValidationCode.bbc_document_validity
-        )
-    elif bbcSkips == 0:
-        validation_results.error(
-            location='Document',
-            message='Document does not meet BBC '
-                    'requirements and is likely not to play properly '
-                    'if at all in the BBC\'s player. '
-                    'There were {} BBC-related errors and '
-                    '{} warnings'.format(bbcFails, bbcWarns),
-            code=ValidationCode.bbc_document_validity
-        )
-    else:
-        summary_text = \
-            'conformance to BBC requirements is unclear with ' \
-            if bbcFails == 0 and not mightPlay else \
-            'conformance to BBC requirements is unclear but may play with ' \
-            'unexpected appearance in the BBC\'s player. There were ' \
-            if bbcFails == 0 and mightPlay else \
-            'does not meet BBC requirements and is likely not to play ' \
-            'properly if at all in the BBC\'s player. There were '
-        validation_results.skip(
-            location='Document',
-            message='{} BBC requirement checks skipped, '
-                    'document {} '
-                    '{} BBC-related errors and '
-                    '{} warnings'.format(
-                        bbcSkips,
-                        summary_text,
-                        bbcFails,
-                        bbcWarns),
-            code=ValidationCode.bbc_document_validity
-        )
-
-    totalFails = xmlFails + ttmlFails + ebuttdFails + bbcFails
-    totalSkips = xmlSkips + ttmlSkips + ebuttdSkips + bbcSkips
+    totalFails, totalSkips = BbcConstraintSet.summarise(validation_results)
     if overall_valid != (totalFails == 0 and totalSkips == 0):
         validation_results.error(
             location='Document validity summaries',

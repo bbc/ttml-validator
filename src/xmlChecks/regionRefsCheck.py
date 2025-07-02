@@ -4,7 +4,7 @@ from ..validationLogging.validationResult import ValidationResult, \
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, get_unqualified_name
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from ..styleAttribs import computeStyles, getMergedStyleSet, \
     ebutt_distribution_color_type_regex, two_percent_vals_regex
 import logging
@@ -48,7 +48,7 @@ ebuttd_required_region_style_attrib_keys = [
 ]
 
 
-class regionRefsXmlCheck(xmlCheck):
+class regionRefsXmlCheck(XmlCheck):
     """
     Checks for unreferenced regions and inappropriate style attributes
     on region elements.

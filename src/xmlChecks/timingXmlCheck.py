@@ -4,7 +4,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from ..timeExpression import TimeExpressionHandler
 from ..styleAttribs import two_percent_vals_regex
 from operator import itemgetter
@@ -17,7 +17,7 @@ timing_attr_keys = [
 ]
 
 
-class timingCheck(xmlCheck):
+class timingCheck(XmlCheck):
     """
     Checks timings in document
     """

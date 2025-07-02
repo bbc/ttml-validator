@@ -2,11 +2,11 @@ from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from ..styleAttribs import getAllStyleAttributeKeys
 
 
-class inlineStyleAttributesCheck(xmlCheck):
+class inlineStyleAttributesCheck(XmlCheck):
     """
     Checks for inline style attributes on body, div, p and span.
     """

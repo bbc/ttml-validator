@@ -2,7 +2,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 
 
-class xmlCheck:
+class XmlCheck:
 
     def run(
             self,

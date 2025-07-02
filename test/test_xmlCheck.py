@@ -1,5 +1,5 @@
 import unittest
-import src.xmlChecks.xmlCheck as xmlCheck
+from src.xmlChecks.xmlCheck import XmlCheck
 from src.xmlChecks.xsdValidator import xsdValidator
 from src.schemas.ebuttdSchema import EBUTTDSchema
 from src.schemas.daptSchema import DAPTSchema
@@ -14,14 +14,14 @@ class testXmlCheck(unittest.TestCase):
     maxDiff = None
 
     def test_no_direct_instantiation(self):
-        not_impl_xmlCheck = xmlCheck.xmlCheck()
+        not_impl_XmlCheck = XmlCheck()
         good_input_xml = """<?xml version="1.0" encoding="UTF-8"?><tt/>"""
         good_input_etree = ElementTree.fromstring(good_input_xml)
         vr = ValidationLogger()
         context = {}
 
         with self.assertRaises(NotImplementedError):
-            not_impl_xmlCheck.run(
+            not_impl_XmlCheck.run(
                 input=good_input_etree,
                 context=context,
                 validation_results=vr)

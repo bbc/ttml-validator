@@ -1,11 +1,11 @@
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from ..validationLogging.validationLogger import ValidationLogger
 from ..validationLogging.validationCodes import ValidationCode
 from xml.etree.ElementTree import Element
 from xmlschema import XMLSchemaValidationError, XMLSchema
 
 
-class xsdValidator(xmlCheck):
+class xsdValidator(XmlCheck):
 
     def __init__(self,
                  xml_schema: XMLSchema,

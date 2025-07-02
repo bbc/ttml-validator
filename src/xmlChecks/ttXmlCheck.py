@@ -5,11 +5,11 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
     xmlIdAttr, unqualifiedIdAttr
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 import re
 
 
-class duplicateXmlIdCheck(xmlCheck):
+class duplicateXmlIdCheck(XmlCheck):
 
     @classmethod
     def _gatherXmlId(cls, e: Element, m: dict[str, list]):
@@ -50,7 +50,7 @@ class duplicateXmlIdCheck(xmlCheck):
         return valid
 
 
-class unqualifiedIdAttributeCheck(xmlCheck):
+class unqualifiedIdAttributeCheck(XmlCheck):
     def run(
             self,
             input: Element,
@@ -85,7 +85,7 @@ class unqualifiedIdAttributeCheck(xmlCheck):
         return True
 
 
-class ttTagAndNamespaceCheck(xmlCheck):
+class ttTagAndNamespaceCheck(XmlCheck):
     def run(
             self,
             input: Element,
@@ -131,7 +131,7 @@ class ttTagAndNamespaceCheck(xmlCheck):
         return valid
 
 
-class timeBaseCheck(xmlCheck):
+class timeBaseCheck(XmlCheck):
     default_timeBase = 'media'
 
     def __init__(self,
@@ -184,7 +184,7 @@ class timeBaseCheck(xmlCheck):
         return valid
 
 
-class activeAreaCheck(xmlCheck):
+class activeAreaCheck(XmlCheck):
     activeArea_re = re.compile(
         r'^(?P<leftOffset>[\d]+(\.[\d]+)?)%[\s]+'
         r'(?P<topOffset>[\d]+(\.[\d]+)?)%[\s]+'
@@ -259,7 +259,7 @@ class activeAreaCheck(xmlCheck):
         return valid
 
 
-class cellResolutionCheck(xmlCheck):
+class cellResolutionCheck(XmlCheck):
     cellResolution_re = re.compile(
         r'^(?P<horizontal>[\d]+)[\s]+'
         r'(?P<vertical>[\d]+)$')

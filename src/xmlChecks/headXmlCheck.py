@@ -4,11 +4,11 @@ from ..validationLogging.validationResult import ValidationResult, \
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
-from .xmlCheck import xmlCheck
+from .xmlCheck import XmlCheck
 from ..styleAttribs import getStyleAttributeKeys, getAllStyleAttributeDict
 
 
-class headCheck(xmlCheck):
+class headCheck(XmlCheck):
     """
     Checks presence of several elements in /tt/head.
     """
