@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-gb">
+    <head>
+        <meta charset="utf-8">
+        <title>BBC EBU-TT-D Validator</title>
+        <meta name="description" content="Page for checking conformance of a subtitle file with the BBC Subtitle Guidelines">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="favicon.ico" />
+        <!-- <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
+
+        <link rel="stylesheet" href="../css/main.css">
+        <link rel="stylesheet" type="text/css" href="https://gel.files.bbci.co.uk/r2.512/bbc-reith.css"/>
+
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <script src="../js/main.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 9]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div id="main">
+
+            <section id="intro">
+                <h2>BBC Subtitle Validator</h2>
+
+            </section>
+
+            <section id="upload">
+                <p>Choose an EBU-TT-D subtitle document from your computer.
+                    The document will be validated by your browser and the results
+                    shown in the area below.
+                    The file will not be sent to the server.</p>
+                <p>The conformance rules are defined by the
+                    <a href="https://www.bbc.co.uk/accessibility/forproducts/guides/subtitles/">BBC Subtitle Guidelines</a>.
+                </p>
+                <input type="file" id="file-input" style="width:512px" multiple/>
+                <p>
+                    <span>Current file: </span><span id="current-file"></span>
+                </p>
+            </section>
+
+        </div>
+    </body>
+</html>
