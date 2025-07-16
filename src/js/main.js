@@ -1,3 +1,5 @@
+// const FileSaver = require('filesaver.js-npm');
+
 function readMultipleFiles(e) {
     filelist = Array.from(e.target.files);
     filelist.sort(function(a, b) {
@@ -16,8 +18,21 @@ function readSingleFile(file, goToEnd = false) {
     } else {
         document.getElementById("current-file").innerText = file.name;
 
-        // TODO: Run the validator here!
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var contents = e.target.result;
+            // TODO: Run the validator here!
+            displayContents(contents, goToEnd);
+        };
+
+        reader.readAsText(file);
     }
+    document.getElementById("current-file").innerText = file.name;
+
+}
+
+function displayContents(contents, goToEnd = false) {
+    document.getElementById("file-contents").innerText = contents;
 }
 
 $(function () {

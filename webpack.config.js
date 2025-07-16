@@ -10,7 +10,9 @@ module.exports = {
     './src/js/main.js',
     './src/html/index.html',
     './src/sass/main.scss',
-    './src/html/favicon.ico'
+    './src/html/favicon.ico',
+    './pyscript.toml',
+    './src/pageScript.py',
   ],
   output: {
     filename: 'main.js',
@@ -24,7 +26,9 @@ module.exports = {
     watchFiles: [
       './src/js/main.js',
       './src/html/index.html',
-      './src/sass/main.scss'],
+      './src/sass/main.scss',
+      './pyscript.toml',
+      './src/pageScript.py',    ]
   },
   module: {
     rules: [
@@ -38,6 +42,14 @@ module.exports = {
       },
       {
         test: /\.ico$/,
+        type: "asset/source",
+      },
+      {
+        test: /\.toml$/,
+        type: "asset/source",
+      },
+      {
+        test: /\.py$/,
         type: "asset/source",
       },
       {
@@ -72,7 +84,9 @@ module.exports = {
     new CopyPlugin({
         patterns: [
             { from: "./src/html/favicon.ico" },
-            { from: "./src/html/index.html"},
+            { from: "./src/html/index.html" },
+            { from: "./src/pageScript.py" },
+            { from: "./pyscript.toml" },
         ]
     }),
     new ESLintPlugin({

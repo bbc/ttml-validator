@@ -1,0 +1,7 @@
+name = "BBC Subtitle Validator"
+description = "A TTML validator for the BBC Subtitle Guidelines."
+packages = ['xmlschema']
+
+[files]
+'./ttml_validator-0.1.0.tar.gz' = 'ttmlValidator'
+'pageScript.py' = ''
