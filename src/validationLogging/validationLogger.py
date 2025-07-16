@@ -1,5 +1,6 @@
 from io import TextIOWrapper
 from csv import writer as csvWriter
+import json
 from typing import Self
 from .validationCodes import ValidationCode
 from .validationResult import ValidationResult, \
@@ -127,3 +128,13 @@ class ValidationLogger(list[ValidationResult]):
                 result.location,
                 result.message
             ])
+
+    def write_json(
+            self,
+            stream: TextIOWrapper,
+            ):
+        stream.write(
+            json.JSONEncoder().encode(
+                [validation_result.asDict() for validation_result in self]
+            )
+        )

@@ -79,6 +79,15 @@ Fail,bbc_timing_gaps,testloc1,simulated BBC timing gaps error\r
 """
         self.assertEqual(result, expected)
 
+    def test_writeJson(self):
+        tf = io.TextIOWrapper(
+            buffer=io.BytesIO(), encoding='utf-8', newline='\n')
+        self.validationLogger.write_json(tf)
+        tf.seek(0)
+        result = tf.read()
+        expected = """[{"status": 1, "location": "test location", "message": "test message", "code": "unclassified"}, {"status": 0, "location": "testloc1", "message": "simulated parse success", "code": "xml_parse"}, {"status": 2, "location": "testloc1", "message": "simulated unqualified id warning", "code": "xml_id_unqualified"}, {"status": 3, "location": "testloc1", "message": "simulated xml id non-uniqueness", "code": "xml_id_unique"}, {"status": 3, "location": "testloc2", "message": "simulated xml id non-uniqueness", "code": "xml_id_unique"}, {"status": 3, "location": "testloc3", "message": "simulated xml id non-uniqueness", "code": "xml_id_unique"}, {"status": 2, "location": "testloc1", "message": "simulated ttml document timing warning", "code": "ttml_document_timing"}, {"status": 4, "location": "testloc4", "message": "simulated ebu-tt-d styling skip", "code": "ebuttd_styling_element_constraint"}, {"status": 3, "location": "testloc1", "message": "simulated BBC timing gaps error", "code": "bbc_timing_gaps"}]"""
+        self.assertEqual(result, expected)
+
     def test_collateResults_and_write_plaintext(self):
         vl = self.validationLogger.collateResults(2)
         tf = io.TextIOWrapper(

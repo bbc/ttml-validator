@@ -23,10 +23,21 @@ class ValidationResult:
     message: str
     code: ValidationCode | None = None
 
+    def _getCode(self) -> str:
+        return self.code.name if self.code else ValidationCode.unclassified.name
+
     def asString(self) -> str:
         return '{status}: {code} {location} {message}'.format(
             status=StatusStrings.get(self.status, 'UNKNOWN'),
-            code=self.code.name if self.code else ValidationCode.unclassified,
+            code=self._getCode(),
             location=self.location,
             message=self.message,
         )
+
+    def asDict(self) -> dict:
+        return {
+            'status': self.status,
+            'location': self.location,
+            'message': self.message,
+            'code': self._getCode(),
+        }

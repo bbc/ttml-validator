@@ -167,7 +167,13 @@ def main():
         default=False,
         required=False,
         action='store_true',
-        help='If set, output in CSV format, with times')
+        help='If set, output in CSV format')
+    parser.add_argument(
+        '-json',
+        default=False,
+        required=False,
+        action='store_true',
+        help='If set, output in JSON format')
     parser.add_argument(
         '-segment',
         default=False,
