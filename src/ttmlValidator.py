@@ -137,6 +137,8 @@ def validate_ttml(args) -> int:
             more_than=args.collate_more_than)
     if args.csv:
         validation_results.write_csv(args.results_out)
+    elif args.json:
+        validation_results.write_json(args.results_out)
     else:
         validation_results.write_plaintext(args.results_out)
     args.results_out.flush()
