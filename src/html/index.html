@@ -16,6 +16,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <!-- This script tag bootstraps PyScript -->
         <script type="module" src="https://pyscript.net/releases/2025.7.3/core.js"></script>
+        <!-- <script type="module" src="/pyscript/core.js"></script> -->
         <script src="main.js"></script>
     </head>
     <body>
@@ -52,7 +53,40 @@
 
             <button id="validate-button" py-click="validateNow">Validate</button>
 
-            <script type="py" src="pageScript.py" config="./pyscript.toml"></script>
+            <!-- <script type="py" src="pageScript.py" config="./pyscript.toml"></script> -->
         </div>
+        <!-- <script type="py" src="./pageScript.py" config="./pyscript.toml"></script> -->
+         <!-- <py-config>
+        {
+            "packages": ["xmlschema"],
+            "files": {
+                './ttml_validator-0.1.0.tar.gz' = 'ttmlValidator'
+            }
+        }
+        </py-config> -->
+
+        <script type="py">
+from pyscript import document, when, display, window
+# from pyweb import pydom
+
+
+document.querySelector("#python-signal").innerText="pageScript.py"
+# pydom["p#python-signal"].html = "pageScript.py"
+
+@when("change", "#file-contents")
+def file_change_handler(event):
+    display("file contents changed")
+    document.querySelector("#python-signal").innerText="file_change_handler"
+
+
+# @when("click", "#validate-button")
+def validateNow(event):
+    display("button clicked")
+    window.console.log("button clicked")
+    document.querySelector("#python-signal").innerText="validateNow"
+
+
+when('click', '#validate-button', handler=validateNow)
+        </script>
     </body>
 </html>
