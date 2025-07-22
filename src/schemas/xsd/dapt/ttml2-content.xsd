@@ -12,6 +12,7 @@
   <xs:include schemaLocation="ttml2-metadata.xsd"/>
   <xs:include schemaLocation="ttml2-animation.xsd"/>
   <xs:include schemaLocation="ttml2-embedded.xsd"/>
+  <xs:include schemaLocation="ttml2-layout.xsd"/>
   <xs:include schemaLocation="ttml2-styling.xsd"/>
   <xs:import namespace="http://www.w3.org/ns/ttml#metadata"
     schemaLocation="ttml2-metadata-attribs.xsd"/>
@@ -68,6 +69,14 @@
     </xs:sequence>
     <xs:attributeGroup ref="tt:body.attlist"/>
   </xs:complexType>
+  <xs:complexType name="dapt_body.eltype">
+    <xs:complexContent>
+      <xs:extension base="tt:body.eltype">
+        <xs:attribute ref="daptm:langSrc"/>
+        <xs:attribute ref="daptm:represents"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="div.eltype">
     <xs:sequence>
       <xs:group ref="tt:Metadata.class" minOccurs="0" maxOccurs="unbounded"/>
@@ -103,6 +112,7 @@
     <xs:complexContent>
       <xs:extension base="tt:p.eltype">
         <xs:attribute ref="daptm:langSrc"/>
+        <xs:attribute ref="daptm:represents"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -114,6 +124,14 @@
     </xs:sequence>
     <xs:attributeGroup ref="tt:span.attlist"/>
   </xs:complexType>
+  <xs:complexType name="dapt_span.eltype" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="tt:span.eltype">
+        <xs:attribute ref="daptm:langSrc"/>
+        <xs:attribute ref="daptm:represents"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="br.eltype">
     <xs:sequence>
       <xs:group ref="tt:Metadata.class" minOccurs="0" maxOccurs="unbounded"/>
@@ -121,10 +139,10 @@
     </xs:sequence>
     <xs:attributeGroup ref="tt:br.attlist"/>
   </xs:complexType>
-  <xs:element name="body" type="tt:body.eltype"/>
+  <xs:element name="body" type="tt:dapt_body.eltype"/>
   <xs:element name="div" type="tt:dapt_div.eltype"/>
-  <xs:element name="p" type="tt:p.eltype"/>
-  <xs:element name="span" type="tt:span.eltype"/>
+  <xs:element name="p" type="tt:dapt_p.eltype"/>
+  <xs:element name="span" type="tt:dapt_span.eltype"/>
   <xs:element name="br" type="tt:br.eltype"/>
   <xs:group name="BlockNoDiv.class">
     <xs:choice>
