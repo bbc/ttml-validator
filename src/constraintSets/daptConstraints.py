@@ -12,11 +12,54 @@ from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from src.xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
 from src.xmlChecks.timingXmlCheck import timingCheck
+from src.xmlChecks.pruner import Pruner
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationSummariser import \
     XmlPassChecker, TtmlPassChecker, DaptPassChecker
 
+recognised_namespaces = set([
+    'http://www.w3.org/XML/1998/namespace', # xml
+    'http://www.w3.org/ns/ttml', # tt
+    'http://www.w3.org/ns/ttml#parameter', # ttp
+    'http://www.w3.org/ns/ttml#audio', # tta
+    'http://www.w3.org/ns/ttml#metadata', # ttm
+    'http://www.w3.org/ns/ttml/feature/',
+    'http://www.w3.org/ns/ttml/profile/dapt#metadata', # daptm
+    'http://www.w3.org/ns/ttml/profile/dapt/extension/',
+    'urn:ebu:tt:metadata', # ebuttm
+])
+
+# We will not prune attributes in no namespace if they are
+# defined on any element in TTML or DAPT, even if they are
+# not defined on the specific element on which they occur.
+known_no_ns_attributes = set([
+    'agent',
+    'animate',
+    'begin',
+    'calcMode',
+    'clipBegin',
+    'clipEnd',
+    'condition',
+    'dur',
+    'encoding',
+    'end',
+    'family',
+    'fill',
+    'format',
+    'keySplines',
+    'keyTimes',
+    'length',
+    'name',
+    'range',
+    'region',
+    'repeatCount',
+    'src',
+    'style',
+    'timeContainer',
+    'type',
+    'weight',
+])
 
 class DaptConstraintSet(ConstraintSet):
     _preParseChecks = [
@@ -28,6 +71,9 @@ class DaptConstraintSet(ConstraintSet):
 
     _xmlChecks = [
         unqualifiedIdAttributeCheck(),
+        Pruner(
+            no_prune_namespaces=recognised_namespaces,
+            no_prune_no_namespace_attributes=known_no_ns_attributes),
         xsdValidator(xml_schema=DAPTSchema, schema_name='DAPT'),
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),
