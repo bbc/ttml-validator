@@ -161,3 +161,16 @@ from an invalid input based on the validation failures
 by processing an MPD or by being passed a template and a starting number
 * check for attributes supposed to be in no namespace placed in a namespace e.g. with a `tt:` prefix
 * Start synthesising an alternate valid version of the document
+* Remove EBU-TT-D styling constraint checks for DAPT
+* Remove EBU-TT-D layout constraint checks for DAPT
+* Add DAPT check for invalid agent
+* Add DAPT check for contentProfiles
+* Add DAPT check for originTimecode without framerate
+* Add DAPT check for >1 originTimecode
+* Add DAPT check for descType
+* Add DAPT check for onScreen
+* Add DAPT checks for represents and scriptRepresents
+* Add DAPT checks for scriptType-root
+* Add DAPT check for xmlLang on audio non-matching
+* Add DAPT check for an empty xmlLang on root
+* Don't require xml:id on div - XSD change
