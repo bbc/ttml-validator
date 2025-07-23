@@ -95,7 +95,7 @@ Fail,bbc_timing_gaps,testloc1,simulated BBC timing gaps error\r
         vl.write_plaintext(tf)
         tf.seek(0)
         result = tf.read()
-        expected = """Information: ValidationCode.unclassified test location test message
+        expected = """Information: unclassified test location test message
 Success: xml_parse testloc1 simulated parse success
 Warning: xml_id_unqualified testloc1 simulated unqualified id warning
 Error: xml_id_unique 3 locations simulated xml id non-uniqueness

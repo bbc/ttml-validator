@@ -6,13 +6,14 @@ import io
 import xml.etree.ElementTree as ElementTree
 from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationLogger import ValidationLogger
-from .constraintSets.bbcConstraints import BbcConstraintSet
+from .constraintSets import constraintSet
+from .constraintSets.bbcConstraints import BbcSubtitleConstraintSet
 from pathlib import Path
 
 logging.getLogger().setLevel(logging.INFO)
 
 
-def log_results_summary(valid: bool):
+def log_results_summary_bbc(valid: bool):
     if valid:
         logging.info(
             'Document appears to be valid EBU-TT-D meeting BBC requirements '
@@ -49,11 +50,18 @@ def validate_ttml(args) -> int:
     epoch = get_epoch(args)
     dur = args.segdur if args.segment else None
 
-    constraints = BbcConstraintSet(
-        epoch=epoch,
-        segment_dur=dur,
-        segment_relative_timing=args.segment_relative_timing
-    )
+    constraints = constraintSet.ConstraintSet()
+    match args.flavour:
+        case 'bbc':
+            constraints = BbcSubtitleConstraintSet(
+                epoch=epoch,
+                segment_dur=dur,
+                segment_relative_timing=args.segment_relative_timing
+            )
+        case other_flavour:
+            logging.exception(
+                'Flavour {} not recognised.'.format(other_flavour))
+
     preParseChecks = constraints.preParseChecks()
     xmlChecks = constraints.xmlChecks()
 
@@ -124,7 +132,8 @@ def validate_ttml(args) -> int:
                     code=ValidationCode.validator_internal_exception
                 )
 
-    totalFails, totalSkips = BbcConstraintSet.summarise(validation_results)
+    totalFails, totalSkips = constraints.summarise(
+        validation_results)
     if overall_valid != (totalFails == 0 and totalSkips == 0):
         validation_results.error(
             location='Document validity summaries',
@@ -143,7 +152,9 @@ def validate_ttml(args) -> int:
         validation_results.write_plaintext(args.results_out)
     args.results_out.flush()
 
-    log_results_summary(overall_valid)
+    match args.flavour:
+        case 'bbc':
+            log_results_summary_bbc(overall_valid)
 
     return 0 if overall_valid else totalFails
 
@@ -217,6 +228,14 @@ def main():
         type=int,
         help='If more than zero, collates similar messages '
              'when there are more than the specified number.'
+    )
+    parser.add_argument(
+        '-flavour',
+        default='bbc',
+        required=False,
+        action='store',
+        type=str,
+        help='bbc (subtitles) or dapt'
     )
     parser.set_defaults(func=validate_ttml)
 

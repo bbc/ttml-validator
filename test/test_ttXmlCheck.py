@@ -263,7 +263,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
-            timeBase_whitelist=['media'],
+            timeBase_acceptlist=['media'],
             timeBase_required=True)
         vr = ValidationLogger()
         context = {}
@@ -293,7 +293,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
-            timeBase_whitelist=['media'],
+            timeBase_acceptlist=['media'],
             timeBase_required=True)
         vr = ValidationLogger()
         context = {}
@@ -323,7 +323,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
-            timeBase_whitelist=['media'],
+            timeBase_acceptlist=['media'],
             timeBase_required=True)
         vr = ValidationLogger()
         context = {}
@@ -354,7 +354,7 @@ class testTtXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         timeBaseCheck = ttXmlCheck.timeBaseCheck(
-            timeBase_whitelist=['media'],
+            timeBase_acceptlist=['media'],
             timeBase_required=True)
         vr = ValidationLogger()
         context = {}

@@ -24,7 +24,9 @@ class ValidationResult:
     code: ValidationCode | None = None
 
     def _getCode(self) -> str:
-        return self.code.name if self.code else ValidationCode.unclassified.name
+        return \
+            self.code.name if self.code \
+            else ValidationCode.unclassified.name
 
     def asString(self) -> str:
         return '{status}: {code} {location} {message}'.format(

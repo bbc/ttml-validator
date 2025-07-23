@@ -135,10 +135,10 @@ class timeBaseCheck(XmlCheck):
     default_timeBase = 'media'
 
     def __init__(self,
-                 timeBase_whitelist: list[str] = ['media'],
+                 timeBase_acceptlist: list[str] = ['media'],
                  timeBase_required: bool = False):
         super().__init__()
-        self._timeBase_whitelist = timeBase_whitelist
+        self._timeBase_acceptlist = timeBase_acceptlist
         self._timeBase_required = timeBase_required
 
     def run(
@@ -163,13 +163,13 @@ class timeBaseCheck(XmlCheck):
 
         timeBase_attr_val = \
             input.get(timeBase_attr_key, self.default_timeBase)
-        if timeBase_attr_val not in self._timeBase_whitelist:
+        if timeBase_attr_val not in self._timeBase_acceptlist:
             valid = False
             validation_results.error(
                 location='{} {} attribute'.format(
                     input.tag, timeBase_attr_key),
                 message='timeBase {} not in the allowed set {}'.format(
-                    timeBase_attr_val, self._timeBase_whitelist),
+                    timeBase_attr_val, self._timeBase_acceptlist),
                 code=ValidationCode.ebuttd_parameter_timeBase
             )
 

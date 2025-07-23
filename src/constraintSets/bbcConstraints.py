@@ -20,7 +20,7 @@ from src.validationLogging.validationSummariser import \
     BbcPassChecker
 
 
-class BbcConstraintSet(ConstraintSet):
+class BbcSubtitleConstraintSet(ConstraintSet):
     _preParseChecks = [
         BadEncodingCheck(),  # check encoding before null bytes
         ByteOrderMarkCheck(),
@@ -33,7 +33,7 @@ class BbcConstraintSet(ConstraintSet):
         xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),
-        timeBaseCheck(timeBase_whitelist=['media'], timeBase_required=True),
+        timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=True),
         activeAreaCheck(activeArea_required=False),
         cellResolutionCheck(cellResolution_required=False),
         headCheck(copyright_required=False),
