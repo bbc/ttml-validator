@@ -8,6 +8,7 @@ from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationLogger import ValidationLogger
 from .constraintSets import constraintSet
 from .constraintSets.bbcConstraints import BbcSubtitleConstraintSet
+from .constraintSets.daptConstraints import DaptConstraintSet
 from pathlib import Path
 
 logging.getLogger().setLevel(logging.INFO)
@@ -22,6 +23,15 @@ def log_results_summary_bbc(valid: bool):
         logging.error(
             'Document is not valid EBU-TT-D meeting BBC '
             'requirements.')
+
+
+def log_results_summary_dapt(valid: bool):
+    if valid:
+        logging.info(
+            'Document appears to be valid DAPT.')
+    else:
+        logging.error(
+            'Document is not valid DAPT.')
 
 
 def get_epoch(args) -> float:
@@ -54,6 +64,12 @@ def validate_ttml(args) -> int:
     match args.flavour:
         case 'bbc':
             constraints = BbcSubtitleConstraintSet(
+                epoch=epoch,
+                segment_dur=dur,
+                segment_relative_timing=args.segment_relative_timing
+            )
+        case 'dapt':
+            constraints = DaptConstraintSet(
                 epoch=epoch,
                 segment_dur=dur,
                 segment_relative_timing=args.segment_relative_timing
@@ -155,6 +171,8 @@ def validate_ttml(args) -> int:
     match args.flavour:
         case 'bbc':
             log_results_summary_bbc(overall_valid)
+        case 'dapt':
+            log_results_summary_dapt(overall_valid)
 
     return 0 if overall_valid else totalFails
 

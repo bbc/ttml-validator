@@ -1,0 +1,3 @@
+[submodule "test/dapt-tests"]
+	path = test/dapt-tests
+	url = https://github.com/w3c/dapt-tests

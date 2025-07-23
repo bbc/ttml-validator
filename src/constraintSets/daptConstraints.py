@@ -1,0 +1,156 @@
+from .constraintSet import ConstraintSet
+from src.preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
+    ByteOrderMarkCheck
+from src.preParseChecks.xmlStructureCheck import XmlStructureCheck
+from src.schemas.daptSchema import DAPTSchema
+from src.xmlChecks.xsdValidator import xsdValidator
+from src.xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
+    ttTagAndNamespaceCheck, unqualifiedIdAttributeCheck
+from src.xmlChecks.headXmlCheck import headCheck
+from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
+from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
+from src.xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
+from src.xmlChecks.bodyXmlCheck import bodyCheck
+from src.xmlChecks.timingXmlCheck import timingCheck
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationSummariser import \
+    XmlPassChecker, TtmlPassChecker, DaptPassChecker
+
+
+class DaptConstraintSet(ConstraintSet):
+    _preParseChecks = [
+        BadEncodingCheck(),  # check encoding before null bytes
+        ByteOrderMarkCheck(),
+        NullByteCheck(),
+        XmlStructureCheck()
+    ]
+
+    _xmlChecks = [
+        unqualifiedIdAttributeCheck(),
+        xsdValidator(xml_schema=DAPTSchema, schema_name='DAPT'),
+        duplicateXmlIdCheck(),
+        ttTagAndNamespaceCheck(),
+        timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
+        headCheck(copyright_required=False),
+        # styleRefsXmlCheck(),
+        # inlineStyleAttributesCheck(),
+        # regionRefsXmlCheck(),
+        bodyCheck()
+    ]
+
+    def __init__(
+            self,
+            epoch: float = 0.0,
+            segment_dur: float | None = None,
+            segment_relative_timing: bool = False) -> None:
+        super().__init__()
+        self._xmlChecks.append(
+            timingCheck(
+                epoch=epoch,
+                segment_dur=segment_dur,
+                segment_relative_timing=segment_relative_timing)
+            )
+
+    @staticmethod
+    def summarise(validation_results: ValidationLogger) -> tuple[int, int]:
+        xmlFails, xmlWarns, xmlSkips = \
+            XmlPassChecker.failuresAndWarningsAndSkips(validation_results)
+        if xmlSkips == 0 and xmlFails == 0:
+            validation_results.good(
+                location='Document',
+                message='Document appears to be valid XML with {} '
+                        'XML-related warnings'.format(xmlWarns),
+                code=ValidationCode.xml_document_validity
+            )
+        elif xmlSkips == 0:
+            validation_results.error(
+                location='Document',
+                message='Document is not valid XML with {} '
+                        'XML-related failures and '
+                        '{} warnings'.format(xmlFails, xmlWarns),
+                code=ValidationCode.xml_document_validity
+            )
+        else:
+            validation_results.skip(
+                location='Document',
+                message='{} XML checks skipped, '
+                        'document {} with '
+                        '{} XML-related failures and '
+                        '{} warnings'.format(
+                            xmlSkips,
+                            'validity as XML unclear' if xmlFails == 0 else
+                            'is not valid XML',
+                            xmlFails,
+                            xmlWarns),
+                code=ValidationCode.xml_document_validity
+            )
+
+        ttmlFails, ttmlWarns, ttmlSkips = \
+            TtmlPassChecker.failuresAndWarningsAndSkips(validation_results)
+        if ttmlSkips == 0 and ttmlFails == 0:
+            validation_results.good(
+                location='Document',
+                message='Document appears to be valid TTML with {} '
+                        'TTML-related warnings'.format(xmlWarns),
+                code=ValidationCode.ttml_document_validity
+            )
+        elif ttmlSkips == 0:
+            validation_results.error(
+                location='Document',
+                message='Document is not valid TTML with {} '
+                        'TTML-related failures and '
+                        '{} warnings'.format(ttmlFails, ttmlWarns),
+                code=ValidationCode.ttml_document_validity
+            )
+        else:
+            validation_results.skip(
+                location='Document',
+                message='{} TTML checks skipped, '
+                        'document {} with '
+                        '{} TTML-related failures and '
+                        '{} warnings'.format(
+                            ttmlSkips,
+                            'validity as TTML unclear' if ttmlFails == 0 else
+                            'is not valid TTML',
+                            ttmlFails,
+                            ttmlWarns),
+                code=ValidationCode.ttml_document_validity
+            )
+
+        daptFails, daptWarns, daptSkips = \
+            DaptPassChecker.failuresAndWarningsAndSkips(validation_results)
+        if daptSkips == 0 and daptFails == 0:
+            validation_results.good(
+                location='Document',
+                message='Document appears to be valid DAPT with {} '
+                        'DAPT-related warnings'.format(daptWarns),
+                code=ValidationCode.dapt_document_validity
+            )
+        elif daptSkips == 0:
+            validation_results.error(
+                location='Document',
+                message='Document is not valid DAPT with {} '
+                        'DAPT-related failures and '
+                        '{} warnings'.format(daptFails, daptWarns),
+                code=ValidationCode.dapt_document_validity
+            )
+        else:
+            validation_results.skip(
+                location='Document',
+                message='{} DAPT checks skipped, '
+                        'document {} with '
+                        '{} DAPT-related failures and '
+                        '{} warnings'.format(
+                            daptSkips,
+                            'validity as DAPT unclear' if daptFails == 0
+                            else 'is not valid DAPT',
+                            daptFails,
+                            daptWarns),
+                code=ValidationCode.ebuttd_document_validity
+            )
+
+        totalFails = xmlFails + ttmlFails + daptFails
+        totalSkips = xmlSkips + ttmlSkips + daptSkips
+
+        return totalFails, totalSkips

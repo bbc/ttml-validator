@@ -62,6 +62,12 @@ class TtmlPassChecker(ValidationPassChecker):
     ]
 
 
+class DaptPassChecker(ValidationPassChecker):
+    _check_codes = [
+        ValidationCode.xml_xsd,
+    ]
+
+
 class EbuttdPassChecker(ValidationPassChecker):
     _check_codes = [
         ValidationCode.xml_xsd,
