@@ -379,7 +379,9 @@ class timingCheck(XmlCheck):
         for begin, el_list in time_el_map.items():
             end_list = [el[1] for el in el_list
                         if get_unqualified_name(el[0].tag) in ['span', 'p']]
-            max_end = max(end_list) if None not in end_list else None
+            max_end = \
+                max(end_list) if None not in end_list and len(end_list)>0 \
+                else None
             begin_end_list.append((begin, max_end))
         begin_end_list.sort(key=itemgetter(0))
 
