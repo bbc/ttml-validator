@@ -65,6 +65,10 @@ class TtmlPassChecker(ValidationPassChecker):
 class DaptPassChecker(ValidationPassChecker):
     _check_codes = [
         ValidationCode.xml_xsd,
+        ValidationCode.xml_encoding_decl,
+        ValidationCode.xml_entity_decl,
+        ValidationCode.xml_document_validity,
+        ValidationCode.xml_prune,  # should never be errors
     ]
 
 
