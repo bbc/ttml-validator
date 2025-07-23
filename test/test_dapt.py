@@ -59,8 +59,8 @@ class testDAPT(TestCase):
                 buffer=namedTestBuffer(), encoding='utf-8', newline='\n')
             args = Namespace(
                 ttml_in=test_file,
-                # results_out=results_out,
-                results_out=sys.stdout,
+                results_out=results_out,
+                # results_out=sys.stdout,
                 csv=False,
                 json=False,
                 segment=False,
@@ -72,6 +72,7 @@ class testDAPT(TestCase):
             )
             result = validate_ttml(args)
             results_out.flush()
+            results_out.seek(0)
             results_text = results_out.read()
         return result, results_text
 
@@ -109,4 +110,6 @@ class testDAPT(TestCase):
                         name=test_name,
                         path=test_path):
                     result, results_text = self._runTest(path=test_path)
+                    if result == 0:
+                        print(results_text)
                     self.assertGreater(result, 0)
