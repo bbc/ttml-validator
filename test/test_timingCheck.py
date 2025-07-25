@@ -1,5 +1,7 @@
 import unittest
 import src.xmlChecks.headXmlCheck as headXmlCheck
+import src.xmlChecks.stylingCheck as stylingCheck
+import src.xmlChecks.layoutCheck as layoutCheck
 import src.xmlChecks.regionRefsCheck as regionRefsCheck
 import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.timingXmlCheck as timingXmlCheck
@@ -814,7 +816,12 @@ class testTimingXmlCheck(unittest.TestCase):
         # we need to run regionRefsXmlCheck, which in turn
         # depends on styleRefxXmlCheck, which in turn depends
         # on headCheck!
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
+        )
         styleRefsXmlCheck = styleRefsCheck.styleRefsXmlCheck()
         regionRefsXmlCheck = regionRefsCheck.regionRefsXmlCheck()
         timingCheck = timingXmlCheck.timingCheck()
