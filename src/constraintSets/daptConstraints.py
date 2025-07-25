@@ -61,7 +61,9 @@ known_no_ns_attributes = set([
     'weight',
 ])
 
+
 class DaptConstraintSet(ConstraintSet):
+
     _preParseChecks = [
         BadEncodingCheck(),  # check encoding before null bytes
         ByteOrderMarkCheck(),
@@ -78,11 +80,11 @@ class DaptConstraintSet(ConstraintSet):
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
-        headCheck(copyright_required=False),
+        # headCheck(copyright_required=False),
         # styleRefsXmlCheck(),
         # inlineStyleAttributesCheck(),
         # regionRefsXmlCheck(),
-        bodyCheck()
+        # bodyCheck()
     ]
 
     def __init__(

@@ -161,6 +161,7 @@ from an invalid input based on the validation failures
 by processing an MPD or by being passed a template and a starting number
 * check for attributes supposed to be in no namespace placed in a namespace e.g. with a `tt:` prefix
 * Start synthesising an alternate valid version of the document
+* Refactor head and body checks to be more "constructable" for different constraint sets
 * Remove EBU-TT-D styling constraint checks for DAPT
 * Remove EBU-TT-D layout constraint checks for DAPT
 * Add DAPT check for invalid agent
