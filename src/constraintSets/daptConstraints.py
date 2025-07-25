@@ -7,6 +7,7 @@ from src.xmlChecks.xsdValidator import xsdValidator
 from src.xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, unqualifiedIdAttributeCheck
 from src.xmlChecks.headXmlCheck import headCheck
+from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
 from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from src.xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
@@ -80,7 +81,10 @@ class DaptConstraintSet(ConstraintSet):
         duplicateXmlIdCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
-        # headCheck(copyright_required=False),
+        headCheck(
+            sub_checks=[
+                copyrightCheck(copyright_required=False)
+            ]),
         # styleRefsXmlCheck(),
         # inlineStyleAttributesCheck(),
         # regionRefsXmlCheck(),

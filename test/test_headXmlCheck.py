@@ -1,5 +1,8 @@
 import unittest
 import src.xmlChecks.headXmlCheck as headXmlCheck
+import src.xmlChecks.copyrightCheck as copyrightCheck
+import src.xmlChecks.stylingCheck as stylingCheck
+import src.xmlChecks.layoutCheck as layoutCheck
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -35,7 +38,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -112,7 +119,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {
@@ -178,7 +189,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -207,7 +222,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -247,7 +266,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -320,7 +343,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=True
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=True),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -391,7 +418,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {
@@ -471,7 +502,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -540,7 +575,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -609,7 +648,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -679,7 +722,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -751,7 +798,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -841,7 +892,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -927,7 +982,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -996,7 +1055,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1065,7 +1128,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1135,7 +1202,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1207,7 +1278,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1297,7 +1372,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}

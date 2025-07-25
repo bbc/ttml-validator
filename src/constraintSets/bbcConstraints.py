@@ -7,6 +7,9 @@ from src.xmlChecks.xsdValidator import xsdValidator
 from src.xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
     ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
     unqualifiedIdAttributeCheck
+from src.xmlChecks.copyrightCheck import copyrightCheck
+from src.xmlChecks.stylingCheck import stylingCheck
+from src.xmlChecks.layoutCheck import layoutCheck
 from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
 from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
@@ -36,7 +39,13 @@ class BbcSubtitleConstraintSet(ConstraintSet):
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=True),
         activeAreaCheck(activeArea_required=False),
         cellResolutionCheck(cellResolution_required=False),
-        headCheck(copyright_required=False),
+        headCheck(
+            sub_checks=[
+                copyrightCheck(copyright_required=False),
+                stylingCheck(),
+                layoutCheck(),
+            ]
+            ),
         styleRefsXmlCheck(),
         inlineStyleAttributesCheck(),
         regionRefsXmlCheck(),
