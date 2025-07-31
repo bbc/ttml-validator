@@ -75,12 +75,12 @@ class DaptConstraintSet(ConstraintSet):
     ]
 
     _xmlChecks = [
-        unqualifiedIdAttributeCheck(),
+        duplicateXmlIdCheck(),
         Pruner(
             no_prune_namespaces=recognised_namespaces,
             no_prune_no_namespace_attributes=known_no_ns_attributes),
         xsdValidator(xml_schema=DAPTSchema, schema_name='DAPT'),
-        duplicateXmlIdCheck(),
+        unqualifiedIdAttributeCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
         headCheck(
