@@ -41,7 +41,7 @@ class timingCheck(XmlCheck):
             te: TimeExpressionHandler,
             el: Element,
             epoch_s: float,
-            parent_end: float,
+            parent_end: float | None,
             begin_defined: bool,
             end_defined: bool,
             time_el_map: dict[float, list[tuple[Element, float]]],
@@ -325,7 +325,7 @@ class timingCheck(XmlCheck):
         num_begins = len(sorted_begins)
         for el_begin_index in range(num_begins):
             el_end_list = \
-                filtered_time_el_map.get(sorted_begins[el_begin_index])
+                filtered_time_el_map.get(sorted_begins[el_begin_index], [])
             num_ends = len(el_end_list)
             for el_end_index in range(num_ends):
                 el, end = el_end_list[el_end_index]

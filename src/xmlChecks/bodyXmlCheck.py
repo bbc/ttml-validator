@@ -1,15 +1,10 @@
 from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_unqualified_name, make_qname, \
-    xmlIdAttr
+from ..xmlUtils import make_qname
 from .xmlCheck import XmlCheck
-
-timing_attr_keys = set([
-    'begin',
-    'end',
-    'dur'
-])
+from .timingAttributeCheck import getTimingAttributes, \
+    pushParentTimingAttributes, popParentTimingAttributes
 
 
 class bodyCheck(XmlCheck):
@@ -17,250 +12,12 @@ class bodyCheck(XmlCheck):
     Checks body element and content descendants
     """
 
-    def _getTimingAttributes(
-            self,
-            el: Element
-    ) -> set:
-        attr_key_set = set(el.keys())
-        return attr_key_set.intersection(timing_attr_keys)
+    _subChecks = []
 
-    def _checkNoTimingAttributes(
-            self,
-            el: Element,
-            validation_results: ValidationLogger,
-    ) -> bool:
-        valid = True
-
-        timing_attributes = list(sorted(self._getTimingAttributes(el)))
-        if len(timing_attributes) > 0:
-            valid = False
-            validation_results.error(
-                location='{} element xml:id {}'
-                         .format(el.tag, el.get(xmlIdAttr, 'omitted')),
-                message='Prohibited timing attributes {} present'
-                        .format(timing_attributes),
-                code=ValidationCode.ebuttd_timing_attribute_constraint
-            )
-
-        return valid
-
-    def _checkSpanChildren(
-            self,
-            parent_el: Element,
-            parent_timing_attributes: set[str],
-            context: dict,
-            validation_results: ValidationLogger,
-            tt_ns: str,
-    ) -> bool:
-        valid = True
-
-        p_el_tag = make_qname(tt_ns, 'p')
-        span_el_tag = make_qname(tt_ns, 'span')
-        spans = [el for el in parent_el if el.tag == span_el_tag]
-        if len(spans) == 0 and parent_el.tag == p_el_tag:
-            valid = False
-            validation_results.error(
-                location='{}/{} xml:id {}'.format(
-                    parent_el.tag,
-                    span_el_tag,
-                    parent_el.get(xmlIdAttr, 'omitted'),
-                ),
-                message='Found 0 span elements; '
-                        'text content needs to be in a styled span',
-                code=ValidationCode.bbc_text_span_constraint
-            )
-        if len(spans) > 0 and parent_el.tag == span_el_tag:
-            valid = False
-            validation_results.error(
-                location='{}/{} xml:id {}'.format(
-                    parent_el.tag,
-                    span_el_tag,
-                    parent_el.get(xmlIdAttr, 'omitted'),
-                ),
-                message='Found {} span element children of span, require 0'
-                        .format(len(spans)),
-                code=ValidationCode.ebuttd_nested_span_constraint
-            )
-
-        for span in spans:
-            timing_attributes = self._getTimingAttributes(span)
-            if len(timing_attributes) > 0 \
-               and len(parent_timing_attributes) > 0:
-                valid = False
-                validation_results.error(
-                    location='{}@xml:id {}/{} element'.format(
-                        parent_el.tag,
-                        parent_el.get(xmlIdAttr, 'omitted'),
-                        span.tag),
-                    message='Nested elements with timing attributes prohibited',
-                    code=ValidationCode.ebuttd_nested_timing_constraint
-                )
-
-            valid &= self._checkSpanChildren(
-                parent_el=span,
-                parent_timing_attributes=parent_timing_attributes.union(
-                    timing_attributes),
-                context=context,
-                validation_results=validation_results,
-                tt_ns=tt_ns,
-            )
-
-        return valid
-
-    def _checkNoTextChildren(
-            self,
-            el: Element,
-            context: dict,
-            validation_results: ValidationLogger,
-    ) -> bool:
-        valid = True
-
-        text_children_present = el.text is not None
-        for child_el in el:
-            text_children_present |= child_el.tail is not None
-
-        if text_children_present:
-            valid = False
-            validation_results.error(
-                location='{} element xml:id {}'.format(
-                    el.tag,
-                    el.get(xmlIdAttr, 'omitted')),
-                message='Text content found in prohibited location.',
-                code=ValidationCode.bbc_text_span_constraint
-            )
-
-        return valid
-
-    def _checkLineBreaks(
-            self,
-            el: Element,
-            context: dict,
-            validation_results: ValidationLogger,
-            tt_ns: str,
-    ) -> bool:
-        valid = True
-
-        all_text = "".join(el.itertext())
-        br_tag = make_qname(tt_ns, 'br')
-        br_subelements = el.findall('.//'+br_tag)
-        lines = all_text.splitlines()
-
-        if len(lines) > 1 and len(br_subelements) == 0:
-            validation_results.warn(
-                location='{} element xml:id {}'.format(
-                    el.tag,
-                    el.get(xmlIdAttr, 'omitted')),
-                message='Text content contains line breaks '
-                        'but no <br> elements.',
-                code=ValidationCode.ttml_element_br
-            )
-
-        return valid
-
-    def _checkPChildren(
-            self,
-            parent_el: Element,
-            context: dict,
-            validation_results: ValidationLogger,
-            tt_ns: str,
-    ) -> bool:
-        valid = True
-
-        p_el_tag = make_qname(tt_ns, 'p')
-        ps = [el for el in parent_el if el.tag == p_el_tag]
-        if len(ps) == 0:
-            valid = False
-            validation_results.error(
-                location='{}/{} xml:id {}'.format(
-                    parent_el.tag,
-                    p_el_tag,
-                    parent_el.get(xmlIdAttr, 'omitted'),
-                ),
-                message='Found 0 p children of a div, require >0',
-                code=ValidationCode.ebuttd_empty_div_constraint
-            )
-
-        for p in ps:
-            if xmlIdAttr not in p.keys():
-                valid = False
-                validation_results.error(
-                    location='{}/{} xml:id {}'.format(
-                        parent_el.tag,
-                        p_el_tag,
-                        p.get(xmlIdAttr, 'omitted'),
-                    ),
-                    message='p element missing required xml:id',
-                    code=ValidationCode.ebuttd_p_xml_id_constraint
-                )
-            valid &= self._checkNoTextChildren(
-                el=p,
-                context=context,
-                validation_results=validation_results,
-            )
-            valid &= self._checkLineBreaks(
-                el=p,
-                context=context,
-                validation_results=validation_results,
-                tt_ns=tt_ns
-            )
-            timing_attributes = self._getTimingAttributes(el=p)
-            valid &= self._checkSpanChildren(
-                parent_el=p,
-                parent_timing_attributes=timing_attributes,
-                context=context,
-                validation_results=validation_results,
-                tt_ns=tt_ns
-            )
-
-        return valid
-
-    def _checkDivChildren(
-            self,
-            parent_el: Element,
-            context: dict,
-            validation_results: ValidationLogger,
-            tt_ns: str,
-    ) -> bool:
-        valid = True
-
-        div_el_tag = make_qname(tt_ns, 'div')
-        divs = [el for el in parent_el if el.tag == div_el_tag]
-        if len(divs) == 0 and get_unqualified_name(parent_el.tag) == 'body':
-            valid = False
-            validation_results.error(
-                location='{}/{}'.format(parent_el.tag, div_el_tag),
-                message='Found 0 div elements, require >0',
-                code=ValidationCode.ebuttd_empty_body_constraint
-            )
-        elif len(divs) > 0 and get_unqualified_name(parent_el.tag) == 'div':
-            valid = False
-            validation_results.error(
-                location='{}/{}'.format(parent_el.tag, div_el_tag),
-                message='Found {} div children of a div, require 0'
-                        .format(len(divs)),
-                code=ValidationCode.ebuttd_nested_div_constraint
-            )
-
-        # Check each div child
-        for div in divs:
-            valid &= self._checkNoTimingAttributes(
-                el=div,
-                validation_results=validation_results,
-            )
-            valid &= self._checkDivChildren(
-                parent_el=div,
-                context=context,
-                validation_results=validation_results,
-                tt_ns=tt_ns,
-            )
-            valid &= self._checkPChildren(
-                parent_el=div,
-                context=context,
-                validation_results=validation_results,
-                tt_ns=tt_ns,
-            )
-
-        return valid
+    def __init__(self,
+                 sub_checks: list[XmlCheck] = []):
+        super().__init__()
+        self._subChecks = sub_checks
 
     def run(
             self,
@@ -284,20 +41,22 @@ class bodyCheck(XmlCheck):
             valid = False
             validation_results.error(
                 location='{}/{}'.format(input.tag, body_el_tag),
-                message='Found {} body elements, expected 1'.format(len(bodys)),
+                message='Found {} body elements, expected 1'.format(
+                    len(bodys)),
                 code=ValidationCode.ttml_element_body
             )
         else:
             body_el = bodys[0]
-            valid &= self._checkNoTimingAttributes(
-                el=body_el,
-                validation_results=validation_results,
-            )
-            valid &= self._checkDivChildren(
-                parent_el=body_el,
-                context=context,
-                validation_results=validation_results,
-                tt_ns=tt_ns)
+            timing_attributes = getTimingAttributes(body_el)
+            pushParentTimingAttributes(
+                timing_attributes=timing_attributes, context=context)
+            for subCheck in self._subChecks:
+                valid &= subCheck.run(
+                    input=body_el,
+                    context=context,
+                    validation_results=validation_results
+                )
+            popParentTimingAttributes(context=context)
 
         if valid:
             validation_results.good(
