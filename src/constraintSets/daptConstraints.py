@@ -4,8 +4,10 @@ from src.preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
 from src.preParseChecks.xmlStructureCheck import XmlStructureCheck
 from src.schemas.daptSchema import DAPTSchema
 from src.xmlChecks.xsdValidator import xsdValidator
-from src.xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
-    ttTagAndNamespaceCheck, unqualifiedIdAttributeCheck
+from src.xmlChecks.ttXmlCheck import timeBaseCheck, \
+    ttTagAndNamespaceCheck
+from src.xmlChecks.xmlIdCheck import unqualifiedIdAttributeCheck, \
+    duplicateXmlIdCheck
 from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck

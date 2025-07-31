@@ -4,9 +4,8 @@ from src.preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
 from src.preParseChecks.xmlStructureCheck import XmlStructureCheck
 from src.schemas.ebuttdSchema import EBUTTDSchema
 from src.xmlChecks.xsdValidator import xsdValidator
-from src.xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
-    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
-    unqualifiedIdAttributeCheck
+from src.xmlChecks.ttXmlCheck import timeBaseCheck, \
+    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.stylingCheck import stylingCheck
 from src.xmlChecks.layoutCheck import layoutCheck
@@ -19,7 +18,8 @@ from src.xmlChecks.divXmlCheck import divCheck
 from src.xmlChecks.pXmlCheck import pCheck
 from src.xmlChecks.spanXmlCheck import spanCheck
 from src.xmlChecks.timingXmlCheck import timingCheck
-from src.xmlChecks.xmlIdCheck import requireXmlId
+from src.xmlChecks.xmlIdCheck import requireXmlId, duplicateXmlIdCheck, \
+    unqualifiedIdAttributeCheck
 from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
     noTimingAttributeCheck
 from src.xmlChecks.textCheck import noTextChildren, checkLineBreaks
