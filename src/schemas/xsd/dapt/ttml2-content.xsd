@@ -93,7 +93,6 @@
           <xs:group ref="tt:Animation.class" minOccurs="0" maxOccurs="unbounded"/>
           <xs:group ref="tt:BlockOrEmbedded.class" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute ref="xml:id" use="required"/>
         <xs:attribute ref="daptm:langSrc"/>
         <xs:attribute ref="daptm:onScreen"/>
         <xs:attribute ref="daptm:represents"/>
