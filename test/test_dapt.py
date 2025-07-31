@@ -5,7 +5,6 @@ from argparse import Namespace
 import io
 import json
 import os
-import sys
 from src.ttmlValidator import validate_ttml
 
 
