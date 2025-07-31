@@ -97,12 +97,6 @@ class DaptConstraintSet(ConstraintSet):
             segment_dur: float | None = None,
             segment_relative_timing: bool = False) -> None:
         super().__init__()
-        self._xmlChecks.append(
-            timingCheck(
-                epoch=epoch,
-                segment_dur=segment_dur,
-                segment_relative_timing=segment_relative_timing)
-            )
 
     @staticmethod
     def summarise(validation_results: ValidationLogger) -> tuple[int, int]:
