@@ -15,7 +15,14 @@ from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
 from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from src.xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
+from src.xmlChecks.divXmlCheck import divCheck
+from src.xmlChecks.pXmlCheck import pCheck
+from src.xmlChecks.spanXmlCheck import spanCheck
 from src.xmlChecks.timingXmlCheck import timingCheck
+from src.xmlChecks.xmlIdCheck import requireXmlId
+from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
+    noTimingAttributeCheck
+from src.xmlChecks.textCheck import noTextChildren, checkLineBreaks
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationSummariser import \
@@ -49,7 +56,24 @@ class BbcSubtitleConstraintSet(ConstraintSet):
         styleRefsXmlCheck(),
         inlineStyleAttributesCheck(),
         regionRefsXmlCheck(),
-        bodyCheck()
+        bodyCheck(sub_checks=[
+            noTimingAttributeCheck(),
+            divCheck(sub_checks=[
+                noTimingAttributeCheck(),
+                pCheck(sub_checks=[
+                    requireXmlId(),
+                    noTextChildren(),
+                    checkLineBreaks(),
+                    spanCheck(sub_checks=[
+                        noNestedTimedElementsCheck()
+                        ],
+                        require_text_in_span=True,
+                        permit_nested_spans=False)
+                    ])
+                ],
+                recurse_div_children=True)
+            ]
+        )
     ]
 
     def __init__(
