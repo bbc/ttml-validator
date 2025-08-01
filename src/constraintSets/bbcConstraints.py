@@ -19,7 +19,7 @@ from src.xmlChecks.pXmlCheck import pCheck
 from src.xmlChecks.spanXmlCheck import spanCheck
 from src.xmlChecks.timingXmlCheck import timingCheck
 from src.xmlChecks.xmlIdCheck import requireXmlId, duplicateXmlIdCheck, \
-    unqualifiedIdAttributeCheck
+    unqualifiedIdAttributeCheck, IDREFSelementApplicabilityCheck
 from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
     noTimingAttributeCheck
 from src.xmlChecks.textCheck import noTextChildren, checkLineBreaks
@@ -42,6 +42,7 @@ class BbcSubtitleConstraintSet(ConstraintSet):
         unqualifiedIdAttributeCheck(),
         xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         duplicateXmlIdCheck(),
+        IDREFSelementApplicabilityCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=True),
         activeAreaCheck(activeArea_required=False),

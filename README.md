@@ -162,8 +162,6 @@ by processing an MPD or by being passed a template and a starting number
 * check for attributes supposed to be in no namespace placed in a namespace e.g. with a `tt:` prefix
 * Start synthesising an alternate valid version of the document
 * For reporting location that needs parent, make a stack/list in context
-* Remove EBU-TT-D styling constraint checks for DAPT
-* Remove EBU-TT-D layout constraint checks for DAPT
 * Add DAPT check for invalid agent
 * Add DAPT check for contentProfiles
 * Add DAPT check for originTimecode without framerate

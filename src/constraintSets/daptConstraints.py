@@ -7,7 +7,7 @@ from src.xmlChecks.xsdValidator import xsdValidator
 from src.xmlChecks.ttXmlCheck import timeBaseCheck, \
     ttTagAndNamespaceCheck
 from src.xmlChecks.xmlIdCheck import unqualifiedIdAttributeCheck, \
-    duplicateXmlIdCheck
+    duplicateXmlIdCheck, IDREFSelementApplicabilityCheck
 from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
@@ -81,6 +81,7 @@ class DaptConstraintSet(ConstraintSet):
             no_prune_no_namespace_attributes=known_no_ns_attributes),
         xsdValidator(xml_schema=DAPTSchema, schema_name='DAPT'),
         unqualifiedIdAttributeCheck(),
+        IDREFSelementApplicabilityCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
         headCheck(

@@ -44,6 +44,9 @@ class TtmlPassChecker(ValidationPassChecker):
     _check_codes = [
         ValidationCode.xml_root_element,
         ValidationCode.xml_tt_namespace,
+        ValidationCode.ttml_idref_element_applicability,
+        ValidationCode.ttml_idref_empty,
+        ValidationCode.ttml_idref_too_many,
         ValidationCode.ttml_parameter_cellResolution,
         ValidationCode.ttml_document_timing,
         ValidationCode.ttml_element_body,
