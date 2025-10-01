@@ -53,6 +53,7 @@ ValidationCode = Enum(
     ttml_idref_element_applicability
     ttml_idref_empty
     ttml_idref_too_many
+    ttml_metadata_actor_reference
     ttml_metadata_copyright
     ttml_layout_region_association
     ttml_styling

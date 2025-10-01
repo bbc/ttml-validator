@@ -10,9 +10,7 @@ from src.xmlChecks.xmlIdCheck import unqualifiedIdAttributeCheck, \
     duplicateXmlIdCheck, IDREFSelementApplicabilityCheck
 from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
-from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
-from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
-from src.xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
+from src.xmlChecks.actorRefsCheck import actorRefsCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
 from src.xmlChecks.timingXmlCheck import timingCheck
 from src.xmlChecks.pruner import Pruner
@@ -86,11 +84,9 @@ class DaptConstraintSet(ConstraintSet):
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
         headCheck(
             sub_checks=[
-                copyrightCheck(copyright_required=False)
+                copyrightCheck(copyright_required=False),
+                actorRefsCheck(),
             ]),
-        # styleRefsXmlCheck(),
-        # inlineStyleAttributesCheck(),
-        # regionRefsXmlCheck(),
         # bodyCheck()
     ]
 
