@@ -5,7 +5,7 @@ from src.preParseChecks.xmlStructureCheck import XmlStructureCheck
 from src.schemas.daptSchema import DAPTSchema
 from src.xmlChecks.xsdValidator import xsdValidator
 from src.xmlChecks.ttXmlCheck import timeBaseCheck, \
-    ttTagAndNamespaceCheck
+    ttTagAndNamespaceCheck, contentProfilesCheck
 from src.xmlChecks.xmlIdCheck import unqualifiedIdAttributeCheck, \
     duplicateXmlIdCheck, IDREFSelementApplicabilityCheck
 from src.xmlChecks.headXmlCheck import headCheck
@@ -81,7 +81,16 @@ class DaptConstraintSet(ConstraintSet):
         unqualifiedIdAttributeCheck(),
         IDREFSelementApplicabilityCheck(),
         ttTagAndNamespaceCheck(),
-        timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=False),
+        timeBaseCheck(
+            timeBase_acceptlist=['media'],
+            timeBase_required=False),
+        contentProfilesCheck(
+            contentProfiles_atleastonelist=[
+                'http://www.w3.org/ns/ttml/profile/dapt1.0/content',
+                ],
+            contentProfiles_denylist=[],
+            contentProfiles_required=True
+        ),
         headCheck(
             sub_checks=[
                 copyrightCheck(copyright_required=False),

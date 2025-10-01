@@ -608,3 +608,183 @@ class testTtXmlCheck(unittest.TestCase):
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
+
+    def test_contentProfiles_ok(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml"
+    ttp:contentProfiles="urn:cp:1 urn:cp:2">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        contentProfilesCheck = ttXmlCheck.contentProfilesCheck(
+            contentProfiles_atleastonelist=[
+                "urn:cp:1",
+            ],
+            contentProfiles_denylist=[
+                "urn:cp:3",
+            ],
+            contentProfiles_required=True)
+        vr = ValidationLogger()
+        context = {}
+        valid = contentProfilesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'contentProfiles attribute',
+                message='contentProfiles checked',
+                code=ValidationCode.ttml_parameter_contentProfiles
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_contentProfiles_missing_at_least_one(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml"
+    ttp:contentProfiles="urn:cp:1 urn:cp:2">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        contentProfilesCheck = ttXmlCheck.contentProfilesCheck(
+            contentProfiles_atleastonelist=[
+                "urn:cp:3",
+            ],
+            contentProfiles_denylist=[
+                "urn:cp:4",
+            ],
+            contentProfiles_required=False)
+        vr = ValidationLogger()
+        context = {}
+        valid = contentProfilesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'contentProfiles attribute',
+                message="At least one of the contentProfiles ['urn:cp:3'] "
+                        "must be present, all are missing from the "
+                        "contentProfile attribute urn:cp:1 urn:cp:2",
+                code=ValidationCode.ttml_parameter_contentProfiles
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_contentProfiles_includes_prohibited(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml"
+    ttp:contentProfiles="urn:cp:4 urn:cp:2">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        contentProfilesCheck = ttXmlCheck.contentProfilesCheck(
+            contentProfiles_atleastonelist=[
+                "urn:cp:2",
+            ],
+            contentProfiles_denylist=[
+                "urn:cp:4",
+            ],
+            contentProfiles_required=False)
+        vr = ValidationLogger()
+        context = {}
+        valid = contentProfilesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'contentProfiles attribute',
+                message="contentProfile urn:cp:4 present but "
+                        "in the prohibited set "
+                        "['urn:cp:4']",
+                code=ValidationCode.ttml_parameter_contentProfiles
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_contentProfiles_required_absent(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        contentProfilesCheck = ttXmlCheck.contentProfilesCheck(
+            contentProfiles_atleastonelist=[],
+            contentProfiles_denylist=[],
+            contentProfiles_required=True)
+        vr = ValidationLogger()
+        context = {}
+        valid = contentProfilesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'contentProfiles attribute',
+                message="Required contentProfiles attribute "
+                        "absent",
+                code=ValidationCode.ttml_parameter_contentProfiles
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_contentProfiles_optional_absent(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-GB"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    xmlns="http://www.w3.org/ns/ttml">
+</tt>
+"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        contentProfilesCheck = ttXmlCheck.contentProfilesCheck(
+            contentProfiles_atleastonelist=[],
+            contentProfiles_denylist=[],
+            contentProfiles_required=False)
+        vr = ValidationLogger()
+        context = {}
+        valid = contentProfilesCheck.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=GOOD,
+                location='{http://www.w3.org/ns/ttml}tt '
+                         '{http://www.w3.org/ns/ttml#parameter}'
+                         'contentProfiles attribute',
+                message="contentProfiles checked",
+                code=ValidationCode.ttml_parameter_contentProfiles
+            ),
+        ]
+        self.assertListEqual(vr, expected_validation_results)

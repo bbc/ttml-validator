@@ -56,6 +56,7 @@ ValidationCode = Enum(
     ttml_metadata_actor_reference
     ttml_metadata_copyright
     ttml_layout_region_association
+    ttml_parameter_contentProfiles
     ttml_styling
     ttml_styling_reference
     ttml_styling_referential_chained

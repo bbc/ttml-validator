@@ -265,3 +265,79 @@ class cellResolutionCheck(XmlCheck):
             context['cellResolution'] = self.default_cellResolution
 
         return valid
+
+
+class contentProfilesCheck(XmlCheck):
+
+    def __init__(self,
+                 contentProfiles_atleastonelist: list[str] = [],
+                 contentProfiles_denylist: list[str] = [],
+                 contentProfiles_required: bool = False):
+        super().__init__()
+        self._contentProfiles_atleastonelist = contentProfiles_atleastonelist
+        self._contentProfiles_denylist = contentProfiles_denylist
+        self._contentProfiles_required = contentProfiles_required
+
+    def run(
+            self,
+            input: Element,
+            context: dict,
+            validation_results: ValidationLogger) -> bool:
+        ttp_ns = \
+            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            + '#parameter'
+        contentProfiles_attr_key = make_qname(ttp_ns, 'contentProfiles')
+        valid = True
+
+        if self._contentProfiles_required \
+           and contentProfiles_attr_key not in input.attrib:
+            valid = False
+            validation_results.error(
+                location='{} {} attribute'.format(
+                    input.tag, contentProfiles_attr_key),
+                message='Required contentProfiles attribute absent',
+                code=ValidationCode.ttml_parameter_contentProfiles
+            )
+
+        contentProfiles_attr_val = \
+            input.get(contentProfiles_attr_key, '')
+        contentProfiles = contentProfiles_attr_val.split()
+        at_least_one_found = False
+        for contentProfile in contentProfiles:
+            if contentProfile in self._contentProfiles_denylist:
+                valid = False
+                validation_results.error(
+                    location='{} {} attribute'.format(
+                        input.tag, contentProfiles_attr_key),
+                    message='contentProfile {} present but '
+                            'in the prohibited set {}'
+                            .format(
+                        contentProfile, self._contentProfiles_denylist),
+                    code=ValidationCode.ttml_parameter_contentProfiles
+                )
+            if contentProfile in self._contentProfiles_atleastonelist:
+                at_least_one_found = True
+
+        if at_least_one_found is False \
+           and len(self._contentProfiles_atleastonelist) > 0:
+            valid = False
+            validation_results.error(
+                location='{} {} attribute'.format(
+                    input.tag, contentProfiles_attr_key),
+                message='At least one of the contentProfiles {} '
+                        'must be present, all are missing from the '
+                        'contentProfile attribute {}'.format(
+                    self._contentProfiles_atleastonelist,
+                    contentProfiles_attr_val),
+                code=ValidationCode.ttml_parameter_contentProfiles
+            )
+
+        if valid:
+            validation_results.good(
+                location='{} {} attribute'.format(
+                    input.tag, contentProfiles_attr_key),
+                message='contentProfiles checked',
+                code=ValidationCode.ttml_parameter_contentProfiles
+            )
+
+        return valid

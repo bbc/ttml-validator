@@ -73,6 +73,8 @@ class DaptPassChecker(ValidationPassChecker):
         ValidationCode.xml_document_validity,
         ValidationCode.xml_prune,  # should never be errors
         ValidationCode.ttml_metadata_actor_reference,
+        ValidationCode.ebuttd_parameter_timeBase,
+        ValidationCode.ttml_parameter_contentProfiles,
     ]
 
 
