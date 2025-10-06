@@ -75,6 +75,16 @@ class DaptPassChecker(ValidationPassChecker):
         ValidationCode.ttml_metadata_actor_reference,
         ValidationCode.ebuttd_parameter_timeBase,
         ValidationCode.ttml_parameter_contentProfiles,
+        ValidationCode.dapt_timing_attribute_constraint,
+        ValidationCode.dapt_document_validity,
+        ValidationCode.dapt_timing_framerate,
+        ValidationCode.dapt_timing_origin_timecode,
+        ValidationCode.dapt_timing_segment_overlap,
+        ValidationCode.dapt_timing_start_of_programme_timecode,
+        ValidationCode.dapt_timing_tickrate,
+        ValidationCode.dapt_timing_timecode_offset,
+        ValidationCode.dapt_timing_timecontainer,
+        ValidationCode.ttml_timing_attribute_syntax
     ]
 
 
