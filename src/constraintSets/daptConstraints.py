@@ -12,6 +12,7 @@ from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.actorRefsCheck import actorRefsCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
+from src.xmlChecks.daptmDescTypeCheck import daptmDescTypeCheck
 from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
 from src.xmlChecks.pruner import Pruner
 from src.validationLogging.validationCodes import ValidationCode
@@ -96,7 +97,8 @@ class DaptConstraintSet(ConstraintSet):
                 copyrightCheck(copyright_required=False),
                 actorRefsCheck(),
             ]),
-        # bodyCheck()
+        daptmDescTypeCheck(),
+        # bodyCheck(),
     ]
 
     def __init__(

@@ -84,7 +84,8 @@ class DaptPassChecker(ValidationPassChecker):
         ValidationCode.dapt_timing_tickrate,
         ValidationCode.dapt_timing_timecode_offset,
         ValidationCode.dapt_timing_timecontainer,
-        ValidationCode.ttml_timing_attribute_syntax
+        ValidationCode.ttml_timing_attribute_syntax,
+        ValidationCode.dapt_desctype_validity,
     ]
 
 
