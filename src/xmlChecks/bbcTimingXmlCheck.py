@@ -17,7 +17,7 @@ timing_attr_keys = [
 ]
 
 
-class timingCheck(XmlCheck):
+class bbcTimingCheck(XmlCheck):
     """
     Checks timings in document
     """
@@ -55,26 +55,27 @@ class timingCheck(XmlCheck):
 
         for timing_attr in timing_attr_keys:
             if timing_attr in el.keys():
-                if not te.isOffsetTime(el.get(timing_attr)):
+                if not te.isNonFrameClockTime(el.get(timing_attr, '')):
                     valid = False
                     validation_results.error(
                         location='{} element xml:id {}'.format(
                             el.tag,
                             el.get(xmlIdAttr, 'omitted')),
-                        message='{}={} is not a valid offset time'.format(
+                        message='{}={} is not a valid non-frame clock time'
+                                .format(
                             timing_attr,
                             el.get(timing_attr)),
                         code=ValidationCode.ebuttd_timing_attribute_constraint
                     )
 
-        this_begin = te.seconds(el.get('begin')) \
+        this_begin = te.seconds(el.get('begin', '')) \
             if 'begin' in el.keys() \
             else 0
         if 'begin' in el.keys():
             begin_defined = True
             # print('{}begin is defined by this element'.format(prefix))
         this_epoch_s = epoch_s + this_begin
-        this_end = epoch_s + te.seconds(el.get('end')) \
+        this_end = epoch_s + te.seconds(el.get('end', '')) \
             if 'end' in el.keys() \
             else parent_end
         if 'end' in el.keys():

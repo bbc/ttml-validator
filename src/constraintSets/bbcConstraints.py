@@ -17,7 +17,7 @@ from src.xmlChecks.bodyXmlCheck import bodyCheck
 from src.xmlChecks.divXmlCheck import divCheck
 from src.xmlChecks.pXmlCheck import pCheck
 from src.xmlChecks.spanXmlCheck import spanCheck
-from src.xmlChecks.timingXmlCheck import timingCheck
+from src.xmlChecks.bbcTimingXmlCheck import bbcTimingCheck
 from src.xmlChecks.xmlIdCheck import requireXmlId, duplicateXmlIdCheck, \
     unqualifiedIdAttributeCheck, IDREFSelementApplicabilityCheck
 from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
@@ -84,7 +84,7 @@ class BbcSubtitleConstraintSet(ConstraintSet):
             segment_relative_timing: bool = False) -> None:
         super().__init__()
         self._xmlChecks.append(
-            timingCheck(
+            bbcTimingCheck(
                 epoch=epoch,
                 segment_dur=segment_dur,
                 segment_relative_timing=segment_relative_timing)

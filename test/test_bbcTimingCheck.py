@@ -4,7 +4,7 @@ import src.xmlChecks.stylingCheck as stylingCheck
 import src.xmlChecks.layoutCheck as layoutCheck
 import src.xmlChecks.regionRefsCheck as regionRefsCheck
 import src.xmlChecks.styleRefsCheck as styleRefsCheck
-import src.xmlChecks.timingXmlCheck as timingXmlCheck
+import src.xmlChecks.bbcTimingXmlCheck as bbcTimingXmlCheck
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -12,14 +12,14 @@ from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD, WARN, INFO, SKIP
 
 
-class testTimingXmlCheck(unittest.TestCase):
+class testBbcTimingXmlCheck(unittest.TestCase):
     maxDiff = None
 
     ##################################
     #  Timing tests                  #
     ##################################
 
-    def test_timingCheck_no_times(self):
+    def test_bbcTimingCheck_no_times(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -34,10 +34,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -62,7 +62,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_ok_p_times_no_gaps(self):
+    def test_bbcTimingCheck_ok_p_times_no_gaps(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -77,10 +77,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -105,7 +105,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_ok_span_times_no_gaps(self):
+    def test_bbcTimingCheck_ok_span_times_no_gaps(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -120,10 +120,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -148,7 +148,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_bad_p_time_expressions_no_gaps(self):
+    def test_bbcTimingCheck_bad_p_time_expressions_no_gaps(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -163,10 +163,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -177,19 +177,19 @@ class testTimingXmlCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
-                message='begin=1.234s is not a valid offset time',
+                message='begin=1.234s is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p1',
-                message='end=2s is not a valid offset time',
+                message='end=2s is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}p element xml:id p2',
-                message='begin=50f is not a valid offset time',
+                message='begin=50f is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
@@ -209,7 +209,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_bad_span_time_expressions_no_gaps(self):
+    def test_bbcTimingCheck_bad_span_time_expressions_no_gaps(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -224,10 +224,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -239,21 +239,21 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span element '
                          'xml:id omitted',
-                message='begin=1.234s is not a valid offset time',
+                message='begin=1.234s is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span element '
                          'xml:id omitted',
-                message='end=2s is not a valid offset time',
+                message='end=2s is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span element '
                          'xml:id omitted',
-                message='dur=00:00:02:00 is not a valid offset time',
+                message='dur=00:00:02:00 is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
@@ -269,7 +269,7 @@ class testTimingXmlCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}span element '
                          'xml:id omitted',
-                message='begin=50f is not a valid offset time',
+                message='begin=50f is not a valid non-frame clock time',
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             ),
             ValidationResult(
@@ -289,7 +289,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_ok_p_times_gaps(self):
+    def test_bbcTimingCheck_ok_p_times_gaps(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -305,10 +305,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -346,7 +346,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_ok_span_times_gaps(self):
+    def test_bbcTimingCheck_ok_span_times_gaps(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -362,10 +362,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -403,7 +403,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_not_enough_early_subs_p_times(self):
+    def test_bbcTimingCheck_not_enough_early_subs_p_times(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -418,10 +418,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -452,7 +452,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_not_enough_early_subs_span_times(self):
+    def test_bbcTimingCheck_not_enough_early_subs_span_times(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -467,10 +467,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -501,7 +501,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_subs_overlap_segment(self):
+    def test_bbcTimingCheck_subs_overlap_segment(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -516,13 +516,13 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck(
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -561,7 +561,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_subs_wholly_within_segment(self):
+    def test_bbcTimingCheck_subs_wholly_within_segment(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -576,13 +576,13 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck(
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -621,7 +621,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_empty_doc_within_segment(self):
+    def test_bbcTimingCheck_empty_doc_within_segment(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -632,10 +632,10 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -652,7 +652,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_subs_end_before_segment(self):
+    def test_bbcTimingCheck_subs_end_before_segment(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -667,13 +667,13 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck(
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -712,7 +712,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_subs_begin_after_segment(self):
+    def test_bbcTimingCheck_subs_begin_after_segment(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -727,13 +727,13 @@ class testTimingXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        timingCheck = timingXmlCheck.timingCheck(
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
             segment_dur=3.84,
             segment_relative_timing=False)
         vr = ValidationLogger()
         context = {}
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -772,7 +772,7 @@ class testTimingXmlCheck(unittest.TestCase):
         ]
         self.assertListEqual(vr, expected_validation_results)
 
-    def test_timingCheck_regions_overlap(self):
+    def test_bbcTimingCheck_regions_overlap(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
@@ -824,7 +824,7 @@ class testTimingXmlCheck(unittest.TestCase):
         )
         styleRefsXmlCheck = styleRefsCheck.styleRefsXmlCheck()
         regionRefsXmlCheck = regionRefsCheck.regionRefsXmlCheck()
-        timingCheck = timingXmlCheck.timingCheck()
+        bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
         context = {}
         valid = headCheck.run(
@@ -847,7 +847,7 @@ class testTimingXmlCheck(unittest.TestCase):
         # checks to populate stuff they needed and don't care
         # about their output in this test
         vr.clear()
-        valid = timingCheck.run(
+        valid = bbcTimingCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr

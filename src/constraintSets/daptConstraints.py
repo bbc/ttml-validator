@@ -12,7 +12,7 @@ from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.actorRefsCheck import actorRefsCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
-from src.xmlChecks.timingXmlCheck import timingCheck
+from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
 from src.xmlChecks.pruner import Pruner
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -20,15 +20,15 @@ from src.validationLogging.validationSummariser import \
     XmlPassChecker, TtmlPassChecker, DaptPassChecker
 
 recognised_namespaces = set([
-    'http://www.w3.org/XML/1998/namespace', # xml
-    'http://www.w3.org/ns/ttml', # tt
-    'http://www.w3.org/ns/ttml#parameter', # ttp
-    'http://www.w3.org/ns/ttml#audio', # tta
-    'http://www.w3.org/ns/ttml#metadata', # ttm
+    'http://www.w3.org/XML/1998/namespace',  # xml
+    'http://www.w3.org/ns/ttml',  # tt
+    'http://www.w3.org/ns/ttml#parameter',  # ttp
+    'http://www.w3.org/ns/ttml#audio',  # tta
+    'http://www.w3.org/ns/ttml#metadata',  # ttm
     'http://www.w3.org/ns/ttml/feature/',
-    'http://www.w3.org/ns/ttml/profile/dapt#metadata', # daptm
+    'http://www.w3.org/ns/ttml/profile/dapt#metadata',  # daptm
     'http://www.w3.org/ns/ttml/profile/dapt/extension/',
-    'urn:ebu:tt:metadata', # ebuttm
+    'urn:ebu:tt:metadata',  # ebuttm
 ])
 
 # We will not prune attributes in no namespace if they are
@@ -105,6 +105,12 @@ class DaptConstraintSet(ConstraintSet):
             segment_dur: float | None = None,
             segment_relative_timing: bool = False) -> None:
         super().__init__()
+        self._xmlChecks.append(
+            daptTimingCheck(
+                epoch=epoch,
+                segment_dur=segment_dur,
+                segment_relative_timing=segment_relative_timing)
+            )
 
     @staticmethod
     def summarise(validation_results: ValidationLogger) -> tuple[int, int]:

@@ -19,6 +19,14 @@ ValidationCode = Enum(
     xml_root_element
     xml_tt_namespace
     dapt_document_validity
+    dapt_timing_attribute_constraint
+    dapt_timing_framerate
+    dapt_timing_origin_timecode
+    dapt_timing_segment_overlap
+    dapt_timing_start_of_programme_timecode
+    dapt_timing_tickrate
+    dapt_timing_timecode_offset
+    dapt_timing_timecontainer
     ebuttd_document_validity
     ebuttd_p_xml_id_constraint
     ebuttd_empty_body_constraint
@@ -61,6 +69,7 @@ ValidationCode = Enum(
     ttml_styling_reference
     ttml_styling_referential_chained
     ttml_styling_attribute_applicability
+    ttml_timing_attribute_syntax
     bbc_document_validity
     bbc_block_backgroundColor_constraint
     bbc_region_attributes_constraint
