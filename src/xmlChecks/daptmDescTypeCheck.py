@@ -5,15 +5,8 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname
 from .xmlCheck import XmlCheck
-
-
-descType_registry_entries = [
-    "pronunciationNote",
-    "scene",
-    "plotSignificance",
-]
-
-descType_user_defined_value_prefix = "x-"
+from ..registries.daptmDescTypeRegistry import descType_registry_entries, \
+    descType_user_defined_value_prefix
 
 
 class daptmDescTypeCheck(XmlCheck):

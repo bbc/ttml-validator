@@ -99,7 +99,7 @@ class DaptConstraintSet(ConstraintSet):
             ]),
         daptmDescTypeCheck(),
         # bodyCheck(),
-    ]
+    ]  # Note that daptTimingCheck is appended in init method
 
     def __init__(
             self,
