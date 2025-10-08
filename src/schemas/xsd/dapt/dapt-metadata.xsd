@@ -11,11 +11,7 @@
                <xs:restriction base="xs:string"/>
           </xs:simpleType>
      </xs:attribute>
-     <xs:attribute name="langSrc">
-          <xs:simpleType>
-               <xs:union memberTypes="daptd:emptyValueType xs:language"></xs:union>
-          </xs:simpleType>
-     </xs:attribute>
+     <xs:attribute name="langSrc" type="xs:language"/>
      <xs:attribute name="onScreen">
           <xs:simpleType>
                <xs:restriction base="xs:token">

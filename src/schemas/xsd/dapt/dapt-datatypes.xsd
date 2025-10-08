@@ -19,7 +19,4 @@
         </xs:annotation>
         <xs:restriction base="xs:string"/>
     </xs:simpleType>
-    <xs:simpleType name="emptyValueType">
-        <xs:restriction base="xs:normalizedString"><xs:enumeration value=""/></xs:restriction>
-    </xs:simpleType>
 </xs:schema>
