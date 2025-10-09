@@ -20,6 +20,9 @@ ValidationCode = Enum(
     xml_tt_namespace
     dapt_desctype_validity
     dapt_document_validity
+    dapt_metadata_content_descriptor
+    dapt_metadata_represents
+    dapt_metadata_scriptRepresents
     dapt_timing_attribute_constraint
     dapt_timing_framerate
     dapt_timing_origin_timecode
