@@ -18,9 +18,9 @@ ValidationCode = Enum(
     xml_id_unqualified
     xml_root_element
     xml_tt_namespace
-    dapt_desctype_validity
     dapt_document_validity
     dapt_metadata_content_descriptor
+    dapt_metadata_desctype_validity
     dapt_metadata_represents
     dapt_metadata_scriptRepresents
     dapt_timing_attribute_constraint

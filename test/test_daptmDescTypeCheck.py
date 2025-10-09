@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD, WARN, INFO
+    ERROR, GOOD
 
 
 class testDaptmDescTypeCheck(unittest.TestCase):
@@ -46,7 +46,7 @@ class testDaptmDescTypeCheck(unittest.TestCase):
                 status=GOOD,
                 location='ttm:desc elements',
                 message='3 well-formed descType attributes found',
-                code=ValidationCode.dapt_desctype_validity
+                code=ValidationCode.dapt_metadata_desctype_validity
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -88,7 +88,7 @@ class testDaptmDescTypeCheck(unittest.TestCase):
                 location='ttm:desc element',
                 message='invalid-extension is not a permitted value for '
                         'daptm:descType',
-                code=ValidationCode.dapt_desctype_validity
+                code=ValidationCode.dapt_metadata_desctype_validity
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)

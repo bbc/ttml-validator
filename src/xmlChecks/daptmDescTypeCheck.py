@@ -46,7 +46,7 @@ class daptmDescTypeCheck(XmlCheck):
                     location='ttm:desc element',
                     message='{} is not a permitted value for daptm:descType'
                             .format(descType_val),
-                    code=ValidationCode.dapt_desctype_validity
+                    code=ValidationCode.dapt_metadata_desctype_validity
                 ))
 
         if valid and len(desc_els) > 0:
@@ -54,14 +54,14 @@ class daptmDescTypeCheck(XmlCheck):
                 location='ttm:desc elements',
                 message='{} well-formed descType attributes found'
                         .format(len(desc_els)),
-                code=ValidationCode.dapt_desctype_validity
+                code=ValidationCode.dapt_metadata_desctype_validity
             )
         elif valid:
             validation_results.info(
                 location='ttm:desc elements',
                 message='{} descType attributes found'
                         .format(len(desc_els)),
-                code=ValidationCode.dapt_desctype_validity
+                code=ValidationCode.dapt_metadata_desctype_validity
             )
 
         return valid
