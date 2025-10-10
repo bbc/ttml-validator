@@ -1,14 +1,7 @@
-content_descriptor_registry_entries = [
-    "audio",
-    "audio.dialogue",
-    "audio.nonDialogueSounds",
-    "visual",
-    "visual.dialogue",
-    "visual.nonText",
-    "visual.text",
-    "visual.text.title",
-    "visual.text.credit",
-    "visual.text.location",
-]
+from .jsonLoader import load_registry
+
+
+content_descriptor_registry_entries = \
+    load_registry(file='content-descriptor.json')
 
 content_descriptor_user_defined_value_prefix = "x-"

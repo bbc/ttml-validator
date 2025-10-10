@@ -1,0 +1,42 @@
+{
+    "columns": [
+        {
+            "header": "daptm:descType",
+            "isKey": true,
+            "rowKey": "value",
+            "isType": false
+        },
+        {
+            "header": "Status",
+            "rowKey": "status"
+        },
+        {
+            "header": "Description",
+            "rowKey": "description"
+        },
+        {
+            "header": "Notes",
+            "rowKey": "notes"
+        }
+    ],
+    "values": [
+        {
+            "value": "pronunciationNote",
+            "status": "Provisional",
+            "description": "Notes for how to pronounce the content.",
+            "notes": ""
+        },
+        {
+            "value": "scene",
+            "status": "Provisional",
+            "description": "Contains a scene identifier",
+            "notes": ""
+        },
+        {
+            "value": "plotSignificance",
+            "status": "Provisional",
+            "description": "Defines a measure of how significant the content is to the plot.",
+            "notes": "Contents are undefined and may be low, medium or high, or a numerical scale."
+        }
+    ]
+}
