@@ -1,4 +1,4 @@
-xmlIdAttr = '{http://www.w3.org/XML/1998/namespace}id'
+ns_xml = 'http://www.w3.org/XML/1998/namespace'
 unqualifiedIdAttr = 'id'
 
 
@@ -23,3 +23,6 @@ def get_unqualified_name(tag: str) -> str:
         return tag
 
     return tag.split('}', 1)[1]
+
+
+xmlIdAttr = make_qname(namespace=ns_xml, name='id')

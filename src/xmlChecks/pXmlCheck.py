@@ -3,6 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import xmlIdAttr, make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from .timingAttributeCheck import getTimingAttributes, \
     pushParentTimingAttributes, popParentTimingAttributes
 
@@ -24,7 +25,7 @@ class pCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
 
         valid = True
 

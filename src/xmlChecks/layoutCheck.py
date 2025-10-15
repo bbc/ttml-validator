@@ -3,6 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from ..styleAttribs import getStyleAttributeKeys, validateStyleAttr
 
 
@@ -16,7 +17,7 @@ class layoutCheck(XmlCheck):
             input: Element,
             context: dict,
             validation_results: ValidationLogger) -> bool:
-        tt_ns = context.get('root_ns', 'http://www.w3.org/ns/ttml')
+        tt_ns = context.get('root_ns', ns_ttml)
         layout_el_tag = make_qname(tt_ns, 'layout')
 
         layout_els = [el for el in input if el.tag == layout_el_tag]
@@ -63,7 +64,7 @@ class layoutCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         valid = True
-        tt_ns = context.get('root_ns', 'http://www.w3.org/ns/ttml')
+        tt_ns = context.get('root_ns', ns_ttml)
 
         if xmlIdAttr not in region_el.keys():
             valid = False
@@ -102,7 +103,7 @@ class layoutCheck(XmlCheck):
             layout_el: Element,
             context: dict,
             validation_results: ValidationLogger) -> bool:
-        tt_ns = context.get('root_ns', 'http://www.w3.org/ns/ttml')
+        tt_ns = context.get('root_ns', ns_ttml)
         region_el_tag = make_qname(tt_ns, 'region')
         valid = True
 

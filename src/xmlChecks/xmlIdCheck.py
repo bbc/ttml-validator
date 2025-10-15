@@ -4,6 +4,7 @@ from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, \
     xmlIdAttr, unqualifiedIdAttr, make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 
 
 class requireXmlId(XmlCheck):
@@ -172,7 +173,7 @@ class IDREFSelementApplicabilityCheck(XmlCheck):
         else:
             # Qualify the attribute and element names
             tt_ns = \
-                context.get('root_ns', 'http://www.w3.org/ns/ttml')
+                context.get('root_ns', ns_ttml)
             idref_map = qualifyTags(
                 attr_to_ell_map=IDREF_attr_to_applicable_elements,
                 tt_ns=tt_ns)

@@ -4,6 +4,7 @@ from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname,  \
     xmlIdAttr
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 
 
 class noTextChildren(XmlCheck):
@@ -50,7 +51,7 @@ class checkLineBreaks(XmlCheck):
         valid = True
 
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         all_text = "".join(input.itertext())
         br_tag = make_qname(tt_ns, 'br')
         br_subelements = input.findall('.//'+br_tag)

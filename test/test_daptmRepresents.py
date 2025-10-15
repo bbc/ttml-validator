@@ -7,7 +7,7 @@ from src.validationLogging.validationResult import ValidationResult, \
     ERROR, GOOD
 
 
-class testDaptmDescTypeCheck(unittest.TestCase):
+class testDaptmRepresentsCheck(unittest.TestCase):
     maxDiff = None
 
     def test_valid_content_descriptor(self):
@@ -65,7 +65,8 @@ class testDaptmDescTypeCheck(unittest.TestCase):
             ('x', 'y'),
             ('x.y', 'y'),
             ('x.y.z', 'x.z'),
-            ('x.y.z', '.')
+            ('x.y.z', '.'),
+            ('x', ''),
         ]
 
         for (subtype, parent) in test_vals:
@@ -156,3 +157,100 @@ class testDaptmDescTypeCheck(unittest.TestCase):
             ]
         self.assertListEqual(vr, expected_validation_results)
 
+    def test_computed_represents_good_inherited(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+    daptm:scriptRepresents="audio"
+    daptm:represents="audio.dialogue">
+<body>
+<div>
+<p><span>dialogue</span></p>
+</div>
+</body>
+</tt>"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        drc = daptmRepresentsCheck.daptmRepresentsCheck()
+        vr = ValidationLogger()
+        context = {}
+        valid = drc.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_computed_represents_good_explicit(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+    daptm:scriptRepresents="audio">
+<body>
+<div daptm:represents="audio.dialogue">
+<p daptm:represents="audio.nonDialogueSounds"><span>dialogue</span></p>
+</div>
+</body>
+</tt>"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        drc = daptmRepresentsCheck.daptmRepresentsCheck()
+        vr = ValidationLogger()
+        context = {}
+        valid = drc.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertTrue(valid)
+        expected_validation_results = [
+            ]
+        self.assertListEqual(vr, expected_validation_results)
+
+    def test_computed_represents_bad_omitted(self):
+        input_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
+    daptm:scriptRepresents="audio">
+<body>
+<div><!-- NB not a Script Event, no error for this -->
+<div>
+<p><span>dialogue</span></p>
+</div>
+</div>
+</body>
+</tt>"""
+        input_elementtree = ElementTree.fromstring(input_xml)
+        drc = daptmRepresentsCheck.daptmRepresentsCheck()
+        vr = ValidationLogger()
+        context = {}
+        valid = drc.run(
+            input=input_elementtree,
+            context=context,
+            validation_results=vr
+        )
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertFalse(valid)
+        expected_validation_results = [
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}div element '
+                         'daptm:represents attribute',
+                message='Computed value "" is not valid',
+                code=ValidationCode.dapt_metadata_represents),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}p element '
+                         'daptm:represents attribute',
+                message='Computed value "" is not valid',
+                code=ValidationCode.dapt_metadata_represents),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}span element '
+                         'daptm:represents attribute',
+                message='Computed value "" is not valid',
+                code=ValidationCode.dapt_metadata_represents),
+            ]
+        self.assertListEqual(vr, expected_validation_results)

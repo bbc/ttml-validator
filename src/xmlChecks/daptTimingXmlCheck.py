@@ -5,6 +5,8 @@ from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
 from .xmlCheck import XmlCheck
+from .daptUtils import ns_daptm
+from .ttmlUtils import ns_ttml
 from ..timeExpression import TimeExpressionHandler
 import traceback
 
@@ -339,7 +341,7 @@ class daptTimingCheck(XmlCheck):
         dot_path = '{}/{}'.format(
             metadata_path,
             make_qname(
-                namespace='http://www.w3.org/ns/ttml/profile/dapt#metadata',
+                namespace=ns_daptm,
                 name='daptOriginTimecode')
         )
         dsop_path = '{}/{}'.format(
@@ -474,7 +476,7 @@ class daptTimingCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
 
         valid = True
 

@@ -3,6 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 
 
 class headCheck(XmlCheck):
@@ -23,7 +24,7 @@ class headCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         head_el_tag = make_qname(tt_ns, 'head')
 
         valid = True

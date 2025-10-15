@@ -3,6 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr, get_unqualified_name
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from ..styleAttribs import getAllStyleAttributeDict, \
     attributeIsApplicableToElement, \
     canonicaliseFontFamily, computeStyles, getMergedStyleSet
@@ -487,7 +488,7 @@ class styleRefsXmlCheck(XmlCheck):
             context['id_to_style_attribs_map'] = id_to_styleattribs_map
 
             tt_ns = \
-                context.get('root_ns', 'http://www.w3.org/ns/ttml')
+                context.get('root_ns', ns_ttml)
             body_el_tag = make_qname(tt_ns, 'body')
             bodies = [el for el in input if el.tag == body_el_tag]
             if len(bodies) != 1:

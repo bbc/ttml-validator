@@ -3,6 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import xmlIdAttr, make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 
 
 class actorRefsCheck(XmlCheck):
@@ -20,7 +21,7 @@ class actorRefsCheck(XmlCheck):
 
         # Qualify the attribute and element names
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         metadata_ns = tt_ns + '#metadata'
         ttm_agent_el_tag = make_qname(metadata_ns, 'agent')
         ttm_actor_el_tag = make_qname(metadata_ns, 'actor')

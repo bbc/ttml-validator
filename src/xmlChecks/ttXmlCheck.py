@@ -5,6 +5,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import get_namespace, get_unqualified_name, make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 import re
 
 
@@ -16,11 +17,10 @@ class ttTagAndNamespaceCheck(XmlCheck):
             validation_results: ValidationLogger) -> bool:
         ns = get_namespace(input.tag)
         unq_name = get_unqualified_name(input.tag)
-        ttml_ns = 'http://www.w3.org/ns/ttml'
         ttml_root_el_name = 'tt'
 
         valid = True
-        if ns != ttml_ns:
+        if ns != ns_ttml:
             valid = False
             validation_results.error(
                 location=input.tag,
@@ -70,7 +70,7 @@ class timeBaseCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         ttp_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            context.get('root_ns', ns_ttml) \
             + '#parameter'
         timeBase_attr_key = make_qname(ttp_ns, 'timeBase')
         valid = True
@@ -199,7 +199,7 @@ class cellResolutionCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         ttp_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            context.get('root_ns', ns_ttml) \
             + '#parameter'
         cellResolution_attr_key = make_qname(ttp_ns, 'cellResolution')
         valid = True
@@ -284,7 +284,7 @@ class contentProfilesCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         ttp_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            context.get('root_ns', ns_ttml) \
             + '#parameter'
         contentProfiles_attr_key = make_qname(ttp_ns, 'contentProfiles')
         valid = True

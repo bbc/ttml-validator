@@ -5,6 +5,7 @@ from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from ..timeExpression import TimeExpressionHandler
 from ..styleAttribs import two_percent_vals_regex
 from operator import itemgetter
@@ -274,9 +275,9 @@ class bbcTimingCheck(XmlCheck):
                 region_overlaps: dict[str, list[str]],
                 validation_results: ValidationLogger) -> bool:
             if self._regionsOverlap(
-                r_id1=el_region,
-                r_id2=oel_region,
-                region_overlaps=region_overlaps):
+               r_id1=el_region,
+               r_id2=oel_region,
+               region_overlaps=region_overlaps):
                 validation_results.error(
                     location='<{}> xml:id={} region={} and '
                              '<{}> xml:id={} region={}'
@@ -452,7 +453,7 @@ class bbcTimingCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
 
         valid = True
 

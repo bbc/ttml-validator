@@ -1,10 +1,12 @@
 from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationResult import ValidationResult, \
-    ERROR, WARN
+    ERROR
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
+from .daptUtils import ns_daptm
 from ..registries.daptmDescTypeRegistry import descType_registry_entries, \
     descType_user_defined_value_prefix
 
@@ -23,11 +25,10 @@ class daptmDescTypeCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         ttm_ns = tt_ns + '#metadata'
         desc_el_tag = make_qname(ttm_ns, 'desc')
-        daptm_ns = 'http://www.w3.org/ns/ttml/profile/dapt#metadata'
-        descType_attr_tag = make_qname(daptm_ns, 'descType')
+        descType_attr_tag = make_qname(ns_daptm, 'descType')
 
         valid = True
 

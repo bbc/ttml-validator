@@ -5,6 +5,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 
 
 class copyrightCheck(XmlCheck):
@@ -23,7 +24,7 @@ class copyrightCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         ttm_ns = tt_ns + '#metadata'
         copyright_el_tag = make_qname(ttm_ns, 'copyright')
         copyright_els = [el for el in input if el.tag == copyright_el_tag]

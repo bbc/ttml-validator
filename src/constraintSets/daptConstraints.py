@@ -16,20 +16,23 @@ from src.xmlChecks.daptmDescTypeCheck import daptmDescTypeCheck
 from src.xmlChecks.daptmRepresentsCheck import daptmRepresentsCheck
 from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
 from src.xmlChecks.pruner import Pruner
+from src.xmlChecks.daptUtils import ns_daptm, ns_dapt_extension
+from src.xmlChecks.ttmlUtils import ns_ttml, ns_ttp, ns_ttm, ns_tta, ns_tt_feature
+from src.xmlUtils import ns_xml
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationSummariser import \
     XmlPassChecker, TtmlPassChecker, DaptPassChecker
 
 recognised_namespaces = set([
-    'http://www.w3.org/XML/1998/namespace',  # xml
-    'http://www.w3.org/ns/ttml',  # tt
-    'http://www.w3.org/ns/ttml#parameter',  # ttp
-    'http://www.w3.org/ns/ttml#audio',  # tta
-    'http://www.w3.org/ns/ttml#metadata',  # ttm
-    'http://www.w3.org/ns/ttml/feature/',
-    'http://www.w3.org/ns/ttml/profile/dapt#metadata',  # daptm
-    'http://www.w3.org/ns/ttml/profile/dapt/extension/',
+    ns_xml,  # xml
+    ns_ttml,  # tt
+    ns_ttp,  # ttp
+    ns_tta,  # tta
+    ns_ttm,  # ttm
+    ns_tt_feature,
+    ns_daptm,  # daptm
+    ns_dapt_extension,
     'urn:ebu:tt:metadata',  # ebuttm
 ])
 

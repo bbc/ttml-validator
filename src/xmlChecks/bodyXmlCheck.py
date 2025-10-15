@@ -2,6 +2,7 @@ from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname
+from .ttmlUtils import ns_ttml
 from .xmlCheck import XmlCheck
 from .timingAttributeCheck import getTimingAttributes, \
     pushParentTimingAttributes, popParentTimingAttributes
@@ -25,7 +26,7 @@ class bodyCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         body_el_tag = make_qname(tt_ns, 'body')
 
         valid = True

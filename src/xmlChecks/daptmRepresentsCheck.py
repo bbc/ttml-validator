@@ -2,6 +2,8 @@ from ..validationLogging.validationCodes import ValidationCode
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname
+from .daptUtils import isScriptEvent, isText, ns_daptm
+from .ttmlUtils import ns_ttml
 from .xmlCheck import XmlCheck
 from ..registries.contentDescriptorRegistry import \
     content_descriptor_registry_entries, \
@@ -69,14 +71,17 @@ class daptmRepresentsCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
-        daptm_ns = 'http://www.w3.org/ns/ttml/profile/dapt#metadata'
-        scriptRepresents_attr_tag = make_qname(daptm_ns, 'scriptRepresents')
-        represents_attr_tag = make_qname(daptm_ns, 'represents')
-        applicable_represents_els = [
+            context.get('root_ns', ns_ttml)
+        scriptRepresents_attr_tag = make_qname(ns_daptm, 'scriptRepresents')
+        represents_attr_tag = make_qname(ns_daptm, 'represents')
+        permitted_represents_el_tags = [
             make_qname(namespace=tt_ns, name=el_name)
             for el_name in ['tt', 'body', 'div', 'p', 'span']
             ]
+        required_computed_represents_el_tags = [
+            make_qname(namespace=tt_ns, name=el_name)
+            for el_name in ['div', 'p', 'span']
+        ]
         valid = True
 
         # Get tt/daptm:scriptRepresents value which MUST be present
