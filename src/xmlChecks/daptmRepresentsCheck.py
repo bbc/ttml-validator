@@ -122,7 +122,7 @@ class daptmRepresentsCheck(XmlCheck):
         )
 
         for el in els:
-            if el.tag not in applicable_represents_els:
+            if el.tag not in permitted_represents_el_tags:
                 valid = False
                 validation_results.error(
                     location='{} element'.format(el.tag),
@@ -156,9 +156,64 @@ class daptmRepresentsCheck(XmlCheck):
                 validation_results.error(
                     location='{} element daptm:represents attribute'
                              .format(el.tag),
-                    message='Content descriptor "{}" is not a subtype of scriptRepresents values {}'
+                    message='Content descriptor "{}" is not a subtype '
+                            'of scriptRepresents values {}'
                             .format(represents_val, scriptRepresents_vals),
                     code=ValidationCode.dapt_metadata_represents
                 )
+
+        # Iterate through the tree to derive the computed represents.
+        # For each element that requires a valid computed represents attribute:
+        # check the computed represents attribute is valid - this will
+        # catch empty computed represents attributes on the relevant
+        # elements
+        valid &= self.recursively_compute_child_represents(
+            input=input,
+            parent_computed_represents='',
+            represents_attr_tag=represents_attr_tag,
+            permitted_represents_el_tags=permitted_represents_el_tags,
+            required_computed_represents_el_tags=required_computed_represents_el_tags,
+            validation_results=validation_results
+        )
+
+        return valid
+
+    def recursively_compute_child_represents(
+            self,
+            input: Element,
+            parent_computed_represents: str,
+            represents_attr_tag: str,
+            permitted_represents_el_tags: list[str],
+            required_computed_represents_el_tags: list[str],
+            validation_results: ValidationLogger,
+            ) -> bool:
+        valid = True
+
+        this_computed_represents = input.get(represents_attr_tag, '') \
+            if represents_attr_tag in input.keys() \
+            else parent_computed_represents
+
+        if (isScriptEvent(el=input) or isText(el=input)) \
+           and not self._is_valid_content_descriptor(this_computed_represents):
+            valid = False
+            validation_results.error(
+                location='{} element daptm:represents attribute'
+                         .format(input.tag),
+                message='Computed value "{}" is not valid'
+                        .format(this_computed_represents),
+                code=ValidationCode.dapt_metadata_represents
+            )
+
+        children = [el for el in input
+                    if el.tag in permitted_represents_el_tags]
+        for child in children:
+            valid &= self.recursively_compute_child_represents(
+                input=child,
+                parent_computed_represents=this_computed_represents,
+                represents_attr_tag=represents_attr_tag,
+                permitted_represents_el_tags=permitted_represents_el_tags,
+                required_computed_represents_el_tags=required_computed_represents_el_tags,
+                validation_results=validation_results
+            )
 
         return valid
