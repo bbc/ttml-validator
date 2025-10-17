@@ -85,6 +85,8 @@ class DaptPassChecker(ValidationPassChecker):
         ValidationCode.dapt_timing_timecode_offset,
         ValidationCode.dapt_timing_timecontainer,
         ValidationCode.ttml_timing_attribute_syntax,
+        ValidationCode.dapt_lang_audio,
+        ValidationCode.dapt_lang_root,
         ValidationCode.dapt_metadata_desctype_validity,
         ValidationCode.dapt_metadata_content_descriptor,
         ValidationCode.dapt_metadata_represents,

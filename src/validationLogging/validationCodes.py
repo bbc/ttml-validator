@@ -19,6 +19,8 @@ ValidationCode = Enum(
     xml_root_element
     xml_tt_namespace
     dapt_document_validity
+    dapt_lang_audio
+    dapt_lang_root
     dapt_metadata_content_descriptor
     dapt_metadata_desctype_validity
     dapt_metadata_represents
