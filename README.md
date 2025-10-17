@@ -162,14 +162,4 @@ by processing an MPD or by being passed a template and a starting number
 * check for attributes supposed to be in no namespace placed in a namespace e.g. with a `tt:` prefix
 * Start synthesising an alternate valid version of the document
 * For reporting location that needs parent, make a stack/list in context
-* Add DAPT check for invalid agent
-* Add DAPT check for contentProfiles
-* Add DAPT check for originTimecode without framerate
-* Add DAPT check for >1 originTimecode
-* Add DAPT check for descType
-* Add DAPT check for onScreen
-* Add DAPT checks for represents and scriptRepresents
-* Add DAPT checks for scriptType-root
-* Add DAPT check for xmlLang on audio non-matching
-* Add DAPT check for an empty xmlLang on root
-* Don't require xml:id on div - XSD change
+* When given an MP4 file, extract the expected timing and the payload from the input, and validate as a segment
