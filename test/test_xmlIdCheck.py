@@ -374,18 +374,18 @@ class testXmlIdCheck(unittest.TestCase):
                 code=ValidationCode.ttml_idref_element_applicability),
             ValidationResult(
                 status=ERROR,
+                location='{http://www.w3.org/ns/ttml}div element region '
+                         'attribute reference set0',
+                message='Attribute references {http://www.w3.org/ns/ttml}set '
+                        'element, not in the list of acceptable elements',
+                code=ValidationCode.ttml_idref_element_applicability),
+            ValidationResult(
+                status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div element style '
                          'attribute reference r0',
                 message='Attribute references '
                         '{http://www.w3.org/ns/ttml}region element, not in '
                         'the list of acceptable elements',
-                code=ValidationCode.ttml_idref_element_applicability),
-            ValidationResult(
-                status=ERROR,
-                location='{http://www.w3.org/ns/ttml}div element region '
-                         'attribute reference set0',
-                message='Attribute references {http://www.w3.org/ns/ttml}set '
-                        'element, not in the list of acceptable elements',
                 code=ValidationCode.ttml_idref_element_applicability),
             ValidationResult(
                 status=ERROR,
