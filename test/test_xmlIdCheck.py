@@ -365,15 +365,6 @@ class testXmlIdCheck(unittest.TestCase):
                 code=ValidationCode.ttml_idref_element_applicability),
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}div element '
-                         '{http://www.w3.org/ns/ttml#metadata}agent '
-                         'attribute reference st1',
-                message='Attribute references '
-                        '{http://www.w3.org/ns/ttml}style element, not in '
-                        'the list of acceptable elements',
-                code=ValidationCode.ttml_idref_element_applicability),
-            ValidationResult(
-                status=ERROR,
                 location='{http://www.w3.org/ns/ttml}div element region '
                          'attribute reference set0',
                 message='Attribute references {http://www.w3.org/ns/ttml}set '
@@ -385,6 +376,15 @@ class testXmlIdCheck(unittest.TestCase):
                          'attribute reference r0',
                 message='Attribute references '
                         '{http://www.w3.org/ns/ttml}region element, not in '
+                        'the list of acceptable elements',
+                code=ValidationCode.ttml_idref_element_applicability),
+            ValidationResult(
+                status=ERROR,
+                location='{http://www.w3.org/ns/ttml}div element '
+                         '{http://www.w3.org/ns/ttml#metadata}agent '
+                         'attribute reference st1',
+                message='Attribute references '
+                        '{http://www.w3.org/ns/ttml}style element, not in '
                         'the list of acceptable elements',
                 code=ValidationCode.ttml_idref_element_applicability),
             ValidationResult(

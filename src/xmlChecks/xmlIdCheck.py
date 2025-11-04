@@ -186,7 +186,7 @@ class IDREFSelementApplicabilityCheck(XmlCheck):
             # Iterate through element's descendants
             for el in input.iter():
                 # For each element, check the attributes
-                idrefs_attrs = set(el.keys()).intersection(all_idref_attrs)
+                idrefs_attrs = sorted(set(el.keys()).intersection(all_idref_attrs))
                 for attr in idrefs_attrs:
                     el_list = \
                         idref_map[attr] if attr in idref_map \
