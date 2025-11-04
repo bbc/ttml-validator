@@ -1,5 +1,8 @@
 import unittest
 import src.xmlChecks.headXmlCheck as headXmlCheck
+import src.xmlChecks.copyrightCheck as copyrightCheck
+import src.xmlChecks.stylingCheck as stylingCheck
+import src.xmlChecks.layoutCheck as layoutCheck
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -35,7 +38,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -112,7 +119,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {
@@ -178,7 +189,7 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[]
         )
         vr = ValidationLogger()
         context = {}
@@ -207,7 +218,7 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[]
         )
         vr = ValidationLogger()
         context = {}
@@ -235,19 +246,14 @@ class testHeadXmlCheck(unittest.TestCase):
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
     xmlns:tts="http://www.w3.org/ns/ttml#styling">
-<head>
-    <styling>
-        <style xml:id="s1" tts:color="#ffffffff"/>
-    </styling>
-    <layout>
-        <region xml:id="r1" tts:origin="10% 10%"/>
-    </layout>
-</head>
+<head></head>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -267,34 +273,6 @@ class testHeadXmlCheck(unittest.TestCase):
             ),
             ValidationResult(
                 status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found',
-                code=ValidationCode.ebuttd_styling_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttml}styling/'
-                         '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked',
-                code=ValidationCode.ttml_element_styling
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found',
-                code=ValidationCode.ebuttd_layout_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttml}layout/'
-                         '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked',
-                code=ValidationCode.ttml_element_layout
-            ),
-            ValidationResult(
-                status=GOOD,
                 location='{http://www.w3.org/ns/ttml}tt/'
                          '{http://www.w3.org/ns/ttml}head',
                 message='Head checked',
@@ -308,19 +286,14 @@ class testHeadXmlCheck(unittest.TestCase):
 <tt xml:lang="en-GB"
     xmlns="http://www.w3.org/ns/ttml"
     xmlns:tts="http://www.w3.org/ns/ttml#styling">
-<head>
-    <styling>
-        <style xml:id="s1" tts:color="#ffffffff"/>
-    </styling>
-    <layout>
-        <region xml:id="r1" tts:origin="10% 10%"/>
-    </layout>
-</head>
+<head></head>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=True
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=True),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -338,34 +311,6 @@ class testHeadXmlCheck(unittest.TestCase):
                 message='Required copyright element absent',
                 code=ValidationCode.ttml_metadata_copyright
             ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml}styling',
-                message='styling element found',
-                code=ValidationCode.ebuttd_styling_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttml}styling/'
-                         '{http://www.w3.org/ns/ttml}style]',
-                message='Style elements checked',
-                code=ValidationCode.ttml_element_styling
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found',
-                code=ValidationCode.ebuttd_layout_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttml}layout/'
-                         '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked',
-                code=ValidationCode.ttml_element_layout
-            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -380,18 +325,14 @@ class testHeadXmlCheck(unittest.TestCase):
 <head>
     <ttm:copyright>valid</ttm:copyright>
     <ttm:copyright>strange</ttm:copyright>
-    <styling>
-        <style xml:id="s1" tts:color="#ffffffff"/>
-    </styling>
-    <layout>
-        <region xml:id="r1" tts:origin="10% 10%"/>
-    </layout>
 </head>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+            ]
         )
         vr = ValidationLogger()
         context = {
@@ -410,34 +351,6 @@ class testHeadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttaf#metadata}copyright',
                 message='2 copyright elements found, expected 1',
                 code=ValidationCode.ttml_metadata_copyright
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttaf}head/'
-                         '{http://www.w3.org/ns/ttaf}styling',
-                message='styling element found',
-                code=ValidationCode.ebuttd_styling_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttaf}styling/'
-                         '{http://www.w3.org/ns/ttaf}style]',
-                message='Style elements checked',
-                code=ValidationCode.ttml_element_styling
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttaf}head/'
-                         '{http://www.w3.org/ns/ttaf}layout',
-                message='layout element found',
-                code=ValidationCode.ebuttd_layout_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttaf}layout/'
-                         '{http://www.w3.org/ns/ttaf}region]',
-                message='Region elements checked',
-                code=ValidationCode.ttml_element_layout
             ),
             ValidationResult(
                 status=GOOD,
@@ -461,17 +374,14 @@ class testHeadXmlCheck(unittest.TestCase):
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     xmlns:tts="http://www.w3.org/ns/ttml#styling"
     ttp:cellResolution="32 15" ttp:timeBase="media">
-<head>
-    <ttm:copyright>valid"</ttm:copyright>
-    <layout>
-        <region xml:id="r1" tts:origin="10% 10%"/>
-    </layout>
-</head>
+<head></head>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -482,13 +392,6 @@ class testHeadXmlCheck(unittest.TestCase):
         )
         self.assertFalse(valid)
         expected_validation_results = [
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found',
-                code=ValidationCode.ttml_metadata_copyright
-            ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
@@ -503,20 +406,6 @@ class testHeadXmlCheck(unittest.TestCase):
                 message='Skipping style element checks',
                 code=ValidationCode.ttml_element_style
             ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found',
-                code=ValidationCode.ebuttd_layout_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttml}layout/'
-                         '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked',
-                code=ValidationCode.ttml_element_layout
-            ),
         ]
         self.assertListEqual(vr, expected_validation_results)
 
@@ -529,18 +418,16 @@ class testHeadXmlCheck(unittest.TestCase):
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 <head>
-    <ttm:copyright>valid"</ttm:copyright>
     <styling/>
     <styling/>
-    <layout>
-        <region xml:id="r1" tts:origin="10% 10%"/>
-    </layout>
 </head>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -551,13 +438,6 @@ class testHeadXmlCheck(unittest.TestCase):
         )
         self.assertFalse(valid)
         expected_validation_results = [
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml#metadata}copyright',
-                message='Copyright element found',
-                code=ValidationCode.ttml_metadata_copyright
-            ),
             ValidationResult(
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}head/'
@@ -571,20 +451,6 @@ class testHeadXmlCheck(unittest.TestCase):
                          '{http://www.w3.org/ns/ttml}styling',
                 message='Skipping style element checks',
                 code=ValidationCode.ttml_element_style
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='{http://www.w3.org/ns/ttml}head/'
-                         '{http://www.w3.org/ns/ttml}layout',
-                message='layout element found',
-                code=ValidationCode.ebuttd_layout_element_constraint
-            ),
-            ValidationResult(
-                status=GOOD,
-                location='[{http://www.w3.org/ns/ttml}layout/'
-                         '{http://www.w3.org/ns/ttml}region]',
-                message='Region elements checked',
-                code=ValidationCode.ttml_element_layout
             ),
         ]
         self.assertListEqual(vr, expected_validation_results)
@@ -609,7 +475,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -679,7 +549,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -751,7 +625,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -841,7 +719,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -927,7 +809,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -996,7 +882,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1065,7 +955,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1135,7 +1029,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1207,7 +1105,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}
@@ -1297,7 +1199,11 @@ class testHeadXmlCheck(unittest.TestCase):
 """
         input_elementtree = ElementTree.fromstring(input_xml)
         headCheck = headXmlCheck.headCheck(
-            copyright_required=False
+            sub_checks=[
+                copyrightCheck.copyrightCheck(copyright_required=False),
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck(),
+            ]
         )
         vr = ValidationLogger()
         context = {}

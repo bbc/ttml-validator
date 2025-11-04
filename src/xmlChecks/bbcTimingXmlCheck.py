@@ -5,6 +5,7 @@ from xml.etree.ElementTree import Element
 from ..xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from ..timeExpression import TimeExpressionHandler
 from ..styleAttribs import two_percent_vals_regex
 from operator import itemgetter
@@ -17,7 +18,7 @@ timing_attr_keys = [
 ]
 
 
-class timingCheck(XmlCheck):
+class bbcTimingCheck(XmlCheck):
     """
     Checks timings in document
     """
@@ -41,7 +42,7 @@ class timingCheck(XmlCheck):
             te: TimeExpressionHandler,
             el: Element,
             epoch_s: float,
-            parent_end: float,
+            parent_end: float | None,
             begin_defined: bool,
             end_defined: bool,
             time_el_map: dict[float, list[tuple[Element, float]]],
@@ -55,26 +56,27 @@ class timingCheck(XmlCheck):
 
         for timing_attr in timing_attr_keys:
             if timing_attr in el.keys():
-                if not te.isOffsetTime(el.get(timing_attr)):
+                if not te.isNonFrameClockTime(el.get(timing_attr, '')):
                     valid = False
                     validation_results.error(
                         location='{} element xml:id {}'.format(
                             el.tag,
                             el.get(xmlIdAttr, 'omitted')),
-                        message='{}={} is not a valid offset time'.format(
+                        message='{}={} is not a valid non-frame clock time'
+                                .format(
                             timing_attr,
                             el.get(timing_attr)),
                         code=ValidationCode.ebuttd_timing_attribute_constraint
                     )
 
-        this_begin = te.seconds(el.get('begin')) \
+        this_begin = te.seconds(el.get('begin', '')) \
             if 'begin' in el.keys() \
             else 0
         if 'begin' in el.keys():
             begin_defined = True
             # print('{}begin is defined by this element'.format(prefix))
         this_epoch_s = epoch_s + this_begin
-        this_end = epoch_s + te.seconds(el.get('end')) \
+        this_end = epoch_s + te.seconds(el.get('end', '')) \
             if 'end' in el.keys() \
             else parent_end
         if 'end' in el.keys():
@@ -273,9 +275,9 @@ class timingCheck(XmlCheck):
                 region_overlaps: dict[str, list[str]],
                 validation_results: ValidationLogger) -> bool:
             if self._regionsOverlap(
-                r_id1=el_region,
-                r_id2=oel_region,
-                region_overlaps=region_overlaps):
+               r_id1=el_region,
+               r_id2=oel_region,
+               region_overlaps=region_overlaps):
                 validation_results.error(
                     location='<{}> xml:id={} region={} and '
                              '<{}> xml:id={} region={}'
@@ -325,7 +327,7 @@ class timingCheck(XmlCheck):
         num_begins = len(sorted_begins)
         for el_begin_index in range(num_begins):
             el_end_list = \
-                filtered_time_el_map.get(sorted_begins[el_begin_index])
+                filtered_time_el_map.get(sorted_begins[el_begin_index], [])
             num_ends = len(el_end_list)
             for el_end_index in range(num_ends):
                 el, end = el_end_list[el_end_index]
@@ -379,7 +381,9 @@ class timingCheck(XmlCheck):
         for begin, el_list in time_el_map.items():
             end_list = [el[1] for el in el_list
                         if get_unqualified_name(el[0].tag) in ['span', 'p']]
-            max_end = max(end_list) if None not in end_list else None
+            max_end = \
+                max(end_list) if None not in end_list and len(end_list)>0 \
+                else None
             begin_end_list.append((begin, max_end))
         begin_end_list.sort(key=itemgetter(0))
 
@@ -449,7 +453,7 @@ class timingCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
 
         valid = True
 

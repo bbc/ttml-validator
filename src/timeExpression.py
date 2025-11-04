@@ -3,12 +3,12 @@ import re
 # Framerate multiplier e.g. "1000 1001"
 _frm_regex = re.compile(r'(?P<numerator>\d+)\s(?P<denominator>\d+)')
 
-# Clock-time Timecode e.g. "01:00:23:14"
+# Clock-time Timecode with Frames e.g. "01:00:23:14"
 _tc_regex = \
     re.compile(
         r'(?P<h>[0-9][0-9]):(?P<m>[0-5][0-9]):(?P<s>[0-5][0-9]):(?P<f>[0-9][0-9])$')
 
-# hhmmss time e.g. "425000:13:14.040"
+# Clock-time with no frames, hhmmss time e.g. "425000:13:14.040"
 _hms_regex = \
     re.compile(
         r'(?P<h>[0-9][0-9]+):(?P<m>[0-5][0-9]):(?P<s>([0-5][0-9])(\.[0-9]+)?)$')
@@ -38,9 +38,9 @@ class TimeExpressionHandler:
         return int(m['numerator'])/int(m['denominator'])
 
     def __init__(self,
-                 framerate: str = None,
-                 framerate_multiplier: str = None,
-                 tickrate: str = None):
+                 framerate: str | None = None,
+                 framerate_multiplier: str | None = None,
+                 tickrate: str | None = None):
         if framerate is not None:
             self._framerate = int(framerate)
         if framerate_multiplier is not None:
@@ -53,6 +53,8 @@ class TimeExpressionHandler:
             self._tickrate = int(tickrate)
         elif framerate is not None:
             self._tickrate = self._effective_framerate
+        else:
+            self._tickrate = 1
 
     def seconds(self, time_value: str) -> float:
         # try hhmmss first
@@ -105,6 +107,33 @@ class TimeExpressionHandler:
             '{} is not a recognised time expression'.format(
                 time_value))
 
-    def isOffsetTime(self, time_expression: str) -> bool:
+    def isNonFrameClockTime(self, time_expression: str) -> bool:
         match = _hms_regex.match(time_expression)
         return match is not None
+
+    def isFrameClockTime(self, time_expression: str) -> bool:
+        match = _tc_regex.match(time_expression)
+        return match is not None
+
+    def isOffsetTime(self, time_expression: str) -> bool:
+        match = _tm_regex.match(time_expression)
+        return match is not None
+
+    def usesFrames(self, time_expression: str) -> bool:
+        rv = self.isFrameClockTime(time_expression=time_expression)
+        if not rv:
+            # try Offset time
+            m = _tm_regex.match(time_expression)
+            if m is not None:
+                rv = m['metric'] == 'f'
+
+        return rv
+
+    def usesTicks(self, time_expression: str) -> bool:
+        rv = False
+
+        m = _tm_regex.match(time_expression)
+        if m is not None:
+            rv = m['metric'] == 't'
+
+        return rv

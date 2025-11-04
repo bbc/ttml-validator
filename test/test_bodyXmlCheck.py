@@ -1,5 +1,12 @@
 import unittest
 import src.xmlChecks.bodyXmlCheck as bodyXmlCheck
+from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
+    noTimingAttributeCheck
+from src.xmlChecks.divXmlCheck import divCheck
+from src.xmlChecks.pXmlCheck import pCheck
+from src.xmlChecks.spanXmlCheck import spanCheck
+from src.xmlChecks.xmlIdCheck import requireXmlId
+from src.xmlChecks.textCheck import noTextChildren, checkLineBreaks
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -14,6 +21,26 @@ class testBodyXmlCheck(unittest.TestCase):
     #  Body tests                    #
     ##################################
 
+    def setUp(self) -> None:
+        self.bodyCheck = bodyXmlCheck.bodyCheck(
+            sub_checks=[
+                noTimingAttributeCheck(),
+                divCheck(sub_checks=[
+                    noTimingAttributeCheck(),
+                    pCheck(sub_checks=[
+                        requireXmlId(),
+                        noTextChildren(),
+                        checkLineBreaks(),
+                        spanCheck(sub_checks=[
+                            noNestedTimedElementsCheck()
+                            ],
+                            require_text_in_span=True,
+                            permit_nested_spans=False)
+                        ])
+                    ])
+                ])
+        return super().setUp()
+
     def test_bodyCheck_ok(self):
         input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <tt xml:lang="en-GB"
@@ -26,10 +53,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -57,10 +83,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -97,10 +122,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -129,10 +153,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -168,10 +191,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -224,10 +246,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -236,9 +257,8 @@ class testBodyXmlCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}div/'
-                         '{http://www.w3.org/ns/ttml}p xml:id omitted',
-                message='p element missing required xml:id',
+                location='p xml:id omitted',
+                message='Element missing required xml:id attribute',
                 code=ValidationCode.ebuttd_p_xml_id_constraint
             ),
         ]
@@ -258,10 +278,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -291,10 +310,9 @@ class testBodyXmlCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -333,10 +351,9 @@ with good line break</span></p>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -375,10 +392,9 @@ with good line break</span></p>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -410,10 +426,9 @@ with good line break</span></p>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -456,10 +471,9 @@ with good line break</span></p>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
-        bodyCheck = bodyXmlCheck.bodyCheck()
         vr = ValidationLogger()
         context = {}
-        valid = bodyCheck.run(
+        valid = self.bodyCheck.run(
             input=input_elementtree,
             context=context,
             validation_results=vr
@@ -468,8 +482,7 @@ with good line break</span></p>
         expected_validation_results = [
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}p@xml:id p1/'
-                         '{http://www.w3.org/ns/ttml}span element',
+                location='{http://www.w3.org/ns/ttml}span element',
                 message='Nested elements with timing attributes prohibited',
                 code=ValidationCode.ebuttd_nested_timing_constraint
             ),
@@ -482,8 +495,7 @@ with good line break</span></p>
             ),
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}span@xml:id omitted/'
-                         '{http://www.w3.org/ns/ttml}span element',
+                location='{http://www.w3.org/ns/ttml}span element',
                 message='Nested elements with timing attributes prohibited',
                 code=ValidationCode.ebuttd_nested_timing_constraint
             ),
@@ -496,8 +508,7 @@ with good line break</span></p>
             ),
             ValidationResult(
                 status=ERROR,
-                location='{http://www.w3.org/ns/ttml}span@xml:id omitted/'
-                         '{http://www.w3.org/ns/ttml}span element',
+                location='{http://www.w3.org/ns/ttml}span element',
                 message='Nested elements with timing attributes prohibited',
                 code=ValidationCode.ebuttd_nested_timing_constraint
             ),

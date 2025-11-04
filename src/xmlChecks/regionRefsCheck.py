@@ -5,6 +5,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, get_unqualified_name
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from ..styleAttribs import computeStyles, getMergedStyleSet, \
     ebutt_distribution_color_type_regex, two_percent_vals_regex
 import logging
@@ -308,7 +309,7 @@ class regionRefsXmlCheck(XmlCheck):
         # Gather region references from body, div, p and span
         # elements in a map from region xml:id to referencing element
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         body_el_tag = make_qname(tt_ns, 'body')
         bodies = [el for el in input if el.tag == body_el_tag]
         if len(bodies) != 1:

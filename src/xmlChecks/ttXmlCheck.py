@@ -3,86 +3,10 @@ from ..validationLogging.validationResult import ValidationResult, \
     ERROR, WARN
 from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_namespace, get_unqualified_name, make_qname, \
-    xmlIdAttr, unqualifiedIdAttr
+from ..xmlUtils import get_namespace, get_unqualified_name, make_qname
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 import re
-
-
-class duplicateXmlIdCheck(XmlCheck):
-
-    @classmethod
-    def _gatherXmlId(cls, e: Element, m: dict[str, list]):
-        xmlId = e.get(xmlIdAttr)
-        if xmlId:
-            elist = m.get(xmlId, [])
-            elist.append(e)
-            m[xmlId] = elist
-
-    def run(
-            self,
-            input: Element,
-            context: dict,
-            validation_results: ValidationLogger) -> bool:
-        xmlIdToElementMap = {}
-
-        for e in input.iter():
-            duplicateXmlIdCheck._gatherXmlId(e=e, m=xmlIdToElementMap)
-
-        valid = True
-        for (xmlId, elist) in xmlIdToElementMap.items():
-            if len(elist) > 1:
-                valid = False
-                validation_results.error(
-                    location=', '.join(e.tag for e in elist),
-                    message='Duplicate xml:id found with value ' + xmlId,
-                    code=ValidationCode.xml_id_unique
-                )
-        if valid:
-            validation_results.good(
-                location='Parsed document',
-                message='xml:id values are unique',
-                code=ValidationCode.xml_id_unique
-            )
-
-        context['xmlId_to_element_map'] = xmlIdToElementMap
-
-        return valid
-
-
-class unqualifiedIdAttributeCheck(XmlCheck):
-    def run(
-            self,
-            input: Element,
-            context: dict,
-            validation_results: ValidationLogger) -> bool:
-
-        elements_with_xml_id = \
-            set(input.findall('.//*[@{}]'.format(xmlIdAttr)))
-        elements_with_unq_id = \
-            set(input.findall('.//*[@{}]'.format(unqualifiedIdAttr)))
-        num_elements_with_unq_id = len(elements_with_unq_id)
-        num_elements_with_unq_id_and_xml_id = \
-            len(elements_with_unq_id.intersection(elements_with_xml_id))
-        num_elements_with_unq_id_and_no_xml_id = \
-            num_elements_with_unq_id - num_elements_with_unq_id_and_xml_id
-
-        if num_elements_with_unq_id_and_no_xml_id > 0 \
-           or num_elements_with_unq_id > 0:
-            validation_results.warn(
-                location='Parsed document',
-                message='{} elements have unqualified id attributes, '
-                        'of which {} have no xml:id attribute. '
-                        'Check if they should have xml:id attributes!'
-                        .format(
-                            num_elements_with_unq_id,
-                            num_elements_with_unq_id_and_no_xml_id
-                        ),
-                code=ValidationCode.xml_id_unqualified
-            )
-
-        # Never fail on this
-        return True
 
 
 class ttTagAndNamespaceCheck(XmlCheck):
@@ -93,11 +17,10 @@ class ttTagAndNamespaceCheck(XmlCheck):
             validation_results: ValidationLogger) -> bool:
         ns = get_namespace(input.tag)
         unq_name = get_unqualified_name(input.tag)
-        ttml_ns = 'http://www.w3.org/ns/ttml'
         ttml_root_el_name = 'tt'
 
         valid = True
-        if ns != ttml_ns:
+        if ns != ns_ttml:
             valid = False
             validation_results.error(
                 location=input.tag,
@@ -147,7 +70,7 @@ class timeBaseCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         ttp_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            context.get('root_ns', ns_ttml) \
             + '#parameter'
         timeBase_attr_key = make_qname(ttp_ns, 'timeBase')
         valid = True
@@ -276,7 +199,7 @@ class cellResolutionCheck(XmlCheck):
             context: dict,
             validation_results: ValidationLogger) -> bool:
         ttp_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml') \
+            context.get('root_ns', ns_ttml) \
             + '#parameter'
         cellResolution_attr_key = make_qname(ttp_ns, 'cellResolution')
         valid = True
@@ -340,5 +263,81 @@ class cellResolutionCheck(XmlCheck):
             context['cellResolution'] = cellResolution_attr_val
         else:
             context['cellResolution'] = self.default_cellResolution
+
+        return valid
+
+
+class contentProfilesCheck(XmlCheck):
+
+    def __init__(self,
+                 contentProfiles_atleastonelist: list[str] = [],
+                 contentProfiles_denylist: list[str] = [],
+                 contentProfiles_required: bool = False):
+        super().__init__()
+        self._contentProfiles_atleastonelist = contentProfiles_atleastonelist
+        self._contentProfiles_denylist = contentProfiles_denylist
+        self._contentProfiles_required = contentProfiles_required
+
+    def run(
+            self,
+            input: Element,
+            context: dict,
+            validation_results: ValidationLogger) -> bool:
+        ttp_ns = \
+            context.get('root_ns', ns_ttml) \
+            + '#parameter'
+        contentProfiles_attr_key = make_qname(ttp_ns, 'contentProfiles')
+        valid = True
+
+        if self._contentProfiles_required \
+           and contentProfiles_attr_key not in input.attrib:
+            valid = False
+            validation_results.error(
+                location='{} {} attribute'.format(
+                    input.tag, contentProfiles_attr_key),
+                message='Required contentProfiles attribute absent',
+                code=ValidationCode.ttml_parameter_contentProfiles
+            )
+
+        contentProfiles_attr_val = \
+            input.get(contentProfiles_attr_key, '')
+        contentProfiles = contentProfiles_attr_val.split()
+        at_least_one_found = False
+        for contentProfile in contentProfiles:
+            if contentProfile in self._contentProfiles_denylist:
+                valid = False
+                validation_results.error(
+                    location='{} {} attribute'.format(
+                        input.tag, contentProfiles_attr_key),
+                    message='contentProfile {} present but '
+                            'in the prohibited set {}'
+                            .format(
+                        contentProfile, self._contentProfiles_denylist),
+                    code=ValidationCode.ttml_parameter_contentProfiles
+                )
+            if contentProfile in self._contentProfiles_atleastonelist:
+                at_least_one_found = True
+
+        if at_least_one_found is False \
+           and len(self._contentProfiles_atleastonelist) > 0:
+            valid = False
+            validation_results.error(
+                location='{} {} attribute'.format(
+                    input.tag, contentProfiles_attr_key),
+                message='At least one of the contentProfiles {} '
+                        'must be present, all are missing from the '
+                        'contentProfile attribute {}'.format(
+                    self._contentProfiles_atleastonelist,
+                    contentProfiles_attr_val),
+                code=ValidationCode.ttml_parameter_contentProfiles
+            )
+
+        if valid:
+            validation_results.good(
+                location='{} {} attribute'.format(
+                    input.tag, contentProfiles_attr_key),
+                message='contentProfiles checked',
+                code=ValidationCode.ttml_parameter_contentProfiles
+            )
 
         return valid

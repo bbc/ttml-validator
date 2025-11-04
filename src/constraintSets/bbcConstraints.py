@@ -4,15 +4,25 @@ from src.preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
 from src.preParseChecks.xmlStructureCheck import XmlStructureCheck
 from src.schemas.ebuttdSchema import EBUTTDSchema
 from src.xmlChecks.xsdValidator import xsdValidator
-from src.xmlChecks.ttXmlCheck import duplicateXmlIdCheck, timeBaseCheck, \
-    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck, \
-    unqualifiedIdAttributeCheck
+from src.xmlChecks.ttXmlCheck import timeBaseCheck, \
+    ttTagAndNamespaceCheck, activeAreaCheck, cellResolutionCheck
+from src.xmlChecks.copyrightCheck import copyrightCheck
+from src.xmlChecks.stylingCheck import stylingCheck
+from src.xmlChecks.layoutCheck import layoutCheck
 from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.styleRefsCheck import styleRefsXmlCheck
 from src.xmlChecks.regionRefsCheck import regionRefsXmlCheck
 from src.xmlChecks.inlineStyleAttributeCheck import inlineStyleAttributesCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
-from src.xmlChecks.timingXmlCheck import timingCheck
+from src.xmlChecks.divXmlCheck import divCheck
+from src.xmlChecks.pXmlCheck import pCheck
+from src.xmlChecks.spanXmlCheck import spanCheck
+from src.xmlChecks.bbcTimingXmlCheck import bbcTimingCheck
+from src.xmlChecks.xmlIdCheck import requireXmlId, duplicateXmlIdCheck, \
+    unqualifiedIdAttributeCheck, IDREFSelementApplicabilityCheck
+from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
+    noTimingAttributeCheck
+from src.xmlChecks.textCheck import noTextChildren, checkLineBreaks
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationSummariser import \
@@ -32,15 +42,39 @@ class BbcSubtitleConstraintSet(ConstraintSet):
         unqualifiedIdAttributeCheck(),
         xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         duplicateXmlIdCheck(),
+        IDREFSelementApplicabilityCheck(),
         ttTagAndNamespaceCheck(),
         timeBaseCheck(timeBase_acceptlist=['media'], timeBase_required=True),
         activeAreaCheck(activeArea_required=False),
         cellResolutionCheck(cellResolution_required=False),
-        headCheck(copyright_required=False),
+        headCheck(
+            sub_checks=[
+                copyrightCheck(copyright_required=False),
+                stylingCheck(),
+                layoutCheck(),
+            ]
+            ),
         styleRefsXmlCheck(),
         inlineStyleAttributesCheck(),
         regionRefsXmlCheck(),
-        bodyCheck()
+        bodyCheck(sub_checks=[
+            noTimingAttributeCheck(),
+            divCheck(sub_checks=[
+                noTimingAttributeCheck(),
+                pCheck(sub_checks=[
+                    requireXmlId(),
+                    noTextChildren(),
+                    checkLineBreaks(),
+                    spanCheck(sub_checks=[
+                        noNestedTimedElementsCheck()
+                        ],
+                        require_text_in_span=True,
+                        permit_nested_spans=False)
+                    ])
+                ],
+                recurse_div_children=True)
+            ]
+        )
     ]
 
     def __init__(
@@ -50,7 +84,7 @@ class BbcSubtitleConstraintSet(ConstraintSet):
             segment_relative_timing: bool = False) -> None:
         super().__init__()
         self._xmlChecks.append(
-            timingCheck(
+            bbcTimingCheck(
                 epoch=epoch,
                 segment_dur=segment_dur,
                 segment_relative_timing=segment_relative_timing)

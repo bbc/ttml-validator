@@ -1,0 +1,84 @@
+{
+    "columns": [
+        {
+            "header": "content-descriptor",
+            "isKey": true,
+            "rowKey": "value",
+            "isType": true
+        },
+        {
+            "header": "Status",
+            "rowKey": "status"
+        },
+        {
+            "header": "Description",
+            "rowKey": "description"
+        },
+        {
+            "header": "Example usage",
+            "rowKey": "example_usage"
+        }
+    ],
+    "values": [
+        {
+            "value": "audio",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents any part of the audio programme.",
+            "example_usage": "Dubbing, translation and hard of hearing subtitles and captions, pre- and post- production scripts"
+        },
+        {
+            "value": "audio.dialogue",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents verbal communication in the audio programme, for example, a spoken conversation.",
+            "example_usage": "Dubbing, translation and hard of hearing subtitles and captions, pre- and post- production scripts"
+        },
+        {
+            "value": "audio.nonDialogueSounds",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents a part of the audio programme corresponding to sounds that are not verbal communication, for example, significant sounds, such as a door being slammed in anger.",
+            "example_usage": "Translation and hard of hearing subtitles and captions, pre- and post- production scripts"
+        },
+        {
+            "value": "visual",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents any part of the visual image of the programme.",
+            "example_usage": "Audio Description"
+        },
+        {
+            "value": "visual.dialogue",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents verbal communication, within the visual image of the programme, for example, a signed conversation.",
+            "example_usage": "Dubbing or Audio Description, translation and hard of hearing subtitles and captions, pre- and post- production scripts"
+        },
+        {
+            "value": "visual.nonText",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents non-textual parts of the visual image of the programme, for example, a significant object in the scene.",
+            "example_usage": "Audio Description"
+        },
+        {
+            "value": "visual.text",
+            "status": "Provisional",
+            "description": "Indicates that the DAPT content represents textual content in the visual image of the programme, for example, a signpost, a clock, a newspaper headline, an instant message etc.",
+            "example_usage": "Audio Description"
+        },
+        {
+            "value": "visual.text.title",
+            "status": "Provisional",
+            "description": "A <a>sub-type</a> of <code>visual.text</code> where the text is the title of the related media.",
+            "example_usage": "Audio Description"
+        },
+        {
+            "value": "visual.text.credit",
+            "status": "Provisional",
+            "description": "A <a>sub-type</a> of <code>visual.text</code> where the text is a credit, e.g. the name of an actor.",
+            "example_usage": "Audio Description"
+        },
+        {
+            "value": "visual.text.location",
+            "status": "Provisional",
+            "description": "A <a>sub-type</a> of <code>visual.text</code> where the text indicates the location where the content is occurring.",
+            "example_usage": "Audio Description"
+        }
+    ]
+}

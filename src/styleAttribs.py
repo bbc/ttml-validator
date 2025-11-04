@@ -2,7 +2,8 @@ import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from xml.etree.ElementTree import Element
-from .xmlUtils import make_qname, get_unqualified_name, get_namespace, xmlIdAttr
+from .xmlUtils import make_qname, get_unqualified_name, \
+    get_namespace, xmlIdAttr
 from .validationLogging.validationCodes import ValidationCode
 from .validationLogging.validationResult import ValidationResult, ERROR
 from .validationLogging.validationLogger import ValidationLogger
@@ -633,5 +634,29 @@ def computeStyles(
             )
             if fallback_css:
                 el_css[style_attr.tag] = fallback_css
+
+    return valid
+
+
+def validateStyleAttr(
+        style_el: Element,
+        context: dict,
+        validation_results: ValidationLogger) -> bool:
+    valid = True
+    tt_ns = context.get('root_ns', 'http://www.w3.org/ns/ttml')
+    style_attr_dict = getAllStyleAttributeDict(tt_ns=tt_ns)
+    for a_key, a_val in style_el.items():
+        if a_key in style_attr_dict:
+            match = style_attr_dict[a_key].syntaxRegex.match(a_val)
+            if match is None:
+                valid = False
+                validation_results.error(
+                    location='{}@{}'.format(
+                        style_el.tag,
+                        a_key),
+                    message='Attribute value [{}] is invalid'.format(
+                        a_val),
+                    code=ValidationCode.ttml_attribute_styling_attribute
+                )
 
     return valid

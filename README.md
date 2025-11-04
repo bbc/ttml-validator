@@ -161,3 +161,5 @@ from an invalid input based on the validation failures
 by processing an MPD or by being passed a template and a starting number
 * check for attributes supposed to be in no namespace placed in a namespace e.g. with a `tt:` prefix
 * Start synthesising an alternate valid version of the document
+* For reporting location that needs parent, make a stack/list in context
+* When given an MP4 file, extract the expected timing and the payload from the input, and validate as a segment

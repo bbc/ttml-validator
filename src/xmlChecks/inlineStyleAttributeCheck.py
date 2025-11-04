@@ -3,6 +3,7 @@ from ..validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 from ..xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import XmlCheck
+from .ttmlUtils import ns_ttml
 from ..styleAttribs import getAllStyleAttributeKeys
 
 
@@ -17,7 +18,7 @@ class inlineStyleAttributesCheck(XmlCheck):
             validation_results: ValidationLogger) -> bool:
         valid = True
         tt_ns = \
-            context.get('root_ns', 'http://www.w3.org/ns/ttml')
+            context.get('root_ns', ns_ttml)
         style_attribute_keys = set(getAllStyleAttributeKeys(tt_ns=tt_ns))
         style_attribute_keys.remove('style')  # the one that is allowed!
         el_tags = set(make_qname(tt_ns, t)

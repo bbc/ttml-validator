@@ -44,6 +44,9 @@ class TtmlPassChecker(ValidationPassChecker):
     _check_codes = [
         ValidationCode.xml_root_element,
         ValidationCode.xml_tt_namespace,
+        ValidationCode.ttml_idref_element_applicability,
+        ValidationCode.ttml_idref_empty,
+        ValidationCode.ttml_idref_too_many,
         ValidationCode.ttml_parameter_cellResolution,
         ValidationCode.ttml_document_timing,
         ValidationCode.ttml_element_body,
@@ -59,6 +62,35 @@ class TtmlPassChecker(ValidationPassChecker):
         ValidationCode.ttml_styling_reference,
         ValidationCode.ttml_styling_referential_chained,
         ValidationCode.ttml_styling_attribute_applicability,
+    ]
+
+
+class DaptPassChecker(ValidationPassChecker):
+    _check_codes = [
+        ValidationCode.xml_xsd,
+        ValidationCode.xml_encoding_decl,
+        ValidationCode.xml_entity_decl,
+        ValidationCode.xml_document_validity,
+        ValidationCode.xml_prune,  # should never be errors
+        ValidationCode.ttml_metadata_actor_reference,
+        ValidationCode.ebuttd_parameter_timeBase,
+        ValidationCode.ttml_parameter_contentProfiles,
+        ValidationCode.dapt_timing_attribute_constraint,
+        ValidationCode.dapt_document_validity,
+        ValidationCode.dapt_timing_framerate,
+        ValidationCode.dapt_timing_origin_timecode,
+        ValidationCode.dapt_timing_segment_overlap,
+        ValidationCode.dapt_timing_start_of_programme_timecode,
+        ValidationCode.dapt_timing_tickrate,
+        ValidationCode.dapt_timing_timecode_offset,
+        ValidationCode.dapt_timing_timecontainer,
+        ValidationCode.ttml_timing_attribute_syntax,
+        ValidationCode.dapt_lang_audio,
+        ValidationCode.dapt_lang_root,
+        ValidationCode.dapt_metadata_desctype_validity,
+        ValidationCode.dapt_metadata_content_descriptor,
+        ValidationCode.dapt_metadata_represents,
+        ValidationCode.dapt_metadata_scriptRepresents,
     ]
 
 

@@ -2,6 +2,8 @@ import unittest
 import src.xmlChecks.regionRefsCheck as regionRefsCheck
 import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.headXmlCheck as headXmlCheck
+import src.xmlChecks.stylingCheck as stylingCheck
+import src.xmlChecks.layoutCheck as layoutCheck
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
@@ -45,7 +47,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
@@ -109,7 +116,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
@@ -182,7 +194,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
@@ -260,7 +277,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_region_map']
@@ -337,7 +359,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
@@ -408,7 +435,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
@@ -564,7 +596,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
@@ -633,7 +670,12 @@ class testRegionRefsCheck(unittest.TestCase):
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
-        headCheck = headXmlCheck.headCheck()
+        headCheck = headXmlCheck.headCheck(
+            sub_checks=[
+                stylingCheck.stylingCheck(),
+                layoutCheck.layoutCheck()
+            ]
+        )
         vr = ValidationLogger()
         context = {}
         # headCheck is a dependency so it populates context['id_to_style_map']
