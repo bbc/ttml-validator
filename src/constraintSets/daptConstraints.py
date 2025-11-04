@@ -12,6 +12,8 @@ from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.actorRefsCheck import actorRefsCheck
 from src.xmlChecks.bodyXmlCheck import bodyCheck
+from src.xmlChecks.daptLangCheck import daptLangAudioNonMatchingCheck, \
+    nonEmptyLangRootCheck
 from src.xmlChecks.daptmDescTypeCheck import daptmDescTypeCheck
 from src.xmlChecks.daptmRepresentsCheck import daptmRepresentsCheck
 from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
@@ -86,6 +88,8 @@ class DaptConstraintSet(ConstraintSet):
         unqualifiedIdAttributeCheck(),
         IDREFSelementApplicabilityCheck(),
         ttTagAndNamespaceCheck(),
+        nonEmptyLangRootCheck(),
+        daptLangAudioNonMatchingCheck(),
         timeBaseCheck(
             timeBase_acceptlist=['media'],
             timeBase_required=False),
