@@ -8,6 +8,8 @@ from src.validationLogging.validationCodes import ValidationCode
 
 class testXmlStructureCheck(unittest.TestCase):
 
+    maxDiff = None
+
     def test_well_formed(self):
         stimulus = b'''<?xml version="1.0" encoding="UTF-8"?>
 <tt xmlns="http://www.w3.org/ns/ttml"
@@ -38,6 +40,12 @@ class testXmlStructureCheck(unittest.TestCase):
                 location='XML prolog',
                 message='XML Prolog declares UTF-8 encoding',
                 code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
             ),
             ValidationResult(
                 status=GOOD,
@@ -77,6 +85,12 @@ class testXmlStructureCheck(unittest.TestCase):
                 message='No XML Prolog present, assuming XML document '
                         'with UTF-8 encoding',
                 code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
             ),
             ValidationResult(
                 status=GOOD,
@@ -120,6 +134,12 @@ class testXmlStructureCheck(unittest.TestCase):
             ),
             ValidationResult(
                 status=GOOD,
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
+            ),
+            ValidationResult(
+                status=GOOD,
                 location='XML Document Type',
                 message='No XML Entity declarations found',
                 code=ValidationCode.xml_entity_decl
@@ -156,6 +176,12 @@ class testXmlStructureCheck(unittest.TestCase):
                 location='XML prolog',
                 message='XML Prolog declares UTF-8 encoding',
                 code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
             ),
             ValidationResult(
                 status=GOOD,
@@ -196,6 +222,12 @@ class testXmlStructureCheck(unittest.TestCase):
                 message='Non-UTF-8 encoding declaration: ISO-8859-1, '
                         'UTF-8 required',
                 code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
             ),
             ValidationResult(
                 status=GOOD,
@@ -241,11 +273,133 @@ class testXmlStructureCheck(unittest.TestCase):
             ),
             ValidationResult(
                 status=ERROR,
-                location='XML Document Type',
+                location='XML Document Type Declaration',
+                message='Prohibited Document Type Declaration present',
+                code=ValidationCode.xml_dtd
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='XML Document Type Declaration',
                 message='XML Entity declaration found - '
                         'these are not permitted',
                 code=ValidationCode.xml_entity_decl
             )
+        ])
+
+    def test_dtd_reference_present(self):
+        stimulus = b'''<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tt SYSTEM "some_non_existent.dtd">
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    ttp:cellResolution="40 24"
+    xml:lang="en">
+    <body>
+        <div xml:id="d1">
+            <p>Something</p>
+        </div>
+    </body>
+</tt>
+'''
+        xmlStructureCheck = XmlStructureCheck()
+        vr = ValidationLogger()
+
+        valid, result = xmlStructureCheck.run(
+            input=stimulus,
+            validation_results=vr
+        )
+
+        self.assertEqual(stimulus, result)
+        self.assertFalse(valid)
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=GOOD,
+                location='XML prolog',
+                message='XML Prolog declares UTF-8 encoding',
+                code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='XML Document Type Declaration',
+                message='Prohibited Document Type Declaration present'
+                        ' referencing external DTD some_non_existent.dtd',
+                code=ValidationCode.xml_dtd
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type',
+                message='No XML Entity declarations found',
+                code=ValidationCode.xml_entity_decl
+            ),
+        ])
+
+    def test_dtd_internal_present(self):
+        stimulus = b'''<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tt [
+<!ELEMENT tt (body)>
+<!ATTLIST tt
+  xmlns CDATA #FIXED 'http://www.w3.org/ns/ttml'
+  xmlns:ttm CDATA #FIXED 'http://www.w3.org/ns/ttml#metadata'
+  xmlns:ttp CDATA #FIXED 'http://www.w3.org/ns/ttml#parameter'
+  xml:lang NMTOKEN #REQUIRED
+  ttp:cellResolution CDATA #REQUIRED>
+
+<!ELEMENT body (div)+>
+<!ATTLIST body
+  xmlns CDATA #FIXED 'http://www.w3.org/ns/ttml'>
+
+<!ELEMENT div (p)+>
+<!ATTLIST div
+  xmlns CDATA #FIXED 'http://www.w3.org/ns/ttml'
+  xml:id NMTOKEN #REQUIRED>
+
+<!ELEMENT p (#PCDATA)>
+<!ATTLIST p
+  xmlns CDATA #FIXED 'http://www.w3.org/ns/ttml'>
+]>
+<tt xmlns="http://www.w3.org/ns/ttml"
+    xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
+    xmlns:ttp="http://www.w3.org/ns/ttml#parameter"
+    ttp:cellResolution="40 24"
+    xml:lang="en">
+    <body>
+        <div xml:id="d1">
+            <p>Something</p>
+        </div>
+    </body>
+</tt>
+'''
+        xmlStructureCheck = XmlStructureCheck()
+        vr = ValidationLogger()
+
+        valid, result = xmlStructureCheck.run(
+            input=stimulus,
+            validation_results=vr
+        )
+
+        self.assertEqual(stimulus, result)
+        self.assertFalse(valid)
+        print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=GOOD,
+                location='XML prolog',
+                message='XML Prolog declares UTF-8 encoding',
+                code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=ERROR,
+                location='XML Document Type Declaration',
+                message='Prohibited Document Type Declaration present',
+                code=ValidationCode.xml_dtd
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type',
+                message='No XML Entity declarations found',
+                code=ValidationCode.xml_entity_decl
+            ),
         ])
 
     def test_badly_formed(self):
@@ -283,6 +437,12 @@ class testXmlStructureCheck(unittest.TestCase):
                 location='XML prolog',
                 message='XML Prolog declares UTF-8 encoding',
                 code=ValidationCode.xml_encoding_decl
+            ),
+            ValidationResult(
+                status=GOOD,
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
             ),
             ValidationResult(
                 status=GOOD,

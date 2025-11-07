@@ -25,6 +25,8 @@ class XmlStructureCheck(PreParseCheck):
         encodingDecl = None
         entityDeclarationsFound = False
         xmlDeclFound = False
+        doctypeFound = False
+        externalDtd = None
 
         def entityDeclHandler(
                 entityName: str,
@@ -52,9 +54,26 @@ class XmlStructureCheck(PreParseCheck):
             xmlDeclFound = True
             return
 
+        def doctypeHandler(
+                doctypeName: str,
+                systemId: str | None,
+                publicId: str | None,
+                has_internal_subset: bool) -> None:
+            logging.info(
+                'Doctype Declaration doctypeName {} '
+                'systemId {} '
+                'publicId {} '
+                'has_internal_subset {}'
+                .format(doctypeName, systemId, publicId, has_internal_subset))
+            nonlocal doctypeFound, externalDtd
+            doctypeFound = True
+            externalDtd = systemId
+            return
+
         valid = True
 
         parser = ParserCreate()
+        parser.StartDoctypeDeclHandler = doctypeHandler
         parser.EntityDeclHandler = entityDeclHandler
         parser.XmlDeclHandler = xmlDeclHandler
 
@@ -98,10 +117,27 @@ class XmlStructureCheck(PreParseCheck):
                 code=ValidationCode.xml_encoding_decl
             )
 
+        if doctypeFound:
+            valid = False
+            validation_results.error(
+                location='XML Document Type Declaration',
+                message='Prohibited Document Type Declaration present{}'
+                        .format(
+                            ' referencing external DTD {}'.format(externalDtd)
+                            if externalDtd else ''),
+                code=ValidationCode.xml_dtd,
+            )
+        else:
+            validation_results.good(
+                location='XML Document Type Declaration',
+                message='No Document Type Declarations found',
+                code=ValidationCode.xml_dtd
+            )
+
         if entityDeclarationsFound:
             valid = False
             validation_results.error(
-                location='XML Document Type',
+                location='XML Document Type Declaration',
                 message='XML Entity declaration found - '
                         'these are not permitted',
                 code=ValidationCode.xml_entity_decl
