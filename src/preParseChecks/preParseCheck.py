@@ -1,5 +1,6 @@
 from ..validationLogging.validationLogger import ValidationLogger
 from ..validationLogging.validationCodes import ValidationCode
+import chardet
 import codecs
 
 
@@ -57,11 +58,11 @@ class BadEncodingCheck(PreParseCheck):
             b'\xc3\x83\xc2\xac',  # badly encoded U00EC ì
             b'\xc3\x83\xc2\xb2',  # badly encoded U00F2 ò
         ]
-        needs_reencoding = False
+        utf8_as_latin1_found = False
         for utf8_as_latin1_siren in utf8_as_latin1_sirens:
-            needs_reencoding |= utf8_as_latin1_siren in input
+            utf8_as_latin1_found |= utf8_as_latin1_siren in input
 
-        if needs_reencoding:
+        if utf8_as_latin1_found:
             validation_results.error(
                 location='Unparsed file',
                 message='Bad latin-1 encoding found, re-encoding as UTF-8',
@@ -69,6 +70,59 @@ class BadEncodingCheck(PreParseCheck):
             )
             output = str(input, encoding='utf-8').encode('latin-1')
             return (False, output)
+
+        # Detecting the encoding is not always accurate.
+        # The chardet library tends to assume Windows-1252
+        # as the most frequently used character encoding,
+        # but will also report that UTF-8 is a possibility if it
+        # hasn't ruled it out.
+        # So we're going to assume UTF-8 if that's a possibility,
+        # and only re-encode if it is definitely not UTF-8.
+        # NB ASCII is a subset of UTF-8 so treat ascii as not needing
+        # a re-encode.
+        # Another approach would be to inspect the XML encoding
+        # declaration and if it is UTF-8, and UTF-8 has not been ruled
+        # out, use that, whereas if it is something else, that is also
+        # in the "possibles" list, assume that is what it is,
+        # and re-encode. However not doing that for now since we have
+        # a separate check for the encoding in XMLStructureCheck
+        detected = chardet.detect_all(input)
+        detected_encodings = [d.get('encoding') for d in detected]
+        if detected_encodings == [None]:
+            validation_results.error(
+                location='Unparsed file',
+                message='No detectable encoding found, input may not be a '
+                        'valid encoded byte sequence',
+                code=ValidationCode.preParse_encoding
+            )
+            return (False, input)
+        elif 'utf-8' not in detected_encodings \
+             and 'ascii' not in detected_encodings:
+            validation_results.error(
+                location='Unparsed file',
+                message='{} encoding found, with confidence {}, '
+                        're-encoding as UTF-8'
+                        .format(
+                            detected[0]['encoding'],
+                            detected[0]['confidence']),
+                code=ValidationCode.preParse_encoding
+            )
+            # assume that if there is at least one encoding that is
+            # not None then none of them will be None, and definitely
+            # not the first one
+            decoded = str(
+                input,
+                encoding=detected_encodings[0])  # type: ignore
+            output = decoded.encode('utf-8')
+            return (False, output)
+        elif len(detected_encodings) > 1:
+            validation_results.info(
+                location='Unparsed file',
+                message='Multiple possible encodings found including UTF-8 '
+                        'or ASCII, assuming UTF-8 '
+                        '(XML encoding declaration not checked)',
+                code=ValidationCode.preParse_encoding
+            )
 
         validation_results.good(
             location='Unparsed file',

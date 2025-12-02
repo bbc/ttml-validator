@@ -6,7 +6,8 @@ authors = [ {name = "Nigel Megitt <nigel.megitt@bbc.co.uk>"} ]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "xmlschema >= 4.2.0"
+    "xmlschema == 4.2.0",
+    "chardet == 5.2.0"
 ]
 
 [project.scripts]
@@ -26,7 +27,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.13.4"
-xmlschema = "^4.0.1"
+xmlschema = "4.2.0"
+chardet = "5.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pydocstyle = "^6.3.0"

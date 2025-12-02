@@ -2,11 +2,13 @@ import unittest
 import src.preParseChecks.preParseCheck as preParseCheck
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD
+    ERROR, GOOD, INFO
 from src.validationLogging.validationCodes import ValidationCode
 
 
 class testPreParseCheck(unittest.TestCase):
+
+    maxDiff = None
 
     def test_no_direct_instantiation(self):
         not_impl_preparseCheck = preParseCheck.PreParseCheck()
@@ -55,13 +57,10 @@ class testPreParseCheck(unittest.TestCase):
         )
         self.assertListEqual(vr, [expected_vr])
 
-    def testBadEncodingCheck(self):
+    def testBadEncodingCheck_good(self):
         badEncodingCheck = preParseCheck.BadEncodingCheck()
-        # two versions of the same string, one correctly UTF-8 encoded,
-        # the other badly encoded, as we've seen in some files
+        # correctly UTF-8 encoded string
         good_input = b' boys don\xe2\x80\x99t'
-        bad_input = \
-            b'\x20\x62\x6f\x79\x73\x20\x64\x6f\x6e\xc3\xa2\xc2\x80\xc2\x99\x74'
 
         vr = ValidationLogger()
         valid, good_result = badEncodingCheck.run(
@@ -73,12 +72,28 @@ class testPreParseCheck(unittest.TestCase):
         self.assertTrue(valid)
         self.assertListEqual(vr, [
             ValidationResult(
+                status=INFO,
+                location='Unparsed file',
+                message='Multiple possible encodings found including UTF-8 '
+                        'or ASCII, assuming UTF-8 '
+                        '(XML encoding declaration not checked)',
+                code=ValidationCode.preParse_encoding
+            ),
+            ValidationResult(
                 status=GOOD,
                 location='Unparsed file',
                 message='No bad encoding sirens found',
                 code=ValidationCode.preParse_encoding
             )
         ])
+
+    def testBadEncodingCheck_bad_latin1(self):
+        badEncodingCheck = preParseCheck.BadEncodingCheck()
+        # two versions of the same string, one correctly UTF-8 encoded,
+        # the other badly encoded, as we've seen in some files
+        good_input = b' boys don\xe2\x80\x99t'
+        bad_input = \
+            b'\x20\x62\x6f\x79\x73\x20\x64\x6f\x6e\xc3\xa2\xc2\x80\xc2\x99\x74'
 
         vr = ValidationLogger()
         valid, bad_result = badEncodingCheck.run(
@@ -93,6 +108,54 @@ class testPreParseCheck(unittest.TestCase):
                 status=ERROR,
                 location='Unparsed file',
                 message='Bad latin-1 encoding found, re-encoding as UTF-8',
+                code=ValidationCode.preParse_encoding)
+        ])
+
+    def testBadEncodingCheck_not_utf8(self):
+        badEncodingCheck = preParseCheck.BadEncodingCheck()
+        # two versions of the same string, one correctly UTF-8 encoded,
+        # the other encoded in Windows-1252, as we've seen in some files
+        good_input = b'ry\xe2\x80\x99s mon'
+        bad_input = \
+            b'\x72\x79\x92\x73\x20\x6d\x6f\x6e'
+
+        vr = ValidationLogger()
+        valid, bad_result = badEncodingCheck.run(
+            input=bad_input,
+            validation_results=vr
+        )
+
+        self.assertEqual(bad_result, good_input)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='Unparsed file',
+                message='Windows-1252 encoding found, with confidence 0.73, '
+                        're-encoding as UTF-8',
+                code=ValidationCode.preParse_encoding)
+        ])
+
+    def testBadEncodingCheck_empty(self):
+        badEncodingCheck = preParseCheck.BadEncodingCheck()
+
+        empty_input = \
+            b''
+
+        vr = ValidationLogger()
+        valid, empty_result = badEncodingCheck.run(
+            input=empty_input,
+            validation_results=vr
+        )
+
+        self.assertEqual(empty_result, empty_input)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='Unparsed file',
+                message='No detectable encoding found, input may not be a '
+                        'valid encoded byte sequence',
                 code=ValidationCode.preParse_encoding)
         ])
 
