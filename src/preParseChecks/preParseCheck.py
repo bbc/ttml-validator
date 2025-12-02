@@ -100,7 +100,7 @@ class BadEncodingCheck(PreParseCheck):
              and 'ascii' not in detected_encodings:
             validation_results.error(
                 location='Unparsed file',
-                message='{} encoding found, with confidence {}, '
+                message='{} encoding found, with confidence {:.2f}, '
                         're-encoding as UTF-8'
                         .format(
                             detected[0]['encoding'],
