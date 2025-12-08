@@ -125,7 +125,32 @@ class testPreParseCheck(unittest.TestCase):
             ValidationResult(
                 status=ERROR,
                 location='Unparsed file',
-                message='cp1250 encoding found, re-encoding as UTF-8',
+                message='cp1250 encoding found, with no BOM, ''' \
+                        're-encoding as UTF-8',
+                code=ValidationCode.preParse_encoding)
+        ])
+
+    def testBadEncodingCheck_utf16(self):
+        badEncodingCheck = preParseCheck.BadEncodingCheck()
+        stimulus = 'some funky \u0800 text'
+        good_result = stimulus.encode('utf-8')
+        utf16_bom_input = stimulus.encode('utf-16')  # comes with a BOM!
+
+        vr = ValidationLogger()
+        valid, actual_result = badEncodingCheck.run(
+            input=utf16_bom_input,
+            validation_results=vr
+        )
+
+        # print('\n'+('\n'.join([v.asString() for v in vr])))
+        self.assertEqual(actual_result, good_result)
+        self.assertFalse(valid)
+        self.assertListEqual(vr, [
+            ValidationResult(
+                status=ERROR,
+                location='Unparsed file',
+                message='utf_16 encoding found, with a BOM, '
+                        're-encoding as UTF-8',
                 code=ValidationCode.preParse_encoding)
         ])
 

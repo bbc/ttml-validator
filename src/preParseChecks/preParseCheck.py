@@ -1,7 +1,6 @@
 from ..validationLogging.validationLogger import ValidationLogger
 from ..validationLogging.validationCodes import ValidationCode
 from charset_normalizer import from_bytes
-from charset_normalizer.models import CharsetMatches, CharsetMatch
 import codecs
 
 
@@ -100,13 +99,15 @@ class BadEncodingCheck(PreParseCheck):
         elif 'utf_8' not in detected_encodings \
              and 'utf-8' not in detected_encodings \
              and 'ascii' not in detected_encodings:
-            print(detected_encodings)
+            # print(detected_encodings)
             validation_results.error(
                 location='Unparsed file',
-                message='{} encoding found, '
+                message='{} encoding found, with {} BOM, '
                         're-encoding as UTF-8'
                         .format(
-                            detected.best().encoding),  # type: ignore
+                            detected.best().encoding,  # type: ignore
+                            'a' if detected.best()._has_sig_or_bom else 'no'
+                        ),
                 code=ValidationCode.preParse_encoding
             )
             # assume that if there is at least one encoding that is
