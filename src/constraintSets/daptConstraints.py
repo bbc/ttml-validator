@@ -73,8 +73,8 @@ known_no_ns_attributes = set([
 class DaptConstraintSet(ConstraintSet):
 
     _preParseChecks = [
+        ByteOrderMarkCheck(),  # encoding check will remove BOM
         BadEncodingCheck(),  # check encoding before null bytes
-        ByteOrderMarkCheck(),
         NullByteCheck(),
         XmlStructureCheck()
     ]
@@ -107,7 +107,9 @@ class DaptConstraintSet(ConstraintSet):
             ]),
         daptmDescTypeCheck(),
         daptmRepresentsCheck(),
-        # bodyCheck(),
+        # bodyCheck(
+        #     sub_checks=[
+        #     ]),
     ]  # Note that daptTimingCheck is appended in init method
 
     def __init__(

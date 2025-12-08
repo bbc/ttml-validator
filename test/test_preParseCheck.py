@@ -186,41 +186,39 @@ class testPreParseCheck(unittest.TestCase):
             )
         ])
 
-        # UTF-8 BOM
+        # Valid UTF-8 BOM
         vr = ValidationLogger()
         valid, actual_result = bomCheck.run(
             input=utf8_bom_input,
             validation_results=vr
         )
 
-        self.assertEqual(good_result, actual_result)
+        self.assertEqual(utf8_bom_input, actual_result)
         self.assertFalse(valid)
         self.assertListEqual(vr, [
             ValidationResult(
                 status=ERROR,
                 location='First 3 bytes',
                 message='File has a prohibited Byte Order Mark (BOM): '
-                        'b\'\\xef\\xbb\\xbf\''
-                        ' - stripping UTF-8 BOM and continuing.',
+                        'b\'\\xef\\xbb\\xbf\' - continuing.',
                 code=ValidationCode.preParse_byteOrderMark)
         ])
 
-        # UTF-16 BOM
+        # Valid UTF-16 BOM
         vr = ValidationLogger()
         valid, actual_result = bomCheck.run(
             input=utf16_bom_input,
             validation_results=vr
         )
 
-        self.assertEqual(good_result, actual_result)
+        self.assertEqual(utf16_bom_input, actual_result)
         self.assertFalse(valid)
         self.assertListEqual(vr, [
             ValidationResult(
                 status=ERROR,
                 location='First 2 bytes',
                 message='File has a prohibited Byte Order Mark (BOM): '
-                        'b\'\\xff\\xfe\''
-                        ' - attempting to re-encode using codec utf_16_le',
+                        'b\'\\xff\\xfe\'',
                 code=ValidationCode.preParse_byteOrderMark)
         ])
 

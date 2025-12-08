@@ -32,8 +32,8 @@ from src.validationLogging.validationSummariser import \
 
 class BbcSubtitleConstraintSet(ConstraintSet):
     _preParseChecks = [
+        ByteOrderMarkCheck(),  # encoding check will remove BOM
         BadEncodingCheck(),  # check encoding before null bytes
-        ByteOrderMarkCheck(),
         NullByteCheck(),
         XmlStructureCheck()
     ]

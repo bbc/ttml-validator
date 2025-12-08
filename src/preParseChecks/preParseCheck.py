@@ -137,6 +137,18 @@ class BadEncodingCheck(PreParseCheck):
 
 
 class ByteOrderMarkCheck(PreParseCheck):
+    """
+    Checks for prohibited or wierd BOMs.
+
+    Could do this as part of the BadEncodingCheck, but that likely
+    won't deal with weird BOMs. Previous behaviour was to reencode
+    if valid BOMs were found - we can now leave that to the
+    BadEncodingCheck, but that means that there's no point in running
+    ByteOrderMarkCheck after BadEncodingCheck, because there won't
+    be anything to find.
+
+    Must be run before BadEncodingCheck to work.
+    """
 
     _boms_to_encodings = {
         codecs.BOM: 'utf_16',
@@ -176,27 +188,23 @@ class ByteOrderMarkCheck(PreParseCheck):
             validation_results.error(
                 location='First {} bytes'.format(len(has_bom)),
                 message='File has a prohibited Byte Order Mark (BOM): {} '
-                        '- stripping UTF-8 BOM and continuing.'
+                        '- continuing.'
                         .format(str(has_bom)),
                 code=ValidationCode.preParse_byteOrderMark
             )
-            output = input[len(has_bom):]
-            return (False, output)
+            return (False, input)
         elif has_bom:
             validation_results.error(
                 location='First {} bytes'.format(len(has_bom)),
                 message='File has a prohibited Byte Order Mark (BOM): {}'
-                        ' - attempting to re-encode using codec {}'
+                        # ' - attempting to re-encode using codec {}'
                         .format(
                             str(has_bom),
-                            self._boms_to_encodings[has_bom]),
+                            # self._boms_to_encodings[has_bom]
+                            ),
                 code=ValidationCode.preParse_byteOrderMark
             )
-            output = codecs.encode(
-                codecs.decode(
-                    input[len(has_bom):], self._boms_to_encodings[has_bom]),
-                'utf-8')
-            return (False, output)
+            return (False, input)
         elif has_weird_bom:
             validation_results.error(
                 location='First {} bytes'.format(len(has_weird_bom)),
