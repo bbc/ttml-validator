@@ -1,6 +1,7 @@
 from ..validationLogging.validationLogger import ValidationLogger
 from ..validationLogging.validationCodes import ValidationCode
-import chardet
+from charset_normalizer import from_bytes
+from charset_normalizer.models import CharsetMatches, CharsetMatch
 import codecs
 
 
@@ -86,8 +87,8 @@ class BadEncodingCheck(PreParseCheck):
         # in the "possibles" list, assume that is what it is,
         # and re-encode. However not doing that for now since we have
         # a separate check for the encoding in XMLStructureCheck
-        detected = chardet.detect_all(input)
-        detected_encodings = [d.get('encoding') for d in detected]
+        detected = from_bytes(input)
+        detected_encodings = [d.encoding for d in detected]
         if detected_encodings == [None]:
             validation_results.error(
                 location='Unparsed file',
@@ -96,15 +97,16 @@ class BadEncodingCheck(PreParseCheck):
                 code=ValidationCode.preParse_encoding
             )
             return (False, input)
-        elif 'utf-8' not in detected_encodings \
+        elif 'utf_8' not in detected_encodings \
+             and 'utf-8' not in detected_encodings \
              and 'ascii' not in detected_encodings:
+            print(detected_encodings)
             validation_results.error(
                 location='Unparsed file',
-                message='{} encoding found, with confidence {:.2f}, '
+                message='{} encoding found, '
                         're-encoding as UTF-8'
                         .format(
-                            detected[0]['encoding'],
-                            detected[0]['confidence']),
+                            detected.best().encoding),  # type: ignore
                 code=ValidationCode.preParse_encoding
             )
             # assume that if there is at least one encoding that is
@@ -112,10 +114,11 @@ class BadEncodingCheck(PreParseCheck):
             # not the first one
             decoded = str(
                 input,
-                encoding=detected_encodings[0])  # type: ignore
-            output = decoded.encode('utf-8')
+                encoding=detected.best().encoding)  # type: ignore
+            output = decoded.encode('utf-8')  # has no BOM
             return (False, output)
         elif len(detected_encodings) > 1:
+            print(detected_encodings)
             validation_results.info(
                 location='Unparsed file',
                 message='Multiple possible encodings found including UTF-8 '

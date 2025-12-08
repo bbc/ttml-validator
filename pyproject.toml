@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "xmlschema == 4.2.0",
-    "chardet == 5.2.0"
+"charset-normalizer == 3.4.4"
 ]
 
 [project.scripts]
@@ -28,7 +28,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.13.4"
 xmlschema = "4.2.0"
-chardet = "5.2.0"
+charset-normalizer = "3.4.4"
 
 [tool.poetry.group.dev.dependencies]
 pydocstyle = "^6.3.0"
