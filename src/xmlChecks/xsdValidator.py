@@ -1,6 +1,6 @@
 from .xmlCheck import XmlCheck
-from ..validationLogging.validationLogger import ValidationLogger
-from ..validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
 from xml.etree.ElementTree import Element
 from xmlschema import XMLSchemaValidationError, XMLSchema
 

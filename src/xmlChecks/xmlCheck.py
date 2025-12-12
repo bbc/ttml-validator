@@ -1,4 +1,4 @@
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 
 

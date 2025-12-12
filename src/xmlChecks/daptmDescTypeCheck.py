@@ -1,13 +1,13 @@
-from ..validationLogging.validationCodes import ValidationCode
-from ..validationLogging.validationResult import ValidationResult, \
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationResult import ValidationResult, \
     ERROR
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import make_qname
+from src.xmlUtils import make_qname
 from .xmlCheck import XmlCheck
 from .ttmlUtils import ns_ttml
 from .daptUtils import ns_daptm
-from ..registries.daptmDescTypeRegistry import descType_registry_entries, \
+from src.registries.daptmDescTypeRegistry import descType_registry_entries, \
     descType_user_defined_value_prefix
 
 

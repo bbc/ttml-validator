@@ -1,7 +1,7 @@
 from .xmlCheck import XmlCheck
 from xml.etree.ElementTree import Element
-from ..validationLogging.validationLogger import ValidationLogger
-from ..validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
 
 
 def get_namespace(tag: str) -> str:

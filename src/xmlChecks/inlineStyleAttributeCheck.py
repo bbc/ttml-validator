@@ -1,10 +1,10 @@
-from ..validationLogging.validationCodes import ValidationCode
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import make_qname, xmlIdAttr
+from src.xmlUtils import make_qname, xmlIdAttr
 from .xmlCheck import XmlCheck
 from .ttmlUtils import ns_ttml
-from ..styleAttribs import getAllStyleAttributeKeys
+from src.styleAttribs import getAllStyleAttributeKeys
 
 
 class inlineStyleAttributesCheck(XmlCheck):

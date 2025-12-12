@@ -1,7 +1,7 @@
-from ..validationLogging.validationCodes import ValidationCode
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import xmlIdAttr, make_qname
+from src.xmlUtils import xmlIdAttr, make_qname
 from .xmlCheck import XmlCheck
 from .ttmlUtils import ns_ttml
 

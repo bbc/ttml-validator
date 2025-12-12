@@ -31,19 +31,20 @@ xmlschema = "4.2.0"
 charset-normalizer = "3.4.4"
 
 [tool.poetry.group.dev.dependencies]
-pydocstyle = "^6.3.0"
-flake8 = "^7.3.0"
-coverage = "^7.11.0"
+pydocstyle = "6.3.0"
+flake8 = "7.3.0"
+coverage = "7.13.0"
+debugpy = "1.8.18"
 
-debugpy = "^1.8.17"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "coverage>=7.9.0",
-    "debugpy>=1.8.14",
+    "coverage==7.9.0",
+    "debugpy==1.8.14",
+    "sphinx==9.0.4",
 ]
 
 [tool.poetry.scripts]

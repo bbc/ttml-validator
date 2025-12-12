@@ -1,6 +1,6 @@
 from xml.etree.ElementTree import Element
 from .ttmlUtils import ns_ttml
-from ..xmlUtils import make_qname
+from src.xmlUtils import make_qname
 
 
 ns_daptm = "http://www.w3.org/ns/ttml/profile/dapt#metadata"

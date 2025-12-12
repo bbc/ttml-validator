@@ -1,6 +1,6 @@
 from .preParseCheck import PreParseCheck
-from ..validationLogging.validationLogger import ValidationLogger
-from ..validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
 from xml.parsers.expat import ParserCreate, ExpatError, errors
 import logging
 

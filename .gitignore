@@ -1,2 +1,5 @@
 
 *.pyc
+/docs/build
+/build/doctrees
+/build/html

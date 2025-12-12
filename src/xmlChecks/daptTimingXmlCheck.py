@@ -1,13 +1,13 @@
 from typing import Tuple
-from ..validationLogging.validationCodes import ValidationCode
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_unqualified_name, make_qname, \
+from src.xmlUtils import get_unqualified_name, make_qname, \
     xmlIdAttr
 from .xmlCheck import XmlCheck
 from .daptUtils import ns_daptm
 from .ttmlUtils import ns_ttml
-from ..timeExpression import TimeExpressionHandler
+from src.timeExpression import TimeExpressionHandler
 import traceback
 
 

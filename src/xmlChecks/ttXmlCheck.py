@@ -1,9 +1,9 @@
-from ..validationLogging.validationCodes import ValidationCode
-from ..validationLogging.validationResult import ValidationResult, \
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationResult import ValidationResult, \
     ERROR, WARN
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import get_namespace, get_unqualified_name, make_qname
+from src.xmlUtils import get_namespace, get_unqualified_name, make_qname
 from .xmlCheck import XmlCheck
 from .ttmlUtils import ns_ttml
 import re

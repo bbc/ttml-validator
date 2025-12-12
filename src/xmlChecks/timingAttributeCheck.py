@@ -1,7 +1,7 @@
-from ..validationLogging.validationCodes import ValidationCode
-from ..validationLogging.validationLogger import ValidationLogger
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
-from ..xmlUtils import xmlIdAttr
+from src.xmlUtils import xmlIdAttr
 from .xmlCheck import XmlCheck
 
 timing_attr_keys = set([
