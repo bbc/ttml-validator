@@ -14,6 +14,8 @@ Built with python 3.13, so you might want to make sure you have that version ava
 
 You can use `poetry` or `uv` to build and run.
 
+We have tested this works with Poetry v2.2.1 and uv v0.7.12.
+
 #### Poetry:
 
 1. Install `poetry`
