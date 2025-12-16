@@ -15,26 +15,10 @@ validate-ttml = "src.ttmlValidator:main"
 collate-validation-results = "src.validationCollater:main"
 
 [tool.poetry]
-name = "ttml-validator"
-version = "0.1.0"
-description = "Utility for validating TTML-like files against the BBC Subtitle Guidelines EBU-TT-D requirements."
-authors = ["Nigel Megitt <nigel.megitt@bbc.co.uk>"]
-readme = "README.md"
 packages = [
     { include = "src" },
     { include = "test" }
 ]
-
-[tool.poetry.dependencies]
-python = "^3.13.4"
-xmlschema = "4.2.0"
-charset-normalizer = "3.4.4"
-
-[tool.poetry.group.dev.dependencies]
-pydocstyle = "6.3.0"
-flake8 = "7.3.0"
-coverage = "7.13.0"
-debugpy = "1.8.19"
 
 [build-system]
 requires = ["poetry-core"]
@@ -48,7 +32,3 @@ dev = [
     "flake8==7.3.0",
     "pydocstyle==6.3.0",
 ]
-
-[tool.poetry.scripts]
-validate-ttml = "src.ttmlValidator:main"
-collate-validation-results = "src.validationCollater:main"

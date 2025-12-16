@@ -7,13 +7,16 @@ It is built with python 3.13, so you might want to make sure you have that versi
 Setup
 -----
 
-You can use `poetry` or `uv` to build and run.
+After cloning the repository (recursively - it has submodule dependencies),
+you can use `poetry` or `uv` to build and run.
 
 **Poetry**
 
 1. Install `poetry`
 2. If need be, ``poetry env use 3.13.4`` to tell poetry to create and use 3.13.4
 3. ``poetry install``
+
+We have tested this works with Poetry v2.2.1.
 
 **uv**
 
@@ -22,8 +25,10 @@ You can use `poetry` or `uv` to build and run.
 3. Pin to that version: ``uv python pin 3.13``
 4. ``uv build``
 
-Running scripts
----------------
+We have tested this works with uv v0.7.12.
+
+Running the validator script
+----------------------------
 
 Replacing ``$launchtool`` with ``poetry`` or ```uv``` according to your environment:
 
