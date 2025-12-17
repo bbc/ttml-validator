@@ -10,18 +10,14 @@ conforming to the `BBC Subtitle Guidelines`_, and DAPT_.
 Contents:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    usage
    testing
+   internals
+   dependencies
+   preParseChecks
    modules/src
-   modules/src.constraintSets
-   modules/src.preParseChecks
-   modules/src.registries
-   modules/src.schemas
-   modules/src.validationLogging
-   modules/src.xmlChecks
-
 
 
 Indices and tables
