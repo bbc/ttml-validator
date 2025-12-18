@@ -23,6 +23,7 @@ encoded as UTF-8. Real world problems that we have observed include:
   that string as UTF-8, thus corrupting the BOM.
 
 Three checks are provided to look for these issues and resolve them:
+
 * :py:class:`NullByteCheck<src.preParseChecks.preParseCheck.NullByteCheck>`
   looks for and removes null bytes;
 * :py:class:`ByteOrderMarkCheck<src.preParseChecks.preParseCheck.ByteOrderMarkCheck>`
