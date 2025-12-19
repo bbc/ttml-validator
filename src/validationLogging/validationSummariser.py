@@ -57,6 +57,7 @@ class TtmlPassChecker(ValidationPassChecker):
         ValidationCode.ttml_element_style,
         ValidationCode.ttml_element_styling,
         ValidationCode.ttml_metadata_copyright,
+        ValidationCode.ttml_metadata_role,
         ValidationCode.ttml_layout_region_association,
         ValidationCode.ttml_styling,
         ValidationCode.ttml_styling_reference,

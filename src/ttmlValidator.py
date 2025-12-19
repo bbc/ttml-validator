@@ -4,11 +4,11 @@ import logging
 import re
 import io
 import xml.etree.ElementTree as ElementTree
-from .validationLogging.validationCodes import ValidationCode
-from .validationLogging.validationLogger import ValidationLogger
-from .constraintSets import constraintSet
-from .constraintSets.bbcConstraints import BbcSubtitleConstraintSet
-from .constraintSets.daptConstraints import DaptConstraintSet
+from src.validationLogging.validationCodes import ValidationCode
+from src.validationLogging.validationLogger import ValidationLogger
+from src.constraintSets import constraintSet
+from src.constraintSets.bbcConstraints import BbcSubtitleConstraintSet
+from src.constraintSets.daptConstraints import DaptConstraintSet
 from pathlib import Path
 
 logging.getLogger().setLevel(logging.INFO)

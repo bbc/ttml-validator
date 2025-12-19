@@ -1,0 +1,62 @@
+{
+    "columns": [
+        {
+            "header": "ttm:role",
+            "isKey": true,
+            "rowKey": "value"
+        }
+    ],
+    "values": [
+        {
+            "value": "action"
+        },
+        {
+            "value": "caption"
+        },
+        {
+            "value": "description"
+        },
+        {
+            "value": "dialog"
+        },
+        {
+            "value": "expletive"
+        },
+        {
+            "value": "kinesic"
+        },
+        {
+            "value": "lyrics"
+        },
+        {
+            "value": "music"
+        },
+        {
+            "value": "narration"
+        },
+        {
+            "value": "quality"
+        },
+        {
+            "value": "sound"
+        },
+        {
+            "value": "source"
+        },
+        {
+            "value": "suppressed"
+        },
+        {
+            "value": "reproduction"
+        },
+        {
+            "value": "thought"
+        },
+        {
+            "value": "title"
+        },
+        {
+            "value": "transcription"
+        }
+    ]
+}

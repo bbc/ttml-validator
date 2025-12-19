@@ -23,6 +23,7 @@ from src.xmlChecks.xmlIdCheck import requireXmlId, duplicateXmlIdCheck, \
 from src.xmlChecks.timingAttributeCheck import noNestedTimedElementsCheck, \
     noTimingAttributeCheck
 from src.xmlChecks.textCheck import noTextChildren, checkLineBreaks
+from src.xmlChecks.ttmlRoleCheck import ttmlRoleTypeCheck
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationSummariser import \
@@ -59,6 +60,7 @@ class BbcSubtitleConstraintSet(ConstraintSet):
         regionRefsXmlCheck(),
         bodyCheck(sub_checks=[
             noTimingAttributeCheck(),
+            ttmlRoleTypeCheck(),
             divCheck(sub_checks=[
                 noTimingAttributeCheck(),
                 pCheck(sub_checks=[

@@ -17,6 +17,7 @@ from src.xmlChecks.daptLangCheck import daptLangAudioNonMatchingCheck, \
 from src.xmlChecks.daptmDescTypeCheck import daptmDescTypeCheck
 from src.xmlChecks.daptmRepresentsCheck import daptmRepresentsCheck
 from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
+from src.xmlChecks.ttmlRoleCheck import ttmlRoleTypeCheck
 from src.xmlChecks.pruner import Pruner
 from src.xmlChecks.daptUtils import ns_daptm, ns_dapt_extension
 from src.xmlChecks.ttmlUtils import ns_ttml, ns_ttp, ns_ttm, ns_tta, ns_tt_feature
@@ -107,6 +108,7 @@ class DaptConstraintSet(ConstraintSet):
             ]),
         daptmDescTypeCheck(),
         daptmRepresentsCheck(),
+        ttmlRoleTypeCheck(),
         # bodyCheck(
         #     sub_checks=[
         #     ]),

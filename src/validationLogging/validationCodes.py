@@ -70,6 +70,7 @@ ValidationCode = Enum(
     ttml_idref_too_many
     ttml_metadata_actor_reference
     ttml_metadata_copyright
+    ttml_metadata_role
     ttml_layout_region_association
     ttml_parameter_contentProfiles
     ttml_styling
