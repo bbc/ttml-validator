@@ -17,6 +17,8 @@ Contents:
    internals
    dependencies
    preParseChecks
+   xmlChecks
+   validationLogging
    modules/src
 
 
