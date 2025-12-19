@@ -180,6 +180,14 @@ src.xmlChecks.ttXmlCheck module
    :show-inheritance:
    :undoc-members:
 
+src.xmlChecks.ttmlRoleCheck module
+----------------------------------
+
+.. automodule:: src.xmlChecks.ttmlRoleCheck
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 src.xmlChecks.ttmlUtils module
 ------------------------------
 
