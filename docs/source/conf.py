@@ -51,10 +51,16 @@ modindex_common_prefix = ['src.']
 autosummary_generate = True
 todo_include_todos = True
 
+autodoc_default_options = {
+    # 'no-index-entry': ['src'],
+}
+
 language = 'en'
 # master_doc = 'docs/index'
 pygments_style = 'sphinx'
 source_suffix = '.rst'
+
+napoleon_google_docstring = True
 
 # -- Options for HTML output ----------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

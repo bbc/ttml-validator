@@ -4,7 +4,7 @@ from .validationResult import ERROR, WARN, SKIP
 
 
 class ValidationPassChecker():
-    _check_codes = []
+    _check_codes: list[ValidationCode] = []
 
     @classmethod
     def failuresAndWarningsAndSkips(
@@ -29,7 +29,7 @@ class ValidationPassChecker():
 
 
 class XmlPassChecker(ValidationPassChecker):
-    _check_codes = [
+    _check_codes: list[ValidationCode] = [
         ValidationCode.preParse_nullBytes,
         ValidationCode.preParse_encoding,
         ValidationCode.preParse_byteOrderMark,
@@ -41,7 +41,7 @@ class XmlPassChecker(ValidationPassChecker):
 
 
 class TtmlPassChecker(ValidationPassChecker):
-    _check_codes = [
+    _check_codes: list[ValidationCode] = [
         ValidationCode.xml_root_element,
         ValidationCode.xml_tt_namespace,
         ValidationCode.ttml_idref_element_applicability,
@@ -67,7 +67,7 @@ class TtmlPassChecker(ValidationPassChecker):
 
 
 class DaptPassChecker(ValidationPassChecker):
-    _check_codes = [
+    _check_codes: list[ValidationCode] = [
         ValidationCode.xml_xsd,
         ValidationCode.xml_encoding_decl,
         ValidationCode.xml_entity_decl,
@@ -97,7 +97,7 @@ class DaptPassChecker(ValidationPassChecker):
 
 
 class EbuttdPassChecker(ValidationPassChecker):
-    _check_codes = [
+    _check_codes: list[ValidationCode] = [
         ValidationCode.xml_xsd,
         ValidationCode.ttml_attribute_styling_attribute,
         ValidationCode.ebuttd_parameter_timeBase,
@@ -123,7 +123,7 @@ class EbuttdPassChecker(ValidationPassChecker):
 
 
 class BbcPassChecker(ValidationPassChecker):
-    _check_codes = [
+    _check_codes: list[ValidationCode] = [
         ValidationCode.bbc_block_backgroundColor_constraint,
         ValidationCode.bbc_region_attributes_constraint,
         ValidationCode.bbc_region_backgroundColor_constraint,

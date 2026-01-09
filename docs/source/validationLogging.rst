@@ -25,4 +25,12 @@ appropriate check codes, for example the
 :py:class:`XmlPassChecker<src.validationLogging.validationSummariser.XmlPassChecker>` has a ``_check_codes``
 list that contains all the appropriate ``ValidationCode`` values
 for which check failures would indicate that the input is not
-valid XML.
+valid XML, whereas the
+:py:class:`TtmlPassChecker<src.validationLogging.validationSummariser.TtmlPassChecker>` has TTML-specific check failures.
+
+Typically a :py:class:`ConstraintSet<src.constraintSets.constraintSet.ConstraintSet>`
+would check each appropriate ``ValidationPassChecker`` that is
+relevant for its purpose, in its static
+:py:meth:`summarise<src.constraintSets.constraintSet.ConstraintSet.summarise>` method, so that the results can be used to establish
+where the error lies, for example the input document might be valid
+XML but contain TTML errors.
