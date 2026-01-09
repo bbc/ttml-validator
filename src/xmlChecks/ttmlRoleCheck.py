@@ -30,8 +30,15 @@ class ttmlRoleTypeCheck(XmlCheck):
 
         valid = True
 
-        role_els: list[Element[str]] = input.findall(
-            './/*[@{}]'.format(role_attr_tag))
+        role_els: list[Element[str]] = []
+        # The findall doesn't find the attribute on the input element
+        # so check it explicitly
+        if input.get(role_attr_tag):
+            role_els.append(input)
+        role_els.extend(input.findall(
+            './/*[@{}]'.format(role_attr_tag)))
+
+        good_roles_count = 0
 
         for role_el in role_els:
             role_val = role_el.get(role_attr_tag)
@@ -48,21 +55,27 @@ class ttmlRoleTypeCheck(XmlCheck):
                             .format(role_val),
                     code=ValidationCode.ttml_metadata_role
                 ))
+            elif role_val:
+                good_roles_count += 1
 
-        if valid and len(role_els) > 0:
+        if valid and good_roles_count > 0:
             validation_results.good(
                 location='{} element and descendants'
                          .format(input.tag),
-                message='{} well-formed ttm:role attributes found'
-                        .format(len(role_els)),
+                message='{} well-formed ttm:role attribute{} found'
+                        .format(
+                            good_roles_count,
+                            's' if good_roles_count != 1 else ''),
                 code=ValidationCode.ttml_metadata_role
             )
-        elif valid:
+        elif valid or good_roles_count > 0:
             validation_results.info(
                 location='{} element and descendants'
                          .format(input.tag),
-                message='{} ttm:role attributes found'
-                        .format(len(role_els)),
+                message='{} well-formed ttm:role attribute{} found'
+                        .format(
+                            good_roles_count,
+                            's' if good_roles_count != 1 else ''),
                 code=ValidationCode.ttml_metadata_role
             )
 

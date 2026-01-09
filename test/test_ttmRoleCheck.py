@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD
+    ERROR, GOOD, INFO
 
 
 class testTtmRoleCheck(unittest.TestCase):
@@ -27,11 +27,14 @@ class testTtmRoleCheck(unittest.TestCase):
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
+        input_body_el = \
+            input_elementtree.find('./{http://www.w3.org/ns/ttml}body')
+        self.assertIsNotNone(input_body_el)
         tr_check = ttmlRoleCheck.ttmlRoleTypeCheck()
         vr = ValidationLogger()
         context = {}
         valid = tr_check.run(
-            input=input_elementtree,
+            input=input_body_el,  # ty:ignore[invalid-argument-type]
             context=context,
             validation_results=vr
         )
@@ -40,7 +43,7 @@ class testTtmRoleCheck(unittest.TestCase):
         expected_validation_results = [
             ValidationResult(
                 status=GOOD,
-                location='{http://www.w3.org/ns/ttml}tt element '
+                location='{http://www.w3.org/ns/ttml}body element '
                          'and descendants',
                 message='4 well-formed ttm:role attributes found',
                 code=ValidationCode.ttml_metadata_role
@@ -60,16 +63,22 @@ class testTtmRoleCheck(unittest.TestCase):
         <p ttm:role="nonsense">
             <span ttm:role="gibberish">some text</span>
         </p>
+        <p ttm:role="caption">
+            <span>valid role caption text</span>
+        </p>
     </div>
 </body>
 </tt>
 """
         input_elementtree = ElementTree.fromstring(input_xml)
+        input_body_el = \
+            input_elementtree.find('./{http://www.w3.org/ns/ttml}body')
+        self.assertIsNotNone(input_body_el)
         tr_check = ttmlRoleCheck.ttmlRoleTypeCheck()
         vr = ValidationLogger()
         context = {}
         valid = tr_check.run(
-            input=input_elementtree,
+            input=input_body_el,  # ty:ignore[invalid-argument-type]
             context=context,
             validation_results=vr
         )
@@ -102,6 +111,13 @@ class testTtmRoleCheck(unittest.TestCase):
                 location='{http://www.w3.org/ns/ttml}span element',
                 message='"gibberish" is not a permitted value for '
                         'ttm:role',
+                code=ValidationCode.ttml_metadata_role
+            ),
+            ValidationResult(
+                status=INFO,
+                location='{http://www.w3.org/ns/ttml}body element '
+                         'and descendants',
+                message='1 well-formed ttm:role attribute found',
                 code=ValidationCode.ttml_metadata_role
             ),
         ]
