@@ -21,6 +21,20 @@ timing_attr_keys = [
 class bbcTimingCheck(XmlCheck):
     """
     Checks timings in document
+
+    Things we need to check:
+
+    * Time expressions are well formed in begin, end, dur attributes:
+    * clock-time hh:mm:ss or hh:mm:ss.sss
+    * If timeContainer is present, its value is "par"
+    * error if a different value
+    * warn if present and "par"
+
+    Extra things to check:
+    * What's the earliest begin and latest end time, for info
+    * In case this is in a segment, do the times overlap the segment interval?
+    * Are there enough distinct subtitles in the first 23 minutes?
+    * Are the gaps between subtitles long enough or zero?
     """
 
     _min_short_gap = 0.8
