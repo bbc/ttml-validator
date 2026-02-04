@@ -18,3 +18,22 @@ or on the command line use the `-s` option:
 ```sh
 git commit -s -m 'This is my commit message'
 ```
+
+## Contributor Privacy Information
+
+When you contribute to this project, certain personal data becomes visible to project maintainers and to the public. This includes:
+* your name and email address as included in your Git commits
+* your GitHub username and any profile information you choose to make public
+* any personal data you voluntarily include in issues, pull requests, comments, or discussions
+
+This information is provided through GitHub and is processed under GitHub’s Terms of Use and Privacy Policy.
+
+The BBC does not collect additional personal data beyond what GitHub makes available.
+
+The BBC uses contributor information only for:
+* reviewing and managing contributions
+* maintaining project quality and security
+* moderating comments, issues, and discussions where necessary
+
+The BBC does not commit to deleting personal data contained in GitHub issues, pull requests, or commit history, but may moderate or remove content where appropriate.
+By contributing, you acknowledge this handling of contributor information.’
