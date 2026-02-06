@@ -19,7 +19,7 @@ Contents:
    preParseChecks
    xmlChecks
    validationLogging
-   modules/src
+   source/modules/src
 
 
 Indices and tables
