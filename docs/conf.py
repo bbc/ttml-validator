@@ -92,7 +92,7 @@ if build_all_docs is not None:
 
     html_context: dict[str, str | None | list[list[str]]] = {
         'current_language': current_language,
-        # 'languages' : [],  # not supporting languages yet
+        'languages': [],
         'current_version': current_version,
         'versions': [],
     }
