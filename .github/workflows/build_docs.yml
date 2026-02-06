@@ -16,10 +16,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       id-token: write
       pages: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
       - name: "Set up Python"
         uses: actions/setup-python@v6
         with:
