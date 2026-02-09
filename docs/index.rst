@@ -19,6 +19,7 @@ Contents:
    preParseChecks
    xmlChecks
    validationLogging
+   development
    source/modules/src
 
 
