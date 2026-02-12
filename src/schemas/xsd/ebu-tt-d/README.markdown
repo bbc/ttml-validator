@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: Copyright (C) 2015 EBU-UER Technology & Innovation
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 # EBU-TT-D W3C XML Schema
 
 The publication of the EBU-TT-D XML Schema for EBU-TT-D is intended to support the implementation of the specification in EBU-Tech 3380 version 1.0.

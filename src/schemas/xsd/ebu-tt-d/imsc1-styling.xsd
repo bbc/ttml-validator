@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: Copyright (C) 2015 EBU-UER Technology & Innovation
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 <xs:schema targetNamespace="http://www.w3.org/ns/ttml/profile/imsc1#styling" xml:lang="en"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:itts="http://www.w3.org/ns/ttml/profile/imsc1#styling">

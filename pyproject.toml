@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 [project]
 name = "ttml-validator"
 version = "0.1.0"
@@ -33,4 +37,6 @@ dev = [
     "pydocstyle==6.3.0",
     "sphinx-rtd-theme>=3.1.0",
     "pyyaml>=6.0.3",
+    "ruff>=0.15.0",
+    "reuse>=6.2.0",
 ]

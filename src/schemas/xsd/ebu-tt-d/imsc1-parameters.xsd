@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+SPDX-FileCopyrightText: Copyright (C) 2015 EBU-UER Technology & Innovation
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xml:lang="en"
     targetNamespace="http://www.w3.org/ns/ttml/profile/imsc1#parameter">
     <xs:attribute name="activeArea">

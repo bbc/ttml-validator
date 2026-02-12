@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: © 2026 BBC
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 # TTML Validator
 
 A utility to read a file and check against a set of requirements to

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from typing import Tuple
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger

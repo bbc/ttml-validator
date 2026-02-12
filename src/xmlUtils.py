@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 ns_xml = 'http://www.w3.org/XML/1998/namespace'
 unqualifiedIdAttr = 'id'
 

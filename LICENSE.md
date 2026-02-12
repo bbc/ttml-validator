@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: © 2026 BBC
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 # ttml-validator BSD 3-Clause License
 
 The copyright in this software is being made available under the Modified BSD License, included below.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 

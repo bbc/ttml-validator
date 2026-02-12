@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2019, EBU, www.ebu.ch -->
+
+<!--
+Copyright 2019 EBU, www.ebu.ch
+SPDX-FileCopyrightText: Copyright (C) 2019 EBU-UER Technology & Innovation
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
 <!-- Version of XML Schema: 0.9 -->
 <!-- Creation: 24/05/2019 -->
 <!--  The publication of this EBU-TT XML Schema for EBU-TT Metadata is intended to support the 

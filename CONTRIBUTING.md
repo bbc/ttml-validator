@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: © 2026 BBC
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 Contributions to this repository, in the form of new issues, discussions and pull requests, are welcome.
 
 For large changes please use the [Discussions](https://github.com/bbc/ttml-validator/discussions) to check in with the rest of the community before going ahead.

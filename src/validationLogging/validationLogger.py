@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from io import TextIOWrapper
 from csv import writer as csvWriter
 import json

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 """
 Read a set of CSV validation files,
 count the number of Good, Info, Warn and Error

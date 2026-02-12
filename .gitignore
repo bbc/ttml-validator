@@ -4,3 +4,9 @@
 /build/doctrees
 /build/html
 /pages
+.python-version
+.ruby-version
+*.ttml
+*.m4s
+*.csv
+*.mp4

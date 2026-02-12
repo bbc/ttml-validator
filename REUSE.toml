@@ -1,0 +1,9 @@
+version = 1
+
+# DAPT Schema from W3C
+[[annotations]]
+path = "src/schemas/xsd/dapt/*"
+SPDX-FileCopyrightText = "Copyright © 2025 World Wide Web Consortium"
+# TODO: replace the license identifier when there is one for the 2023 document license
+SPDX-License-Identifier = "LicenseRef-W3C-20230101"
+

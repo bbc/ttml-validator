@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 import unittest
 import src.xmlChecks.daptmRepresentsCheck as daptmRepresentsCheck
 import xml.etree.ElementTree as ElementTree

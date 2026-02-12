@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: Copyright (C) 2019 EBU-UER Technology & Innovation
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+
 ## Current status: DRAFT, work in progress
 
 Please consider this work as non-final for the time being.

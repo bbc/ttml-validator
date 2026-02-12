@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright © 2026 BBC
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from xml.etree.ElementTree import Element
 from .ttmlUtils import ns_ttml
 from src.xmlUtils import make_qname
