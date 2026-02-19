@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-3-Clause
 
 A utility to read a file and check against a set of requirements to
 see if it is valid EBU-TT-D according to the BBC Subtitle Guidelines,
-and if not, to list the errors.
+and if not, to list the errors. Also checks for DAPT validity.
 
 For requirements, see [Subtitle File Validation Checks (BBC internal Confluence page)](https://confluence.dev.bbc.co.uk/x/GDiPGQ)
 
