@@ -29,7 +29,6 @@ updates:
       semver-major-days: 14
       semver-minor-days: 7
       semver-patch-days: 7
-    versioning-strategy: 'increase'
 
   # Enable version updates for uv
   - package-ecosystem: 'uv'
@@ -55,4 +54,3 @@ updates:
       semver-major-days: 14
       semver-minor-days: 7
       semver-patch-days: 7
-    versioning-strategy: 'increase'
