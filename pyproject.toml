@@ -33,9 +33,16 @@ dev = [
     "coverage==7.13.3",
     "debugpy==1.8.20",
     "sphinx==9.0.4",
-"pydocstyle==6.3.0",
+    "pydocstyle==6.3.0",
     "sphinx-rtd-theme==3.1.0",
     "pyyaml==6.0.3",
-    "ruff==0.15.0",
+    "ruff==0.15.2",
     "reuse==6.2.0",
+    "ty==0.0.17",
 ]
+
+[tool.ty.terminal]
+output-format = "github"
+
+[tool.ty.rules]
+invalid-argument-type = "warn"
