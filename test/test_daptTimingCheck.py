@@ -3,11 +3,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import unittest
-import src.xmlChecks.headXmlCheck as headXmlCheck
-import src.xmlChecks.stylingCheck as stylingCheck
-import src.xmlChecks.layoutCheck as layoutCheck
-import src.xmlChecks.regionRefsCheck as regionRefsCheck
-import src.xmlChecks.styleRefsCheck as styleRefsCheck
 import src.xmlChecks.daptTimingXmlCheck as daptTimingXmlCheck
 import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode

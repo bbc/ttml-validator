@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ElementTree
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationResult import ValidationResult, \
-    ERROR, GOOD
+    ERROR
 
 
 class testDaptmRepresentsCheck(unittest.TestCase):

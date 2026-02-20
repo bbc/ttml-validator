@@ -331,11 +331,11 @@ class bbcTimingCheck(XmlCheck):
         # - if so, that's a validation error
         filtered_time_el_map = {
             begin: [
-                (el, end) for el, end in l
+                (el, end) for el, end in el_end_list
                 if el in potential_overlap_elements
                 and get_unqualified_name(el.tag) == 'p'
                 ]
-            for begin, l in time_el_map.items()
+            for begin, el_end_list in time_el_map.items()
         }
 
         sorted_begins = sorted(filtered_time_el_map.keys())
