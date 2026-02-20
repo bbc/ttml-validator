@@ -26,9 +26,6 @@ updates:
       interval: 'weekly'
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 7
 
   # Enable version updates for uv
   - package-ecosystem: 'uv'
@@ -51,6 +48,3 @@ updates:
       interval: 'weekly'
     cooldown:
       default-days: 7
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 7
