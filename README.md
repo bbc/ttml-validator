@@ -7,10 +7,19 @@ SPDX-License-Identifier: BSD-3-Clause
 # TTML Validator
 
 A utility to read a file and check against a set of requirements to
-see if it is valid EBU-TT-D according to the BBC Subtitle Guidelines,
-and if not, to list the errors. Also checks for DAPT validity.
+see if it is valid according to some set of technical requirements
+and if not, to list the errors. Currently can check:
 
-For requirements, see [Subtitle File Validation Checks (BBC internal Confluence page)](https://confluence.dev.bbc.co.uk/x/GDiPGQ)
+* EBU-TT-D meeting the technical (but not editorial) requirements of the
+[BBC Subtitle Guidelines](https://www.bbc.co.uk/accessibility/forproducts/guides/subtitles/);
+* The [DAPT](https://www.w3.org/TR/DAPT/) profile of TTML2.
+
+Note that technical validation of a standalone file is not a substitute
+for previewing the presented file against the media it relates to, nor
+can technical validation confirm that editorial or presentation guidelines
+have been met.
+
+For requirements, see [BBC Subtitle Guidelines technical requirements for EBU-TT-D](https://github.com/bbc/ttml-validator/discussions/10#discussion-9510390)
 
 ## Usage
 
