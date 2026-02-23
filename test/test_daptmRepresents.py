@@ -85,7 +85,7 @@ class testDaptmRepresentsCheck(unittest.TestCase):
 <tt xmlns="http://www.w3.org/ns/ttml"
     xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
     daptm:scriptRepresents="audio visual.text x-userdefined.foo audio.x-userdefined">
-</tt>"""
+</tt>"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         drc = daptmRepresentsCheck.daptmRepresentsCheck()
         vr = ValidationLogger()
@@ -128,7 +128,7 @@ class testDaptmRepresentsCheck(unittest.TestCase):
 <tt xmlns="http://www.w3.org/ns/ttml"
     xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata"
     daptm:scriptRepresents="audio.bad visual.text userdefined.audio . audio.x-userdefined">
-</tt>"""
+</tt>"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         drc = daptmRepresentsCheck.daptmRepresentsCheck()
         vr = ValidationLogger()
@@ -150,7 +150,8 @@ class testDaptmRepresentsCheck(unittest.TestCase):
                 status=ERROR,
                 location='{http://www.w3.org/ns/ttml}tt element '
                          'daptm:scriptRepresents attribute',
-                message='Value userdefined.audio is not a valid content descriptor',
+                message='Value userdefined.audio is not a '
+                        'valid content descriptor',
                 code=ValidationCode.dapt_metadata_scriptRepresents),
             ValidationResult(
                 status=ERROR,

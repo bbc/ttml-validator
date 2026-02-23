@@ -23,7 +23,8 @@ from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
 from src.xmlChecks.ttmlRoleCheck import ttmlRoleTypeCheck
 from src.xmlChecks.pruner import Pruner
 from src.xmlChecks.daptUtils import ns_daptm, ns_dapt_extension
-from src.xmlChecks.ttmlUtils import ns_ttml, ns_ttp, ns_ttm, ns_tta, ns_tt_feature
+from src.xmlChecks.ttmlUtils import ns_ttml, ns_ttp, ns_ttm, ns_tta, \
+    ns_tt_feature
 from src.xmlUtils import ns_xml
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger

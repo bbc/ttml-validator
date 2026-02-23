@@ -4,7 +4,8 @@
 
 import unittest
 from src.xmlChecks.pruner import Pruner
-from src.validationLogging.validationLogger import ValidationLogger, ValidationResult, ValidationCode, INFO
+from src.validationLogging.validationLogger import ValidationLogger, \
+    ValidationResult, ValidationCode, INFO
 
 import xml.etree.ElementTree as ElementTree
 
@@ -75,7 +76,7 @@ class testPruner(unittest.TestCase):
     xml:lang="en">
     <head>
         <metadata xmlns:otherns="urn:some:other:namespace">
-            <ttm:agent xmlns:nttm="http://www.netflix.com/ns/ttml#metadata" 
+            <ttm:agent xmlns:nttm="http://www.netflix.com/ns/ttml#metadata"
                 nttm:voice="en-US-Wavenet-B" foo="bar" otherns:test="x" type="person" xml:id="actor_A" id="huh">
                 <ttm:name type="full">Matthias Schoenaerts</ttm:name>
             </ttm:agent>
@@ -95,7 +96,7 @@ class testPruner(unittest.TestCase):
         </div>
     </body>
 </tt>
-"""
+"""  # noqa: E501
         input_etree = ElementTree.fromstring(input_xml)
         vr = ValidationLogger()
         context = {}
@@ -115,19 +116,22 @@ class testPruner(unittest.TestCase):
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='Pruned 0 elements and 2 attributes ("foo" 1 time, "id" 1 time) in namespace ""',
+                message='Pruned 0 elements and 2 attributes '
+                        '("foo" 1 time, "id" 1 time) in namespace ""',
                 code=ValidationCode.xml_prune
             ),
             ValidationResult(
                 status=INFO,
                 location='Document',
-                message='Pruned 2 elements ("x" 1 time, "y" 1 time) and 1 attributes ("test" 1 time) in namespace '
+                message='Pruned 2 elements ("x" 1 time, "y" 1 time) and '
+                        '1 attributes ("test" 1 time) in namespace '
                         '"urn:some:other:namespace"',
                 code=ValidationCode.xml_prune
             )
         ])
         self.assertTrue(valid)
-        # To get the output namespaces to look the way we want, register them explicitly
+        # To get the output namespaces to look the way we want,
+        # register them explicitly
         ElementTree.register_namespace('', 'http://www.w3.org/ns/ttml')
         ElementTree.register_namespace('ttp', 'http://www.w3.org/ns/ttml#parameter')
         ElementTree.register_namespace('ttm', 'http://www.w3.org/ns/ttml#metadata')
@@ -141,9 +145,9 @@ class testPruner(unittest.TestCase):
             .decode('utf-8')
         # ElementTree.tostring() actually makes bytes!
 
-        # The format of output that ElementTree makes is a bit weird, but short of
-        # reparsing it and processing it as XML again, this is probably the easiest thing
-        # to do. It may be a bit brittle...
+        # The format of output that ElementTree makes is a bit weird, but short
+        # of reparsing it and processing it as XML again, this is probably the
+        # easiest thing to do. It may be a bit brittle...
         expected_output_str = """<?xml version='1.0' encoding='UTF-8'?>
 <tt xmlns="http://www.w3.org/ns/ttml" xmlns:daptm="http://www.w3.org/ns/ttml/profile/dapt#metadata" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" ttp:contentProfiles="http://www.w3.org/ns/ttml/profile/dapt1.0/content" daptm:scriptRepresents="audio" daptm:scriptType="originalTranscript" xml:lang="en">
     <head>
@@ -164,5 +168,5 @@ class testPruner(unittest.TestCase):
             <p daptm:langSrc="en"><span>Look at this beautiful valley.</span></p>
         </div>
     </body>
-</tt>"""
+</tt>"""  # noqa: E501
         self.assertEqual(output_str, expected_output_str)

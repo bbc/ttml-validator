@@ -46,3 +46,44 @@ output-format = "github"
 
 [tool.ty.rules]
 invalid-argument-type = "warn"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".coverage",
+    ".direnv",
+    ".git",
+    ".git-rewrite",
+    ".github",
+    ".gitmodules",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "pages",
+    "LICENSES",
+    "docs",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "*/license",
+]
+line-length = 79
+indent-width = 4
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F", "W", "E"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

@@ -29,7 +29,7 @@ class xsdValidator(XmlCheck):
         except XMLSchemaValidationError as e:
             valid = False
             validation_results.error(
-                location=e.elem.tag,
+                location=e.elem.tag,  # ty:ignore[unresolved-attribute]
                 message='Fails {} XSD validation: {}'.format(
                     self._schemaName, e.reason),
                 code=ValidationCode.xml_xsd

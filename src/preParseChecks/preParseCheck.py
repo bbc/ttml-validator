@@ -110,7 +110,7 @@ class BadEncodingCheck(PreParseCheck):
                         're-encoding as UTF-8'
                         .format(
                             detected.best().encoding,  # type: ignore
-                            'a' if detected.best()._has_sig_or_bom else 'no'
+                            'a' if detected.best()._has_sig_or_bom else 'no'  # ty:ignore[unresolved-attribute]
                         ),
                 code=ValidationCode.preParse_encoding
             )

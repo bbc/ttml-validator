@@ -43,10 +43,11 @@ jobs:
       - name: Install the project
         run: uv sync --locked --all-extras --dev
       - name: REUSE Compliance Check
-        uses: fsfe/reuse-action@v6
+        run: |
+          uv run reuse lint
       - name: ruff Python lint
         run: |
-          uv run ruff check
+          uv run ruff check --output-format=github
       - name: ty Type check
         run: |
           uv run ty check

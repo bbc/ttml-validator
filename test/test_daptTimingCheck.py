@@ -66,7 +66,7 @@ class testDaptTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2" begin="00:00:02.0" end="00:00:03.4"><span>content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -101,7 +101,7 @@ class testDaptTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2"><span begin="00:00:02.0" end="00:00:03.4">content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -136,7 +136,7 @@ class testDaptTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2" begin="50f" end="00:00:03.4"><span>content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -192,7 +192,7 @@ class testDaptTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2"><span begin="2t" end="00:00:04.4" dur="00:00:02.00">content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -251,7 +251,7 @@ here<audio clipBegin="5s" clipEnd="7s"/></span></p>
 here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -300,7 +300,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p xml:id="p1" begin="00:00:01.234" end="00:00:02" timeContainer="seq"><span>content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -350,7 +350,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p xml:id="p2"><span begin="00:06:27.83" end="00:06:30.4">just overlaps the end</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck(
             epoch=384,
@@ -395,7 +395,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:25.500" end="00:06:27" xml:id="p2"><span>within the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck(
             epoch=384,
@@ -436,7 +436,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
     xmlns:ttm="http://www.w3.org/ns/ttml#metadata"
     ttp:cellResolution="32 15" ttp:timeBase="media">
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -471,7 +471,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:22.500" end="00:06:24.0" xml:id="p2"><span>within the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck(
             epoch=384,
@@ -516,7 +516,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck(
             epoch=384,
@@ -570,7 +570,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -623,7 +623,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -669,7 +669,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -730,7 +730,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()
@@ -792,7 +792,7 @@ here<audio clipBegin="100f" clipEnd="1.5z"/></span></p>
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         daptTimingCheck = daptTimingXmlCheck.daptTimingCheck()
         vr = ValidationLogger()

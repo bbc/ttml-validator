@@ -353,7 +353,7 @@ with bad line break</span></p>
 with good line break</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         vr = ValidationLogger()
         context = {}
@@ -473,7 +473,7 @@ with good line break</span></p>
 <p xml:id="p3"><span begin="00:02:01" dur="00:01:00">p1 <span end="00:00:30.123">content </span> here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         vr = ValidationLogger()
         context = {}

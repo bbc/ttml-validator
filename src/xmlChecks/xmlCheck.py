@@ -23,6 +23,6 @@ class XmlCheck:
             validation_results: Object in which to store any validation results
 
         Returns:
-            True if the input element passes the check, False otherwise 
+            True if the input element passes the check, False otherwise
         """
         raise NotImplementedError()

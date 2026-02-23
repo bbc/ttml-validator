@@ -79,7 +79,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2" begin="00:00:02.0" end="00:00:03.4"><span>content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -122,7 +122,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2"><span begin="00:00:02.0" end="00:00:03.4">content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -226,7 +226,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2"><span begin="50f" end="00:00:03.4">content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -307,7 +307,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p3" begin="00:00:04.2" end="00:00:05.4"><span>content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -364,7 +364,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p3" begin="00:00:04.3"><span end="00:00:06.4">content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -420,7 +420,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2" begin="00:23:00" end="00:23:03.4"><span>late content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -469,7 +469,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2"><span begin="00:23:00" end="00:23:03.4">late content here</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck()
         vr = ValidationLogger()
@@ -518,7 +518,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p xml:id="p2"><span begin="00:06:27.83" end="00:06:30.4">just overlaps the end</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
@@ -578,7 +578,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p begin="00:06:25.500" end="00:06:27" xml:id="p2"><span>within the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
@@ -669,7 +669,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p begin="00:06:22.500" end="00:06:24.0" xml:id="p2"><span>within the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
@@ -729,7 +729,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 <p begin="00:06:28.500" end="00:06:30" xml:id="p2"><span>after the segment 2</span></p>
 </div></body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         bbcTimingCheck = bbcTimingXmlCheck.bbcTimingCheck(
             epoch=384,
@@ -814,7 +814,7 @@ class testBbcTimingXmlCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         # In order to populate the required context info,
         # we need to run regionRefsXmlCheck, which in turn

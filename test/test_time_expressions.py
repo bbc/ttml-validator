@@ -41,13 +41,13 @@ class TestTimeExpressionHandlers(unittest.TestCase):
 
     def testOffsetTime(self):
         tm = TimeExpressionHandler(tickrate='20')
-        tvs = [
-            ['1.5h', 5400],
-            ['1.5m', 90],
-            ['1234.56s', 1234.56],
-            ['40ms', 0.04],
-            ['125f', 5],
-            ['99t', 4.95]
+        tvs: list[tuple[str, float]] = [
+            ('1.5h', 5400),
+            ('1.5m', 90),
+            ('1234.56s', 1234.56),
+            ('40ms', 0.04),
+            ('125f', 5),
+            ('99t', 4.95)
         ]
         for tv in tvs:
             with self.subTest(time_expression=tv[0], expected=tv[1]):

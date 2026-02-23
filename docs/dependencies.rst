@@ -82,6 +82,6 @@ Development dependencies
 * Documentation: ``sphinx``.
 * Test coverage: ``coverage``.
 * Python documentation string validation: ``pydocstyle``.
-* Python source code checking/linting: ``flake8``.
+* Python source code linting: ``ruff``.
+* Python source code type checking: ``ty``.
 * Debug adaptor: ``debugpy``.
-

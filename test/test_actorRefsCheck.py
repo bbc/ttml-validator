@@ -38,7 +38,7 @@ class testActorRefsCheck(unittest.TestCase):
         vr = ValidationLogger()
         context = {}
         valid = archeck.run(
-            input=input_element,
+            input=input_element,  # ty:ignore[invalid-argument-type]
             context=context,
             validation_results=vr
         )
@@ -78,7 +78,7 @@ class testActorRefsCheck(unittest.TestCase):
         vr = ValidationLogger()
         context = {}
         valid = archeck.run(
-            input=input_element,
+            input=input_element,  # ty:ignore[invalid-argument-type]
             context=context,
             validation_results=vr
         )

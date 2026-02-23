@@ -146,7 +146,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div xml:id="d1"><p style="style_bbc_ok d1"></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -229,7 +229,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d1" style="style_bbc_ok"><span style="s1">text</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -297,7 +297,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div style="style_bbc_ok"><p xml:id="d1"><span style="s1">text</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -384,7 +384,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div style="s2" tts:backgroundColor="#ff0000"><p xml:id="d2"><span style="s1"></span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -471,7 +471,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d1" style="s1"><span style="span_background">text</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -528,7 +528,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d1" style="style_bbc_ok"><span style="span_background">text</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -607,7 +607,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d1" style="style_bbc_ok s2"><span style="style_bbc_ok span_background">text</span><span tts:fontSize="115%" style="span_background">big</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -665,7 +665,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d1" style="style_bbc_ok s2"><span style="span_background">text</span><span tts:fontSize="115%" style="span_background">big</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -732,7 +732,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d2" style="fontSize2"><span style="fontSize2 span_background" xml:id="sp3">text</span><span xml:id="sp4" tts:fontSize="20%" tts:backgroundColor="#000000">tiny</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -848,7 +848,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d2" style="fontSize2"><span style="fontSize2 span_background" xml:id="sp3">text</span><span xml:id="sp4" tts:fontSize="20%" tts:backgroundColor="#000000">tiny</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -961,7 +961,7 @@ class testStyleRefsCheck(unittest.TestCase):
 <div><p xml:id="d3" style="lineHeight1" tts:fontSize="9%"><span style="span_background" xml:id="sp4">text</span></p></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -1059,7 +1059,7 @@ class testStyleRefsCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -1145,7 +1145,7 @@ class testStyleRefsCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -1242,7 +1242,7 @@ class testStyleRefsCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -1331,7 +1331,7 @@ class testStyleRefsCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -1406,7 +1406,7 @@ class testStyleRefsCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(
@@ -1520,7 +1520,7 @@ class testStyleRefsCheck(unittest.TestCase):
 </div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()
         headCheck = headXmlCheck.headCheck(

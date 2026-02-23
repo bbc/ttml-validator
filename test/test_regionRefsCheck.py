@@ -277,7 +277,7 @@ class testRegionRefsCheck(unittest.TestCase):
 <div xml:id="d2" region="d1"></div>
 </body>
 </tt>
-"""
+"""  # noqa: E501
         input_elementtree = ElementTree.fromstring(input_xml)
         regionsCheck = regionRefsCheck.regionRefsXmlCheck()
         stylesCheck = styleRefsCheck.styleRefsXmlCheck()

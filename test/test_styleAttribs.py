@@ -120,8 +120,8 @@ class testStyleAttribs(unittest.TestCase):
                  syntaxRegex=re.compile(
                      r'^([a-zA-Z_][\S]*([\t\f ]+([a-zA-Z_][\S]*))*)?$'),
                  defaultValue='',
-                 computeValue=_computeUninheritedAttribute,
-                 fallbackComputeValue=_fallbackToDefault
+                 computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+                 fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
             )
             }
         self.assertDictEqual(actual, expected)
@@ -296,7 +296,7 @@ class testStyleAttribs(unittest.TestCase):
             ('{#styling}wrapOption', 'noWrap'),
             ('{urn:ebu:tt:style}multiRowAlign', 'center'),
             ('{urn:ebu:tt:style}linePadding', '0.5c'),
-            ('{http://www.w3.org/ns/ttml/profile/imsc1#styling}fillLineGap', 'true'),
+            ('{http://www.w3.org/ns/ttml/profile/imsc1#styling}fillLineGap', 'true'),  # noqa: E501
             ('{#styling}origin', '10% 20.5%'),
             ('{#styling}extent', '50.123% 30%'),
             ('{#styling}padding', '1%'),
@@ -316,7 +316,8 @@ class testStyleAttribs(unittest.TestCase):
                     style_attr_key=style_attr_key,
                     value=value):
                 style_attr = allStyleDict.get(style_attr_key)
-                self.assertTrue(style_attr.validateValue(value=value))
+                self.assertIsNotNone(style_attr)
+                self.assertTrue(style_attr.validateValue(value=value))  # ty:ignore[unresolved-attribute]
 
     def test_validateValue_bad(self):
         good_values = [
@@ -337,7 +338,7 @@ class testStyleAttribs(unittest.TestCase):
             ('{#styling}wrapOption', 'golden'),
             ('{urn:ebu:tt:style}multiRowAlign', 'arctic'),
             ('{urn:ebu:tt:style}linePadding', '0.5%'),
-            ('{http://www.w3.org/ns/ttml/profile/imsc1#styling}fillLineGap', 'possible'),
+            ('{http://www.w3.org/ns/ttml/profile/imsc1#styling}fillLineGap', 'possible'),  # noqa: E501
             ('{#styling}origin', '110% 20.5%'),
             ('{#styling}extent', '-50.123% 30%'),
             ('{#styling}padding', '1% '),
@@ -357,4 +358,5 @@ class testStyleAttribs(unittest.TestCase):
                     style_attr_key=style_attr_key,
                     value=value):
                 style_attr = allStyleDict.get(style_attr_key)
-                self.assertFalse(style_attr.validateValue(value=value))
+                self.assertIsNotNone(style_attr)
+                self.assertFalse(style_attr.validateValue(value=value))  # ty:ignore[unresolved-attribute]

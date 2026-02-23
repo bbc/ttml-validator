@@ -44,7 +44,7 @@ class styleRefsXmlCheck(XmlCheck):
         style_attr_key = 'style'
         for el in input.iter():
             if style_attr_key in el.keys():
-                style_refs = el.get(style_attr_key).split()
+                style_refs = el.get(style_attr_key).split()  # ty:ignore[unresolved-attribute]
                 for style_ref in style_refs:
                     referencing_el_list = \
                         style_to_referencing_el_map.get(style_ref, [])
@@ -355,7 +355,7 @@ class styleRefsXmlCheck(XmlCheck):
 
             # For every p, check ebutts:linePadding - ERROR if absent,
             # ERROR if out of range
-            c_lp = el_css.get('linePadding')
+            c_lp: str = el_css['linePadding']
             # print('linePadding = {}'.format(c_lp))
 
             if c_lp[-1:] != 'c':
@@ -392,7 +392,7 @@ class styleRefsXmlCheck(XmlCheck):
 
         if el_tag == 'span':
             # For every span, check tts:color - ERROR if not a permitted color
-            c_c = el_css.get('color').lower()
+            c_c: str = el_css['color'].lower()
             # print('color = {}'.format(c_c))
 
             if c_c not in permitted_color_values:
@@ -406,7 +406,7 @@ class styleRefsXmlCheck(XmlCheck):
 
             # For every span, check tts:backgroundColor - ERROR if not a
             # permitted color (black)
-            c_bc = el_css.get('backgroundColor').lower()
+            c_bc: str = el_css['backgroundColor'].lower()
             # print('backgroundColor = {}'.format(c_bc))
 
             if c_bc not in permitted_span_backgroundColor_values:

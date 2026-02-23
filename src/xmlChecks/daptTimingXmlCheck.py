@@ -152,13 +152,14 @@ class daptTimingCheck(XmlCheck):
             parent_end: float | None,
             begin_defined: bool,
             end_defined: bool,
-            time_el_map: dict[float, list[tuple[Element, float]]],
+            time_el_map: dict[float, list[tuple[Element, float | None]]],
             validation_results: ValidationLogger,
             # depth: int = 0
             ) -> tuple[bool, float, float]:
         # prefix = '  ' * depth
-        # print('{}_collect_timed_elements for {}, epoch: {}s, begin_defined: {}'.
-        #       format(prefix, el.tag, epoch_s, begin_defined))
+        # print(
+        #     '{}_collect_timed_elements for {}, epoch: {}s, begin_defined: {}'
+        #     .format(prefix, el.tag, epoch_s, begin_defined))
         valid = True
 
         for timing_attr in timing_attr_keys:
@@ -213,7 +214,8 @@ class daptTimingCheck(XmlCheck):
         if 'begin' in el.keys():
             begin_defined = True
             # print('{}begin is defined by this element'.format(prefix))
-        this_epoch_s = epoch_s + this_begin
+        # safe to add this_begin because we provided the default of 0
+        this_epoch_s = epoch_s + this_begin  # ty:ignore[unsupported-operator]
 
         this_end, end_valid = self._safe_get_timing_attr_seconds(
             te=te, el=el, attr_key='end',
@@ -261,21 +263,28 @@ class daptTimingCheck(XmlCheck):
 
         child_begins.sort()
         if not begin_defined and len(child_begins) > 0:
-            # print(prefix+'setting epoch for {} to {}'.format(el.tag, child_begins[0]))
+            # print(
+            #     prefix+'setting epoch for {} to {}'
+            #     .format(el.tag, child_begins[0]))
             this_epoch_s = child_begins[0]
         # elif begin_defined:
-        #     print(prefix+'for {}, begin is defined, not setting epoch'.format(el.tag))
+        #     print(
+        #         prefix+'for {}, begin is defined, not setting epoch'
+        #         .format(el.tag))
         # else:
-        #     print(prefix+'for {}, begin not defined but no child begins'.format(el.tag))
+        #     print(
+        #         prefix+'for {}, begin not defined but no child begins'
+        #         .format(el.tag))
 
         if not end_defined and len(child_ends) > 0:
             this_end = child_ends[-1]
 
-        el_list = time_el_map.get(this_epoch_s, [])
+        el_list: list[tuple[Element[str], int | float | None]] = \
+            time_el_map.get(this_epoch_s, [])
         el_list.append((el, this_end))
         time_el_map[this_epoch_s] = el_list
 
-        return (valid, this_epoch_s, this_end)
+        return (valid, this_epoch_s, this_end)  # ty:ignore[invalid-return-type]
 
     def _makeTimeExpressionHandler(
             self,
