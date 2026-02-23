@@ -82,7 +82,7 @@ class testXmlCheck(unittest.TestCase):
     </tt:div>
   </tt:body>
 </tt:tt>
-"""
+"""  # noqa: E501
         good_input_etree = ElementTree.fromstring(good_input_xml)
         vr = ValidationLogger()
         context = {}
@@ -145,7 +145,7 @@ class testXmlCheck(unittest.TestCase):
     </tt:div>
   </tt:body>
 </tt:tt>
-"""
+"""  # noqa: E501
         bad_input_etree = ElementTree.fromstring(bad_input_xml)
         vr = ValidationLogger()
         context = {}
@@ -204,7 +204,7 @@ class testXmlCheck(unittest.TestCase):
         </div>
     </body>
 </tt>
-"""
+"""  # noqa: E501
         good_input_etree = ElementTree.fromstring(good_input_xml)
         vr = ValidationLogger()
         context = {}
@@ -259,7 +259,7 @@ class testXmlCheck(unittest.TestCase):
         </div>
     </body>
 </tt>
-"""
+"""  # noqa: E501
         bad_input_etree = ElementTree.fromstring(bad_input_xml)
         vr = ValidationLogger()
         context = {}

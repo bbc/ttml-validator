@@ -190,7 +190,8 @@ class IDREFSelementApplicabilityCheck(XmlCheck):
             # Iterate through element's descendants
             for el in input.iter():
                 # For each element, check the attributes
-                idrefs_attrs = sorted(set(el.keys()).intersection(all_idref_attrs))
+                idrefs_attrs = \
+                    sorted(set(el.keys()).intersection(all_idref_attrs))
                 for attr in idrefs_attrs:
                     el_list = \
                         idref_map[attr] if attr in idref_map \
@@ -217,7 +218,8 @@ class IDREFSelementApplicabilityCheck(XmlCheck):
                     for idref in idrefs:
                         ref_el_list = xmlIdToElementMap.get(idref)
                         ref_el = ref_el_list[0] \
-                            if ref_el_list is not None and len(ref_el_list) == 1 \
+                            if ref_el_list is not None \
+                                and len(ref_el_list) == 1 \
                             else None
 
                         if ref_el is None or ref_el.tag not in el_list:
@@ -226,9 +228,11 @@ class IDREFSelementApplicabilityCheck(XmlCheck):
                             validation_results.error(
                                 location='{} element {} attribute reference {}'
                                          .format(el.tag, attr, idref),
-                                message='Attribute references {} element, '
-                                        'not in the list of acceptable elements'
-                                        .format(ref_el.tag if ref_el is not None else 'no'),
+                                message='Attribute references {} element, not '
+                                        'in the list of acceptable elements'
+                                        .format(
+                                            ref_el.tag if ref_el is not None
+                                            else 'no'),
                                 code=ValidationCode
                                         .ttml_idref_element_applicability
                             )

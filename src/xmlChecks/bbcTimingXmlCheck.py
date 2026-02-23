@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright © 2026 BBC
 #
 # SPDX-License-Identifier: BSD-3-Clause
+import logging
 
 from math import floor
 from src.validationLogging.validationCodes import ValidationCode
@@ -63,13 +64,14 @@ class bbcTimingCheck(XmlCheck):
             parent_end: float | None,
             begin_defined: bool,
             end_defined: bool,
-            time_el_map: dict[float, list[tuple[Element, float]]],
+            time_el_map: dict[float, list[tuple[Element, float | None]]],
             validation_results: ValidationLogger,
             # depth: int = 0
-            ) -> tuple[bool, float, float]:
+            ) -> tuple[bool, float, float | None]:
         # prefix = '  ' * depth
-        # print('{}_collect_timed_elements for {}, epoch: {}s, begin_defined: {}'.
-        #       format(prefix, el.tag, epoch_s, begin_defined))
+        # print(
+        #     '{}_collect_timed_elements for {}, epoch: {}s, begin_defined: {}'
+        #     .format(prefix, el.tag, epoch_s, begin_defined))
         valid = True
 
         for timing_attr in timing_attr_keys:
@@ -93,8 +95,8 @@ class bbcTimingCheck(XmlCheck):
         if 'begin' in el.keys():
             begin_defined = True
             # print('{}begin is defined by this element'.format(prefix))
-        this_epoch_s = epoch_s + this_begin
-        this_end = epoch_s + te.seconds(el.get('end', '')) \
+        this_epoch_s: float = epoch_s + this_begin
+        this_end: float | None = epoch_s + te.seconds(el.get('end', '')) \
             if 'end' in el.keys() \
             else parent_end
         if 'end' in el.keys():
@@ -114,8 +116,8 @@ class bbcTimingCheck(XmlCheck):
                 code=ValidationCode.ebuttd_timing_attribute_constraint
             )
 
-        child_begins = []
-        child_ends = []
+        child_begins: list[float] = []
+        child_ends: list[float | None] = []
         for child_el in el:
             # br and metadata elements cannot have begin attributes
             if get_unqualified_name(child_el.tag) in ['div', 'p', 'span']:
@@ -137,12 +139,18 @@ class bbcTimingCheck(XmlCheck):
 
         child_begins.sort()
         if not begin_defined and len(child_begins) > 0:
-            # print(prefix+'setting epoch for {} to {}'.format(el.tag, child_begins[0]))
+            # print(
+            #     prefix+'setting epoch for {} to {}'
+            #     .format(el.tag, child_begins[0]))
             this_epoch_s = child_begins[0]
         # elif begin_defined:
-        #     print(prefix+'for {}, begin is defined, not setting epoch'.format(el.tag))
+        #     print(
+        #         prefix+'for {}, begin is defined, not setting epoch'
+        #         .format(el.tag))
         # else:
-        #     print(prefix+'for {}, begin not defined but no child begins'.format(el.tag))
+        #     print(
+        #         prefix+'for {}, begin not defined but no child begins'
+        #         .format(el.tag))
 
         if not end_defined and len(child_ends) > 0:
             this_end = child_ends[-1]
@@ -329,13 +337,13 @@ class bbcTimingCheck(XmlCheck):
         # For each p element, check if any other p elements are
         # selected into an overlapping region and overlap temporally
         # - if so, that's a validation error
-        filtered_time_el_map = {
+        filtered_time_el_map: dict[float, list[tuple[Element[str], float]]] = {
             begin: [
-                (el, end) for el, end in l
+                (el, end) for el, end in el_end_list
                 if el in potential_overlap_elements
                 and get_unqualified_name(el.tag) == 'p'
                 ]
-            for begin, l in time_el_map.items()
+            for begin, el_end_list in time_el_map.items()
         }
 
         sorted_begins = sorted(filtered_time_el_map.keys())
@@ -349,13 +357,13 @@ class bbcTimingCheck(XmlCheck):
             num_ends = len(el_end_list)
             for el_end_index in range(num_ends):
                 el, end = el_end_list[el_end_index]
-                el_region = el_region_id_map.get(el)
+                el_region = el_region_id_map[el]
 
                 # First check other elements with same begin,
                 # which by definition overlap temporally
                 for oei in range(el_end_index + 1, num_ends):
                     oel, oend = el_end_list[oei]
-                    oel_region = el_region_id_map.get(oel)
+                    oel_region = el_region_id_map[oel]
                     valid &= validateOverlap(
                         r_id1=el_region,
                         r_id2=oel_region,
@@ -365,8 +373,8 @@ class bbcTimingCheck(XmlCheck):
                 # Then check for elements with later begins
                 for obi in range(el_begin_index + 1, num_begins):
                     ob = sorted_begins[obi]
-                    if end > ob:
-                        oell = filtered_time_el_map.get(ob)
+                    if end > ob and ob in filtered_time_el_map:
+                        oell = filtered_time_el_map.get(ob, {})
                         for oel, oend in oell:
                             # These temporally overlap
                             # If el and oel have different regions
@@ -374,12 +382,16 @@ class bbcTimingCheck(XmlCheck):
                             # an invalid condition
 
                             # their regions are in el_to_region_map
-                            oel_region = el_region_id_map.get(oel)
+                            oel_region = el_region_id_map[oel]
                             valid &= validateOverlap(
                                 r_id1=el_region,
                                 r_id2=oel_region,
                                 region_overlaps=region_overlaps,
                                 validation_results=validation_results)
+                    elif end > ob and ob not in filtered_time_el_map:
+                        logging.error(
+                            'Internal error: _checkForOverlappingRegions ob '
+                            'not in filtered_time_el_map')
                     else:
                         # Since it's an ordered list, we can skip
                         # all the later begin times: they also
@@ -438,7 +450,7 @@ class bbcTimingCheck(XmlCheck):
     def _checkSubsOverlapSegment(
             self,
             doc_begin: float,
-            doc_end: float,
+            doc_end: float | None,
             validation_results: ValidationLogger) -> bool:
         valid = True
 

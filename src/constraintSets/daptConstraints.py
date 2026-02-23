@@ -15,7 +15,6 @@ from src.xmlChecks.xmlIdCheck import unqualifiedIdAttributeCheck, \
 from src.xmlChecks.headXmlCheck import headCheck
 from src.xmlChecks.copyrightCheck import copyrightCheck
 from src.xmlChecks.actorRefsCheck import actorRefsCheck
-from src.xmlChecks.bodyXmlCheck import bodyCheck
 from src.xmlChecks.daptLangCheck import daptLangAudioNonMatchingCheck, \
     nonEmptyLangRootCheck
 from src.xmlChecks.daptmDescTypeCheck import daptmDescTypeCheck
@@ -24,7 +23,8 @@ from src.xmlChecks.daptTimingXmlCheck import daptTimingCheck
 from src.xmlChecks.ttmlRoleCheck import ttmlRoleTypeCheck
 from src.xmlChecks.pruner import Pruner
 from src.xmlChecks.daptUtils import ns_daptm, ns_dapt_extension
-from src.xmlChecks.ttmlUtils import ns_ttml, ns_ttp, ns_ttm, ns_tta, ns_tt_feature
+from src.xmlChecks.ttmlUtils import ns_ttml, ns_ttp, ns_ttm, ns_tta, \
+    ns_tt_feature
 from src.xmlUtils import ns_xml
 from src.validationLogging.validationCodes import ValidationCode
 from src.validationLogging.validationLogger import ValidationLogger

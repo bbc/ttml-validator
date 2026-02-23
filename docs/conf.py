@@ -108,7 +108,7 @@ if build_all_docs is not None:
 
     if (current_language == 'en'):
         html_context['versions'] \
-            .append(  # ty:ignore[possibly-missing-attribute]
+            .append(
                 ['latest', pages_root])
 
     with open("versions.yaml", "r") as yaml_file:
@@ -116,5 +116,5 @@ if build_all_docs is not None:
 
     for version, details in docs.items():
         html_context['versions'] \
-            .append(  # ty:ignore[possibly-missing-attribute]
+            .append(
                 [version, pages_root+'/'+version+'/'+current_language])

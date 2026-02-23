@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import re
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from xml.etree.ElementTree import Element
 from .xmlUtils import make_qname, get_unqualified_name, \
@@ -13,7 +12,7 @@ from .validationLogging.validationResult import ValidationResult, ERROR
 from .validationLogging.validationLogger import ValidationLogger
 # import logging
 import types
-from typing import TypeVar
+from typing import Protocol
 
 styling_ns_suffix = '#styling'
 ebutts_ns = 'urn:ebu:tt:style'
@@ -35,9 +34,14 @@ percent_regex = \
 basis_regex = \
     re.compile(r'^(?P<number>[0-9]+(\.[0-9]+)?)(?P<unit>[a-zA-Z%]*)$')
 
-specified_type = TypeVar('specified', bound=str)
-parent_type = TypeVar('parent', bound=str)
-params_type = TypeVar('params', bound=dict[str, str])
+
+class ComputeValue(Protocol):
+    def __call__(
+            self,
+            specified: str,
+            parent: str,
+            params: dict[str, str]) -> str:
+        return ""
 
 
 @dataclass
@@ -48,10 +52,8 @@ class StyleAttribute:
     appliesTo: list[str]
     syntaxRegex: re.Pattern
     defaultValue: str
-    computeValue: Callable[[specified_type, parent_type, params_type], str] = \
-        field(hash=False, compare=False)
-    fallbackComputeValue: Callable[
-        [specified_type, parent_type, params_type], str] = \
+    computeValue: ComputeValue = field(hash=False, compare=False)
+    fallbackComputeValue: ComputeValue = \
         field(hash=False, compare=False)
 
     def __post_init__(self):
@@ -265,7 +267,7 @@ def _fallbackComputeUninheritedTwoLengthValue(
 
     # TODO: compute values using other TTML-defined syntaxes, if possible.
 
-    return None
+    return 'TODO'
 
 
 styleAttribs = \
@@ -277,8 +279,8 @@ styleAttribs = \
             appliesTo=['p', 'span'],
             syntaxRegex=re.compile(r'^(ltr)|(rtl)$'),
             defaultValue='ltr',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -288,8 +290,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r"""^(([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*)([\s]+([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*))*|(\"([^\"\\]|\\.)*\")|('([^'\\]|\\.)*'))([\s]*,[\s]*(([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*)([\s]+([-]?([_a-zA-Z]|[^\0-\237\\])([_a-zA-Z0-9\-]|[^\0-\237\\])*))*|(\"([^\"\\]|\\.)*\")|('([^'\\]|\\.)*')))*$"""),
             defaultValue='default',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -298,8 +300,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(?P<percent>[\d]+(\.[\d]+)?%)$'),
             defaultValue='100%',
-            computeValue=_computeFontSize,
-            fallbackComputeValue=_fallbackComputeFontSize
+            computeValue=_computeFontSize,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackComputeFontSize  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -308,8 +310,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^(normal)|([\d]+(\.[\d]+)?%)$'),
             defaultValue='normal',
-            computeValue=_computeLineHeight,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeLineHeight,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -319,8 +321,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(left)|(center)|(right)|(start)|(end)|(justify)$'),
             defaultValue='start',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -329,8 +331,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=ebutt_distribution_color_type_regex,
             defaultValue='#ffffffff',
-            computeValue=_computeInheritedColor,
-            fallbackComputeValue=_fallbackComputeColor
+            computeValue=_computeInheritedColor,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackComputeColor  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -339,8 +341,8 @@ styleAttribs = \
             appliesTo=['region', 'body', 'div', 'p', 'span'],
             syntaxRegex=ebutt_distribution_color_type_regex,
             defaultValue='#00000000',
-            computeValue=_computeUninheritedColor,
-            fallbackComputeValue=_fallbackComputeColor
+            computeValue=_computeUninheritedColor,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackComputeColor  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -349,8 +351,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(normal)|(italic)$'),
             defaultValue='normal',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -359,8 +361,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(normal)|(bold)$'),
             defaultValue='normal',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -369,8 +371,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(none)|(underline)$'),
             defaultValue='none',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -379,8 +381,8 @@ styleAttribs = \
             appliesTo=['p', 'span'],
             syntaxRegex=re.compile(r'^(normal)|(embed)|(bidiOverride)$'),
             defaultValue='normal',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -389,8 +391,8 @@ styleAttribs = \
             appliesTo=['span'],
             syntaxRegex=re.compile(r'^(wrap)|(noWrap)$'),
             defaultValue='wrap',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=ebutts_ns,
@@ -399,8 +401,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^(auto)|(start)|(center)|(end)$'),
             defaultValue='auto',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=ebutts_ns,
@@ -409,8 +411,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^([\d]+(\.[\d]+)?)c$'),
             defaultValue='0c',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault  # Not expecting weirdness
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=itts_ns,
@@ -419,8 +421,8 @@ styleAttribs = \
             appliesTo=['p'],
             syntaxRegex=re.compile(r'^(false)|(true)$'),
             defaultValue='false',
-            computeValue=_computeSimpleInheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeSimpleInheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -429,8 +431,8 @@ styleAttribs = \
             appliesTo=['region'],
             syntaxRegex=two_percent_vals_regex,
             defaultValue='0% 0%',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackComputeUninheritedTwoLengthValue
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackComputeUninheritedTwoLengthValue  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -439,8 +441,8 @@ styleAttribs = \
             appliesTo=['region'],
             syntaxRegex=two_percent_vals_regex,
             defaultValue='100% 100%',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackComputeUninheritedTwoLengthValue
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackComputeUninheritedTwoLengthValue  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -450,8 +452,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(before)|(center)|(after)$'),
             defaultValue='before',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -461,8 +463,9 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^([\d]+(\.[\d]+)?%)([\s]+([\d]+(\.[\d]+)?%)){0,3}$'),
             defaultValue='0%',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault  # TODO improve this
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            # TODO: we can do better than fall back to default
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -472,8 +475,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(lrtb)|(rltb)|(tbrl)|(tblr)|(lr)|(rl)|(tb)$'),
             defaultValue='lrtb',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -483,8 +486,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(always)|(whenActive)$'),
             defaultValue='always',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns=styling_ns_suffix,
@@ -494,8 +497,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^(visible)|(hidden)$'),
             defaultValue='hidden',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         ),
         StyleAttribute(
             ns='',
@@ -507,8 +510,8 @@ styleAttribs = \
             syntaxRegex=re.compile(
                 r'^([a-zA-Z_][\S]*([\t\f ]+([a-zA-Z_][\S]*))*)?$'),
             defaultValue='',
-            computeValue=_computeUninheritedAttribute,
-            fallbackComputeValue=_fallbackToDefault
+            computeValue=_computeUninheritedAttribute,  # ty:ignore[invalid-argument-type]
+            fallbackComputeValue=_fallbackToDefault  # ty:ignore[invalid-argument-type]
         )
     ]
 
@@ -618,8 +621,8 @@ def computeStyles(
             if specified and not style_attr.validateValue(specified):
                 raise ValueError('Value has invalid format')
             el_css[style_attr.tag] = style_attr.computeValue(
-                specified=specified,
-                parent=parent_css.get(style_attr.tag),
+                specified=specified,  # ty:ignore[invalid-argument-type]
+                parent=parent_css.get(style_attr.tag),  # ty:ignore[invalid-argument-type]
                 params=params
             )
         except Exception as e:
@@ -632,8 +635,8 @@ def computeStyles(
                 code=ValidationCode.ttml_attribute_styling_attribute
             ))
             fallback_css = style_attr.fallbackComputeValue(
-                specified=specified,
-                parent=parent_css.get(style_attr.tag),
+                specified=specified,  # ty:ignore[invalid-argument-type]
+                parent=parent_css.get(style_attr.tag),  # ty:ignore[invalid-argument-type]
                 params=params
             )
             if fallback_css:

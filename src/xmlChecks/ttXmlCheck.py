@@ -147,7 +147,7 @@ class activeAreaCheck(XmlCheck):
                 )
             )
         else:
-            ittp_attr_val = input.get(ittp_attr_key)
+            ittp_attr_val: str = input.get(ittp_attr_key)  # ty:ignore[invalid-assignment]
             matches = self.activeArea_re.match(ittp_attr_val)
             if matches:
                 # check validity
@@ -229,7 +229,7 @@ class cellResolutionCheck(XmlCheck):
                 code=ValidationCode.ttml_parameter_cellResolution
             )
         else:
-            cellResolution_attr_val = input.get(cellResolution_attr_key)
+            cellResolution_attr_val: str = input.get(cellResolution_attr_key)  # ty:ignore[invalid-assignment]
             matches = self.cellResolution_re.match(cellResolution_attr_val)
             if matches:
                 # check validity

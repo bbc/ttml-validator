@@ -5,7 +5,7 @@
 from io import TextIOWrapper
 from csv import writer as csvWriter
 import json
-from typing import Self
+from typing import Any
 from .validationCodes import ValidationCode
 from .validationResult import ValidationResult, \
     GOOD, INFO, WARN, ERROR, SKIP
@@ -72,7 +72,7 @@ class ValidationLogger(list[ValidationResult]):
 
     def collateResults(
             self,
-            more_than: int) -> Self:
+            more_than: int) -> Any:  # returning Self no longer allowed
         # When we see the same status and message for more than
         # more_than messages, replace with a ValidationMessage
         # with the same status and message but set the location
@@ -88,7 +88,7 @@ class ValidationLogger(list[ValidationResult]):
         rv = ValidationLogger()
         for vr in self:
             seen_key = (vr.status, vr.message, vr.code)
-            seen_count = seen_messages.get(seen_key)
+            seen_count = seen_messages.get(seen_key, 0)
             if seen_count > more_than \
                and seen_key not in messages_written:
                 rv.append(ValidationResult(
