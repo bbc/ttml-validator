@@ -23,25 +23,25 @@ For requirements, see [BBC Subtitle Guidelines technical requirements for EBU-TT
 
 ## Usage
 
-Built with python 3.13, so you might want to make sure you have that version available.
+Built with python 3.14, so you might want to make sure you have that version available.
 
 ### Setup
 
 You can use `poetry` or `uv` to build and run.
 
-We have tested this works with Poetry v2.2.1 and uv v0.7.12.
+We have tested this works with Poetry v2.2.1 and uv v0.11.6.
 
 #### Poetry:
 
 1. Install `poetry`
-2. If need be, `poetry env use 3.13.4` to tell poetry to create and use 3.13.4
+2. If need be, `poetry env use 3.14` to tell poetry to create and use 3.14
 3. `poetry install`
 
 #### uv:
 
 1. Install `uv`
-2. If need be, `uv python install 3.13` to tell uv to install 3.13
-3. Pin to that version: `uv python pin 3.13`
+2. If need be, `uv python install 3.14` to tell uv to install 3.14
+3. Pin to that version: `uv python pin 3.14`
 4. `uv build`
 
 ### Running scripts

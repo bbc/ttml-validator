@@ -5,18 +5,22 @@
 [project]
 name = "ttml-validator"
 version = "0.1.0"
-description = "Utility for validating TTML-like files against the BBC Subtitle Guidelines EBU-TT-D requirements."
+description = "Utility for validating TTML-like files against the BBC Subtitle Guidelines EBU-TT-D requirements or DAPT."
 authors = [ {name = "Nigel Megitt <nigel.megitt@bbc.co.uk>"} ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "xmlschema == 4.3.1",
-    "charset-normalizer == 3.4.4"
+    "charset-normalizer == 3.4.7"
 ]
 
 [project.scripts]
 validate-ttml = "src.ttmlValidator:main"
 collate-validation-results = "src.validationCollater:main"
+
+[project.urls]
+homepage = "https://github.com/bbc/ttml-validator/"
+documentation = "https://bbc.github.io/ttml-validator/"
 
 [tool.poetry]
 packages = [
@@ -30,15 +34,15 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "coverage==7.13.3",
+    "coverage==7.13.5",
     "debugpy==1.8.20",
-    "sphinx==9.0.4",
+    "sphinx==9.1.0",
     "pydocstyle==6.3.0",
     "sphinx-rtd-theme==3.1.0",
     "pyyaml==6.0.3",
-    "ruff==0.15.2",
+    "ruff==0.15.9",
     "reuse==6.2.0",
-    "ty==0.0.17",
+    "ty==0.0.29",
 ]
 
 [tool.ty.terminal]
