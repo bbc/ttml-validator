@@ -56,7 +56,7 @@ jobs:
           uv run coverage run -m unittest discover
       - name: Coverage comment
         id: coverage_comment
-        uses: py-cov-action/python-coverage-comment-action@v3.40
+        uses: py-cov-action/python-coverage-comment-action@v3.41
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
