@@ -54,6 +54,8 @@ jobs:
           uv run ty check
       - name: Run the tests and gather coverage
         run: |
+          # Remove old coverage files
+          rm .coverage*
           uv run coverage run -m unittest discover
       - name: Coverage comment
         id: coverage_comment
