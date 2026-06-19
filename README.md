@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: © 2026 BBC
 SPDX-License-Identifier: BSD-3-Clause
 -->
 
+[![Coverage badge](https://raw.githubusercontent.com/bbc/ttml-validator/python-coverage-comment-action-data/badge.svg)](https://htmlpreview.github.io/?https://github.com/bbc/ttml-validator/blob/python-coverage-comment-action-data/htmlcov/index.html)
+
 # TTML Validator
 
 A utility to read a file and check against a set of requirements to
