@@ -32,7 +32,7 @@ jobs:
           submodules: recursive
           persist-credentials: true
       - name: "Set up Python"
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v6.2.0
         with:
           python-version-file: "pyproject.toml"
       - name: Install uv
