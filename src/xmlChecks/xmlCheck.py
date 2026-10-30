@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+from abc import ABCMeta, abstractmethod
 from src.validationLogging.validationLogger import ValidationLogger
 from xml.etree.ElementTree import Element
 
 
-class XmlCheck:
+class XmlCheck(metaclass=ABCMeta):
 
+    @abstractmethod
     def run(
             self,
             input: Element,

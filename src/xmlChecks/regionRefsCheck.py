@@ -120,7 +120,7 @@ class regionRefsXmlCheck(XmlCheck):
     def checkSpecifiedStyles(
             self,
             tt_ns: str,
-            sss: dict[str, str],
+            sss: dict[str, str | None],
             validation_results: ValidationLogger,
             location: str,
             error_significance: int = ERROR,

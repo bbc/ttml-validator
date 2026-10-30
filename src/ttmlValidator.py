@@ -64,7 +64,7 @@ def validate_ttml(args) -> int:
     epoch = get_epoch(args)
     dur = args.segdur if args.segment else None
 
-    constraints = constraintSet.ConstraintSet()
+    constraints = None
     match args.flavour:
         case 'bbc':
             constraints = BbcSubtitleConstraintSet(
@@ -82,6 +82,7 @@ def validate_ttml(args) -> int:
             logging.exception(
                 'Flavour {} not recognised.'.format(other_flavour))
 
+    assert(isinstance(constraints, constraintSet.ConstraintSet))
     preParseChecks = constraints.preParseChecks()
     xmlChecks = constraints.xmlChecks()
 
@@ -186,13 +187,13 @@ def main():
 
     parser.add_argument(
         '-ttml_in',
-        type=argparse.FileType('rb'),
+        type=argparse.FileType('rb'),  # ty:ignore[deprecated]
         default=sys.stdin, nargs='?',
         help='Input TTML file to validate',
         action='store')
     parser.add_argument(
         '-results_out',
-        type=argparse.FileType('w'),
+        type=argparse.FileType('w'),  # ty:ignore[deprecated]
         default=sys.stdout,
         nargs='?',
         help='file to be written, containing the validation results output',

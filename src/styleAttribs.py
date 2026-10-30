@@ -605,7 +605,7 @@ def getMergedStyleSet(
 def computeStyles(
         tt_ns: str,
         validation_results: ValidationLogger,
-        el_sss: dict[str, str],
+        el_sss: dict[str, str | None],
         el_css: dict[str, str],
         parent_css: dict[str, str],
         params: dict[str, str],

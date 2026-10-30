@@ -14,21 +14,16 @@ from src.validationLogging.validationResult import ValidationResult, \
   ERROR, GOOD
 
 
+class xmlCheckUnimplemented(XmlCheck):
+    pass
+
+
 class testXmlCheck(unittest.TestCase):
     maxDiff = None
 
     def test_no_direct_instantiation(self):
-        not_impl_XmlCheck = XmlCheck()
-        good_input_xml = """<?xml version="1.0" encoding="UTF-8"?><tt/>"""
-        good_input_etree = ElementTree.fromstring(good_input_xml)
-        vr = ValidationLogger()
-        context = {}
-
-        with self.assertRaises(NotImplementedError):
-            not_impl_XmlCheck.run(
-                input=good_input_etree,
-                context=context,
-                validation_results=vr)
+        with self.assertRaises(TypeError):
+            xmlCheckUnimplemented()  # ty:ignore[call-non-callable]
 
     def test_xsdValidator_good_input_ebuttd(self):
         xsd_validator = xsdValidator(

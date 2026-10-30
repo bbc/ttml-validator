@@ -2,14 +2,15 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+from abc import ABCMeta, abstractmethod
 from src.preParseChecks.preParseCheck import PreParseCheck
 from src.xmlChecks.xmlCheck import XmlCheck
 from src.validationLogging.validationLogger import ValidationLogger
 
 
-class ConstraintSet():
-    _preParseChecks = []
-    _xmlChecks = []
+class ConstraintSet(metaclass=ABCMeta):
+    _preParseChecks: list[PreParseCheck] = []
+    _xmlChecks: list[XmlCheck] = []
 
     def preParseChecks(self) -> list[PreParseCheck]:
         return self._preParseChecks
@@ -18,5 +19,6 @@ class ConstraintSet():
         return self._xmlChecks
 
     @staticmethod
+    @abstractmethod
     def summarise(validation_results: ValidationLogger) -> tuple[int, int]:
         raise NotImplementedError

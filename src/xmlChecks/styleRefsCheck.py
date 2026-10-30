@@ -137,7 +137,7 @@ class styleRefsXmlCheck(XmlCheck):
 
     def _check_no_backgroundColor(
             self,
-            sss: dict[str, str],
+            sss: dict[str, str | None],
             el_tag: str,
             tt_ns: str,
             validation_results: ValidationLogger

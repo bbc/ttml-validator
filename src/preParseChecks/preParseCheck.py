@@ -2,14 +2,16 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+from abc import ABCMeta, abstractmethod
 from src.validationLogging.validationLogger import ValidationLogger
 from src.validationLogging.validationCodes import ValidationCode
 from charset_normalizer import from_bytes
 import codecs
 
 
-class PreParseCheck:
+class PreParseCheck(metaclass=ABCMeta):
 
+    @abstractmethod
     def run(
             self,
             input: bytes,

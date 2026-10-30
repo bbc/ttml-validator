@@ -15,7 +15,7 @@ metadata_items_schema_path = os.path.normpath(
 
 schema_paths = [schema_path, metadata_items_schema_path]
 DAPTSchema = xmlschema.XMLSchema(
-    source=schema_paths,
+    source=schema_paths,  # ty:ignore[invalid-argument-type]
     build=False
 )
 DAPTSchema.build()

@@ -10,19 +10,17 @@ from src.validationLogging.validationResult import ValidationResult, \
 from src.validationLogging.validationCodes import ValidationCode
 
 
+class preParseCheckUnimplemented(preParseCheck.PreParseCheck):
+    pass
+
+
 class testPreParseCheck(unittest.TestCase):
 
     maxDiff = None
 
     def test_no_direct_instantiation(self):
-        not_impl_preparseCheck = preParseCheck.PreParseCheck()
-        good_input = b'acdef'
-        vr = ValidationLogger()
-
-        with self.assertRaises(NotImplementedError):
-            not_impl_preparseCheck.run(
-                input=good_input,
-                validation_results=vr)
+        with self.assertRaises(TypeError):
+            preParseCheckUnimplemented()  # ty:ignore[call-non-callable]
 
     def testNullByteCheck(self):
         nullByteCheck = preParseCheck.NullByteCheck()

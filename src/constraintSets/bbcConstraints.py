@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+from src.xmlChecks.xmlCheck import XmlCheck
 from .constraintSet import ConstraintSet
 from src.preParseChecks.preParseCheck import BadEncodingCheck, NullByteCheck, \
-    ByteOrderMarkCheck
+    ByteOrderMarkCheck, PreParseCheck
 from src.preParseChecks.xmlStructureCheck import XmlStructureCheck
 from src.schemas.ebuttdSchema import EBUTTDSchema
 from src.xmlChecks.xsdValidator import xsdValidator
@@ -36,14 +37,14 @@ from src.validationLogging.validationSummariser import \
 
 
 class BbcSubtitleConstraintSet(ConstraintSet):
-    _preParseChecks = [
+    _preParseChecks: list[PreParseCheck] = [
         ByteOrderMarkCheck(),  # encoding check will remove BOM
         BadEncodingCheck(),  # check encoding before null bytes
         NullByteCheck(),
         XmlStructureCheck()
     ]
 
-    _xmlChecks = [
+    _xmlChecks: list[XmlCheck] = [
         unqualifiedIdAttributeCheck(),
         xsdValidator(xml_schema=EBUTTDSchema, schema_name='EBU-TT-D'),
         duplicateXmlIdCheck(),

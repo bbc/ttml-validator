@@ -134,7 +134,7 @@ def main():
         action='store')
     parser.add_argument(
         '-results_out',
-        type=argparse.FileType('w'),
+        type=argparse.FileType('w'),  # ty:ignore[deprecated]
         default=sys.stdout,
         nargs='?',
         help='file to be written, containing the validation summary output',
