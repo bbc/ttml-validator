@@ -4,7 +4,7 @@
 
 [project]
 name = "ttml-validator"
-version = "0.1.0"
+version = "0.1.1"
 description = "Utility for validating TTML-like files against the BBC Subtitle Guidelines EBU-TT-D requirements or DAPT."
 authors = [ {name = "Nigel Megitt <nigel.megitt@bbc.co.uk>"} ]
 readme = "README.md"
