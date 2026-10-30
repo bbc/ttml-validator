@@ -418,7 +418,7 @@ class bbcTimingCheck(XmlCheck):
         begin_end_list.sort(key=itemgetter(0))
 
         for i in range(0, len(begin_end_list) - 1):
-            gap_to_next = begin_end_list[i+1][0] - begin_end_list[i][1]
+            gap_to_next = begin_end_list[i+1][0] - begin_end_list[i][1]  # ty:ignore[unsupported-operator]
 
             if gap_to_next > 0 and gap_to_next < self._min_short_gap:
                 valid = False
