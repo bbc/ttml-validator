@@ -34,15 +34,15 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "coverage==7.13.5",
-    "debugpy==1.8.20",
-    "sphinx==9.1.0",
+    "coverage==7.17.0",
+    "debugpy==1.8.22",
+    "sphinx==9.2.0",
     "pydocstyle==6.3.0",
     "sphinx-rtd-theme==3.1.0",
     "pyyaml==6.0.3",
-    "ruff==0.15.9",
+    "ruff==0.17.2",
     "reuse==6.2.0",
-    "ty==0.0.29",
+    "ty==0.0.91",
 ]
 
 [tool.ty.terminal]
