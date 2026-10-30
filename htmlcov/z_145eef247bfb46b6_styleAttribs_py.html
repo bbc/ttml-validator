@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_145eef247bfb46b6_timeExpression_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.17.0">coverage.py v7.17.0</a>,
-            created at 2026-10-30 10:48 +0000
+            created at 2026-10-30 12:12 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -659,11 +659,11 @@
     <p class="run"><span class="n"><a id="t577" href="#t577">577</a></span><span class="t"><span class="key">def</span> <span class="nam">getMergedStyleSet</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t578" href="#t578">578</a></span><span class="t">        <span class="nam">el</span><span class="op">:</span> <span class="nam">Element</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t579" href="#t579">579</a></span><span class="t">        <span class="nam">id_to_styleattribs_map</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t580" href="#t580">580</a></span><span class="t"><span class="op">)</span> <span class="op">-&gt;</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t580" href="#t580">580</a></span><span class="t"><span class="op">)</span> <span class="op">-&gt;</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span> <span class="op">|</span> <span class="key">None</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t581" href="#t581">581</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t582" href="#t582">582</a></span><span class="t">    <span class="nam">style_attr_val</span> <span class="op">=</span> <span class="nam">el</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">&#x27;style&#x27;</span><span class="op">,</span> <span class="str">&#x27;&#x27;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t583" href="#t583">583</a></span><span class="t">    <span class="nam">ref_style_ids</span> <span class="op">=</span> <span class="nam">style_attr_val</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t584" href="#t584">584</a></span><span class="t">    <span class="nam">style_set</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t584" href="#t584">584</a></span><span class="t">    <span class="nam">style_set</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span> <span class="op">|</span> <span class="key">None</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t585" href="#t585">585</a></span><span class="t">    <span class="nam">no_store_set</span> <span class="op">=</span> <span class="nam">set</span><span class="op">(</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t586" href="#t586">586</a></span><span class="t">        <span class="str">&#x27;style&#x27;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t587" href="#t587">587</a></span><span class="t">        <span class="nam">xmlIdAttr</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -687,7 +687,7 @@
     <p class="run"><span class="n"><a id="t605" href="#t605">605</a></span><span class="t"><span class="key">def</span> <span class="nam">computeStyles</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t606" href="#t606">606</a></span><span class="t">        <span class="nam">tt_ns</span><span class="op">:</span> <span class="nam">str</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t607" href="#t607">607</a></span><span class="t">        <span class="nam">validation_results</span><span class="op">:</span> <span class="nam">ValidationLogger</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t608" href="#t608">608</a></span><span class="t">        <span class="nam">el_sss</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t608" href="#t608">608</a></span><span class="t">        <span class="nam">el_sss</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span> <span class="op">|</span> <span class="key">None</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t609" href="#t609">609</a></span><span class="t">        <span class="nam">el_css</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t610" href="#t610">610</a></span><span class="t">        <span class="nam">parent_css</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t611" href="#t611">611</a></span><span class="t">        <span class="nam">params</span><span class="op">:</span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -758,7 +758,7 @@
             <a class="nav" href="z_145eef247bfb46b6_timeExpression_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.17.0">coverage.py v7.17.0</a>,
-            created at 2026-10-30 10:48 +0000
+            created at 2026-10-30 12:12 +0000
         </p>
     </div>
 </footer>

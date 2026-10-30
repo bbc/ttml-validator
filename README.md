@@ -6,11 +6,11 @@
 |---------------------------------------------- | -------: | -------: | ------: | --------: |
 | src/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | src/constraintSets/\_\_init\_\_.py            |        0 |        0 |    100% |           |
-| src/constraintSets/bbcConstraints.py          |       64 |       33 |     48% |91-92, 101-253 |
-| src/constraintSets/constraintSet.py           |       13 |        1 |     92% |        22 |
-| src/constraintSets/daptConstraints.py         |       53 |        2 |     96% |  154, 218 |
+| src/constraintSets/bbcConstraints.py          |       65 |       33 |     49% |92-93, 102-254 |
+| src/constraintSets/constraintSet.py           |       15 |        1 |     93% |        24 |
+| src/constraintSets/daptConstraints.py         |       54 |        2 |     96% |  155, 219 |
 | src/preParseChecks/\_\_init\_\_.py            |        0 |        0 |    100% |           |
-| src/preParseChecks/preParseCheck.py           |       66 |        4 |     94% |96-102, 126-127 |
+| src/preParseChecks/preParseCheck.py           |       68 |        5 |     93% |19, 98-104, 128-129 |
 | src/preParseChecks/xmlStructureCheck.py       |       53 |        0 |    100% |           |
 | src/registries/\_\_init\_\_.py                |        0 |        0 |    100% |           |
 | src/registries/contentDescriptorRegistry.py   |        3 |        0 |    100% |           |
@@ -22,7 +22,7 @@
 | src/schemas/ebuttdSchema.py                   |        4 |        0 |    100% |           |
 | src/styleAttribs.py                           |      166 |        4 |     98% |44, 181, 256, 570 |
 | src/timeExpression.py                         |       81 |        0 |    100% |           |
-| src/ttmlValidator.py                          |      117 |       42 |     64% |22-27, 44-54, 70, 81-82, 103-105, 113-120, 147-149, 168, 170, 177, 185-265, 270 |
+| src/ttmlValidator.py                          |      118 |       42 |     64% |22-27, 44-54, 70, 81-82, 104-106, 114-121, 148-150, 169, 171, 178, 186-266, 271 |
 | src/validationLogging/\_\_init\_\_.py         |        0 |        0 |    100% |           |
 | src/validationLogging/validationCodes.py      |        2 |        0 |    100% |           |
 | src/validationLogging/validationLogger.py     |       50 |        0 |    100% |           |
@@ -53,7 +53,7 @@
 | src/xmlChecks/ttXmlCheck.py                   |      128 |        0 |    100% |           |
 | src/xmlChecks/ttmlRoleCheck.py                |       33 |        0 |    100% |           |
 | src/xmlChecks/ttmlUtils.py                    |        5 |        0 |    100% |           |
-| src/xmlChecks/xmlCheck.py                     |        5 |        0 |    100% |           |
+| src/xmlChecks/xmlCheck.py                     |        7 |        1 |     86% |        30 |
 | src/xmlChecks/xmlIdCheck.py                   |       86 |        4 |     95% |97-98, 147, 172 |
 | src/xmlChecks/xsdValidator.py                 |       19 |        0 |    100% |           |
 | src/xmlUtils.py                               |       17 |        0 |    100% |           |
@@ -68,7 +68,7 @@
 | test/test\_daptmRepresents.py                 |       92 |        0 |    100% |           |
 | test/test\_headXmlCheck.py                    |      205 |        0 |    100% |           |
 | test/test\_inlineStyleAttributeCheck.py       |       28 |        0 |    100% |           |
-| test/test\_preParseCheck.py                   |      101 |        7 |     93% |   165-178 |
+| test/test\_preParseCheck.py                   |      100 |        7 |     93% |   163-176 |
 | test/test\_pruner.py                          |       25 |        0 |    100% |           |
 | test/test\_regionRefsCheck.py                 |      135 |        0 |    100% |           |
 | test/test\_styleAttribs.py                    |      110 |        0 |    100% |           |
@@ -77,11 +77,11 @@
 | test/test\_ttXmlCheck.py                      |      243 |        0 |    100% |           |
 | test/test\_ttmRoleCheck.py                    |       34 |        0 |    100% |           |
 | test/test\_validation.py                      |       50 |        0 |    100% |           |
-| test/test\_xmlCheck.py                        |       59 |        0 |    100% |           |
+| test/test\_xmlCheck.py                        |       56 |        0 |    100% |           |
 | test/test\_xmlIdCheck.py                      |       80 |        0 |    100% |           |
 | test/test\_xmlStructureCheck.py               |       81 |        0 |    100% |           |
 | test/test\_xmlUtils.py                        |       23 |        0 |    100% |           |
-| **TOTAL**                                     | **4698** |  **139** | **97%** |           |
+| **TOTAL**                                     | **4703** |  **141** | **97%** |           |
 
 
 ## Setup coverage badge
