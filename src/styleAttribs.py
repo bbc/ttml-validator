@@ -577,11 +577,11 @@ def canonicaliseFontFamily(fontFamily: str) -> list[str]:
 def getMergedStyleSet(
         el: Element,
         id_to_styleattribs_map: dict[str, dict[str, str]],
-) -> dict[str, str]:
+) -> dict[str, str | None]:
 
     style_attr_val = el.get('style', '')
     ref_style_ids = style_attr_val.split()
-    style_set = {}
+    style_set: dict[str, str | None] = {}
     no_store_set = set([
         'style',
         xmlIdAttr,

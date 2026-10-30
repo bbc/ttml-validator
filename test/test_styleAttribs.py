@@ -320,7 +320,7 @@ class testStyleAttribs(unittest.TestCase):
                 self.assertTrue(style_attr.validateValue(value=value))  # ty:ignore[unresolved-attribute]
 
     def test_validateValue_bad(self):
-        good_values = [
+        bad_values = [
             ('{#styling}direction', 'forward'),
             ('{#styling}fontFamily', '"badly quoted'),
             ('{#styling}fontSize', '1'),
@@ -353,7 +353,7 @@ class testStyleAttribs(unittest.TestCase):
 
         allStyleDict = getAllStyleAttributeDict(tt_ns='')
 
-        for (style_attr_key, value) in good_values:
+        for (style_attr_key, value) in bad_values:
             with self.subTest(
                     style_attr_key=style_attr_key,
                     value=value):
